@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -26,6 +28,22 @@ android {
                 arguments["room.schemaLocation"] = "$projectDir/schemas"
             }
         }
+
+        val propertiesFile = rootProject.file("local.properties")
+
+        if (propertiesFile.exists()) {
+            val properties = Properties().apply {
+                propertiesFile.inputStream().use { fis ->
+                    load(fis)
+                }
+            }
+            buildConfigField("String", "API_URL", properties.getProperty("API_URL"))
+        }
+    }
+    fun readProperties(propertiesFile: File) = Properties().apply {
+        propertiesFile.inputStream().use { fis ->
+            load(fis)
+        }
     }
 
     buildTypes {
@@ -46,6 +64,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
