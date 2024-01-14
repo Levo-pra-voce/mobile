@@ -24,4 +24,10 @@ class AuthStore(private val context: Context) {
             preferences[TOKEN_KEY] = token
         }
     }
+
+    suspend fun logout() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
 }
