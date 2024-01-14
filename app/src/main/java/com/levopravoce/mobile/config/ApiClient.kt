@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.config
 
+import com.levopravoce.mobile.BuildConfig
 import com.levopravoce.mobile.features.auth.domain.AuthInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -26,7 +27,7 @@ class ApiClient @Inject constructor(
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.levopravoce.com")
+            .baseUrl(BuildConfig.API_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
