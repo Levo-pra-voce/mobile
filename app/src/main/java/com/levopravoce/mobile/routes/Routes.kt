@@ -7,4 +7,8 @@ object Routes {
         val LOGIN = "login"
         val REGISTER = "register"
     }
+
+    object Home {
+        val ROUTE = "home"
+    }
 }
