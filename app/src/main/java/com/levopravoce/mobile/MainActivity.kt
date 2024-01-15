@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.authGraph
+import com.levopravoce.mobile.routes.homeGraph
 import com.levopravoce.mobile.ui.theme.MobileTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,9 +28,10 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(navControllerContext provides navHost) {
                     NavHost(
                         navController = navHost,
-                        startDestination = Routes.Auth.ROUTE
+                        startDestination = Routes.Home.ROUTE
                     ) {
                         authGraph()
+                        homeGraph()
                     }
                 }
             }
