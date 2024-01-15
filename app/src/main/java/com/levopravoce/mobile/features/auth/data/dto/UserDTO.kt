@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.auth.data.dto
 
+
 data class UserDTO (
     val firstName: String? = null,
     val lastName: String? = null,
@@ -14,5 +15,6 @@ data class UserDTO (
     val country: String? = null,
     val status: String? = null,
     val complement: String? = null,
-    val neighborhood: String? = null
+    val neighborhood: String? = null,
+    val userType: UserType? = null
 )
