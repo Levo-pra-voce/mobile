@@ -35,7 +35,6 @@ import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Loading
-import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.ui.theme.customColorsShema
@@ -112,7 +111,13 @@ fun Login(
                         .padding(bottom = 36.dp)
                 ) {
                     NextButton(
-                        loginViewModel = viewModel
+                        loginViewModel = viewModel,
+                        email = email,
+                        password = password,
+                        resetFields = {
+                            email = ""
+                            password = ""
+                        }
                     )
                 }
             }
@@ -125,7 +130,8 @@ fun Login(
 private fun NextButton(
     loginViewModel: LoginViewModel,
     email: String = "",
-    password: String = ""
+    password: String = "",
+    resetFields: () -> Unit
 ) {
     val navController = navControllerContext.current
     val uiState = loginViewModel.uiState.collectAsState()
@@ -139,8 +145,9 @@ private fun NextButton(
     Button(
         onClick = {
             coroutineScope.launch {
-                val result: JwtResponseDTO? = loginViewModel.loginRequest(email, password)
+                val (result) = loginViewModel.loginRequest(email, password)
                 if (result != null) {
+                    resetFields()
                     navController.navigate(Routes.Home.ROUTE)
                 } else {
                     showDialog.value = true
@@ -170,7 +177,9 @@ private fun NextButton(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Loading()
+                    Loading(
+                        size = 12.dp,
+                    )
                 }
             }
         }
