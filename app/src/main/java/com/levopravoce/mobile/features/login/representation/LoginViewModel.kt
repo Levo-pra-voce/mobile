@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.features.auth.data.AuthRepository
 import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
+import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.domain.AuthStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,16 +26,19 @@ class LoginViewModel @Inject constructor(
 
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    suspend fun loginRequest(email: String, password: String): JwtResponseDTO? {
+    suspend fun loginRequest(email: String, password: String): Pair<JwtResponseDTO?, Exception?> {
         this._uiState.value = LoginUiState(status = RequestStatus.LOADING)
-        try {
-            val data = authRepository.login(email, password)
+        return try {
+            val data = authRepository.login(UserDTO(
+                email = email,
+                password = password
+            ))
             authStore.saveToken(data.token)
             this._uiState.value = LoginUiState(status = RequestStatus.SUCCESS)
-            return data;
+            Pair(data, null)
         } catch (e: Exception) {
             this._uiState.value = LoginUiState(status = RequestStatus.ERROR, error = e.message)
+            Pair(null, e)
         }
-        return null
     }
 }
