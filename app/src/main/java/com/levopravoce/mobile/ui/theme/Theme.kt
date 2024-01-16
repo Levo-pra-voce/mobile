@@ -20,6 +20,7 @@ data class CustomColorsShema(
     val placeholder: Color = Color.Unspecified,
     val border: Color = Color.Unspecified,
     val button: Color = Color.Unspecified,
+    val invertBackground: Color = Color.Unspecified,
 )
 
 private val LightColorSchema = CustomColorsShema(
@@ -29,6 +30,7 @@ private val LightColorSchema = CustomColorsShema(
     title = Black100,
     placeholder = Black80,
     button = gray80,
+    invertBackground = White100,
 )
 
 
@@ -39,6 +41,7 @@ private val DarkColorSchema = CustomColorsShema(
     title = White100,
     placeholder = gray80,
     button = Black100,
+    invertBackground = Black100,
 )
 
 private val LocalColors = staticCompositionLocalOf { LightColorSchema }
