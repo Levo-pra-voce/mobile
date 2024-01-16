@@ -16,5 +16,6 @@ data class UserDTO (
     val status: String? = null,
     val complement: String? = null,
     val neighborhood: String? = null,
-    val userType: UserType? = null
+    val userType: UserType? = null,
+    val token: String? = null,
 )

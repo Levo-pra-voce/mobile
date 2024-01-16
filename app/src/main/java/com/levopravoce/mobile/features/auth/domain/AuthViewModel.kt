@@ -25,22 +25,6 @@ class AuthViewModel @Inject constructor(
 
     val uiState: StateFlow<AuthUiState> = _uiState
 
-    private suspend fun <T> requestProcessing(
-        vararg parameters: Any, request: suspend (
-            Array<out Any>
-        ) -> T
-    ) {
-        _uiState.value = AuthUiState(status = RequestStatus.LOADING)
-        try {
-            val data = request(parameters);
-            _uiState.value = AuthUiState(data = data as UserDTO, status = RequestStatus.SUCCESS)
-        } catch (
-            e: Exception
-        ) {
-            _uiState.value = AuthUiState(status = RequestStatus.ERROR, error = e.message)
-        }
-    }
-
     suspend fun logout() {
         authStore.logout()
         _uiState.value = AuthUiState()
@@ -51,8 +35,19 @@ class AuthViewModel @Inject constructor(
     }
 
     suspend fun meRequest() {
-        requestProcessing {
-            authRepository.me()
+        _uiState.value = AuthUiState(status = RequestStatus.LOADING)
+        try {
+            val data = authRepository.me()
+
+            if (data.token != null) {
+                authStore.saveToken(data.token)
+            }
+
+            _uiState.value = AuthUiState(data = data, status = RequestStatus.SUCCESS)
+        } catch (
+            e: Exception
+        ) {
+            _uiState.value = AuthUiState(status = RequestStatus.ERROR, error = e.message)
         }
     }
 }
