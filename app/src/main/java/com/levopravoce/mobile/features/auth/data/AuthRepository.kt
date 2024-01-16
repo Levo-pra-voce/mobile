@@ -4,6 +4,7 @@ import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface AuthRepository {
@@ -11,6 +12,7 @@ interface AuthRepository {
     suspend fun me(): UserDTO
 
     @POST("/api/auth/login")
+    @Headers("isAuthorized: false")
     suspend fun login(
         @Body user: UserDTO
     ): JwtResponseDTO

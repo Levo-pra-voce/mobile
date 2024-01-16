@@ -17,11 +17,16 @@ class AuthInterceptor @Inject constructor(
             authStore.getAccessToken.first()
         }
 
-        if (token.isNullOrEmpty()) {
+        val originalRequest = chain.request()
+
+        val shouldAddAuthHeaders = originalRequest.header("isAuthorized")?.toBoolean() ?: true
+
+        if (token.isNullOrEmpty() || !shouldAddAuthHeaders) {
             return chain.proceed(chain.request())
         }
 
-        val requestBuilder = chain.request().newBuilder()
+
+        val requestBuilder = originalRequest.newBuilder()
 
         requestBuilder.addHeader("Authorization", "Bearer $token")
 
