@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.login.representation
+package com.levopravoce.mobile.features.login.domain
 
 import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
