@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -21,7 +20,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
+import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.navControllerContext
+import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 
@@ -29,6 +31,7 @@ data class IconDescriptorData(
     @DrawableRes val id: Int,
     val contentDescription: String,
     val title: String,
+    val route: String? = null
 )
 
 private val firstLineDescriptorData = listOf(
@@ -63,7 +66,8 @@ private val thirdLineDescriptorData = listOf(
     IconDescriptorData(
         id = R.drawable.configuration_icon,
         contentDescription = "icone para ver as configurações",
-        title = "Configurações"
+        title = "Configurações",
+        route = Routes.Home.CONFIGURATION
     ),
 )
 
@@ -75,13 +79,7 @@ fun HomeClient(
     val uiState = authViewModel.uiState.collectAsState();
 
     Column {
-        Column(
-            modifier = Modifier
-                .background(color = MaterialTheme.customColorsShema.invertBackground)
-                .padding(20.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Header {
             Image(
                 painter = painterResource(R.drawable.person_icon),
                 contentDescription = "icone da pessoa",
@@ -104,6 +102,7 @@ fun RowOption(
     iconDescriptorData: List<IconDescriptorData>,
     modifier: Modifier
 ) {
+    val navController = navControllerContext.current
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = horizontalArrangement,
@@ -112,7 +111,12 @@ fun RowOption(
             IconDescriptor(
                 id = it.id,
                 contentDescription = it.contentDescription,
-                title = it.title
+                title = it.title,
+                onClick = {
+                    it.route?.let { route ->
+                        navController.navigate(route)
+                    }
+                }
             )
         }
     }
