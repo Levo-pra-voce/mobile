@@ -18,4 +18,5 @@ data class UserDTO (
     val neighborhood: String? = null,
     val userType: UserType? = null,
     val token: String? = null,
+    val street: String? = null,
 )
