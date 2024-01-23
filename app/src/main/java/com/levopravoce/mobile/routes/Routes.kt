@@ -11,5 +11,6 @@ object Routes {
     object Home {
         val ROUTE = "home"
         val INICIAL = "inicial"
+        val CONFIGURATION = "configuration"
     }
 }
