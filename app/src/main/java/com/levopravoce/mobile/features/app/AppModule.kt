@@ -1,6 +1,7 @@
 package com.levopravoce.mobile.features.app
 
 import android.content.Context
+import com.levopravoce.mobile.config.PreferencesManager
 import com.levopravoce.mobile.features.auth.domain.AuthStore
 import dagger.Module
 import dagger.Provides
@@ -19,5 +20,13 @@ class AppModule {
         @ApplicationContext appContext: Context
     ): AuthStore {
         return AuthStore(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferencesManager(
+        @ApplicationContext appContext: Context
+    ): PreferencesManager {
+        return PreferencesManager(appContext)
     }
 }
