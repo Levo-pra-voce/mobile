@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.features.auth.data.AuthRepository
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
+import com.levopravoce.mobile.features.auth.data.dto.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,5 +50,9 @@ class AuthViewModel @Inject constructor(
         ) {
             _uiState.value = AuthUiState(status = RequestStatus.ERROR, error = e.message)
         }
+    }
+
+    fun isDeliveryMan(): Boolean {
+        return uiState.value.data?.userType == UserType.ENTREGADOR
     }
 }
