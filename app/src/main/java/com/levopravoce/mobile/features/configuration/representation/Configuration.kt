@@ -64,6 +64,7 @@ fun Configuration(
         {
             UserInfo()
             AddressConfig()
+            CustomizationConfig()
         }
     }
 }
