@@ -15,6 +15,8 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun Header(
+    horizontal: Alignment.Horizontal = Alignment.CenterHorizontally,
+    vertical: Arrangement.Vertical = Arrangement.Center,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -23,8 +25,8 @@ fun Header(
             .heightIn(min = 148.dp, max = 148.dp)
             .padding(20.dp)
             .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = horizontal,
+        verticalArrangement = vertical
     ) {
         content()
     }
