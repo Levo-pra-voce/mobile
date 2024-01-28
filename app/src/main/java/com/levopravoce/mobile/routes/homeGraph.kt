@@ -6,6 +6,7 @@ import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.auth.representation.Authencation
 import com.levopravoce.mobile.features.configuration.representation.Configuration
 import com.levopravoce.mobile.features.home.representation.HomeDecider
+import com.levopravoce.mobile.features.themeCustomization.representation.ThemeCustomization
 
 fun NavGraphBuilder.homeGraph() {
     navigation(startDestination = Routes.Home.INICIAL, route = Routes.Home.ROUTE) {
@@ -13,16 +14,23 @@ fun NavGraphBuilder.homeGraph() {
             route = Routes.Home.INICIAL,
         ) {
             Authencation(content =
-                {
-                    HomeDecider()
-                }
+            {
+                HomeDecider()
+            }
             )
         }
         composable(route = Routes.Home.CONFIGURATION) {
             Authencation(content =
-                {
-                    Configuration()
-                }
+            {
+                Configuration()
+            }
+            )
+        }
+        composable(route = Routes.Home.THEME_CUSTOMIZATION) {
+            Authencation(content =
+            {
+                ThemeCustomization()
+            }
             )
         }
     }
