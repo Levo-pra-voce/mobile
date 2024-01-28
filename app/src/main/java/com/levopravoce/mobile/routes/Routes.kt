@@ -12,5 +12,6 @@ object Routes {
         val ROUTE = "home"
         val INICIAL = "inicial"
         val CONFIGURATION = "configuration"
+        val THEME_CUSTOMIZATION = "theme_customization"
     }
 }
