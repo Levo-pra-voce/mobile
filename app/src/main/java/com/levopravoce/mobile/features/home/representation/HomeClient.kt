@@ -1,7 +1,5 @@
 package com.levopravoce.mobile.features.home.representation
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,29 +8,16 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.features.app.representation.Header
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
-
-data class IconDescriptorData(
-    @DrawableRes val id: Int,
-    val contentDescription: String,
-    val title: String,
-    val route: String? = null
-)
 
 private val firstLineDescriptorData = listOf(
     IconDescriptorData(
@@ -72,26 +57,9 @@ private val thirdLineDescriptorData = listOf(
 )
 
 @Composable
-fun HomeClient(
-    authViewModel: AuthViewModel = hiltViewModel()
-) {
-
-    val uiState = authViewModel.uiState.collectAsState();
-
+fun HomeClient() {
     Column {
-        Header {
-            Image(
-                painter = painterResource(R.drawable.person_icon),
-                contentDescription = "icone da pessoa",
-                contentScale = ContentScale.FillHeight,
-            )
-            Text(
-                text = "Olá, ${uiState.value.data?.firstName ?: "Nome não encontrado"}",
-                color = MaterialTheme.customColorsShema.title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-        }
+        UserHeader()
         UserOptions()
     }
 }
@@ -123,7 +91,7 @@ fun RowOption(
 }
 
 @Composable
-fun UserOptions() {
+private fun UserOptions() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
