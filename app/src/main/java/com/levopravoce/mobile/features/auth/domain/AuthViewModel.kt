@@ -31,10 +31,6 @@ class AuthViewModel @Inject constructor(
         _uiState.value = AuthUiState()
     }
 
-    suspend fun saveToken(token: String) {
-        authStore.saveToken(token)
-    }
-
     suspend fun meRequest() {
         _uiState.value = AuthUiState(status = RequestStatus.LOADING)
         try {
