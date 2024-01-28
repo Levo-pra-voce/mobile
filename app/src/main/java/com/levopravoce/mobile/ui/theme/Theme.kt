@@ -9,8 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.levopravoce.mobile.features.themeCustomization.domain.ThemeCustomizationViewModel
 
 @Immutable
 data class CustomColorsShema(
@@ -24,7 +27,7 @@ data class CustomColorsShema(
     val listTitle: Color = Color.Unspecified,
 )
 
-private val LightColorSchema = CustomColorsShema(
+val LightColorSchema = CustomColorsShema(
     material = lightColorScheme(),
     background = White80,
     border = Black80,
@@ -36,7 +39,7 @@ private val LightColorSchema = CustomColorsShema(
 )
 
 
-private val DarkColorSchema = CustomColorsShema(
+val DarkColorSchema = CustomColorsShema(
     material = darkColorScheme(),
     background = Black80,
     border = White80,
@@ -45,33 +48,43 @@ private val DarkColorSchema = CustomColorsShema(
     button = Black100,
     invertBackground = Black100,
     listTitle = gray80,
-    )
+)
 
-private val LocalColors = staticCompositionLocalOf { LightColorSchema }
-
+var LocalColors = staticCompositionLocalOf { LightColorSchema }
 
 val MaterialTheme.customColorsShema: CustomColorsShema
     @Composable
     @ReadOnlyComposable
     get() = LocalColors.current
 
+enum class ThemeMode {
+    LIGHT,
+    DARK,
+    SYSTEM
+}
+
 
 @Composable
 fun MobileTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit,
+    themeCustomizationViewModel: ThemeCustomizationViewModel = hiltViewModel(),
+    content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColorSchema
-    } else {
-        LightColorSchema
+
+    val uistate = themeCustomizationViewModel.uiState.collectAsState();
+
+    val colors = when (uistate.value.themeMode) {
+        ThemeMode.DARK -> DarkColorSchema
+        ThemeMode.LIGHT -> LightColorSchema
+        ThemeMode.SYSTEM -> if (darkTheme) DarkColorSchema else LightColorSchema
     }
 
     CompositionLocalProvider(
         LocalColors provides colors
     ) {
         MaterialTheme(
-            content = content
+            content = content,
+            colorScheme = colors.material,
         )
     }
 }
