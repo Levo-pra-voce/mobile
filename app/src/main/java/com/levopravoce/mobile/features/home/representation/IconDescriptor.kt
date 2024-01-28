@@ -26,7 +26,8 @@ fun IconDescriptor(
     id: Int,
     contentDescription: String,
     title: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    imageModifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -38,7 +39,7 @@ fun IconDescriptor(
                 contentDescription = contentDescription,
                 colorFilter = ColorFilter.tint(MaterialTheme.customColorsShema.border),
                 contentScale = ContentScale.FillHeight,
-                modifier = Modifier.padding(start = 24.dp)
+                modifier = imageModifier.padding(start = 24.dp)
             )
         }
         Spacer(modifier = Modifier.height(8.dp))

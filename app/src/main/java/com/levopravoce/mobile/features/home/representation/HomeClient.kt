@@ -84,7 +84,8 @@ fun RowOption(
                     it.route?.let { route ->
                         navController.navigate(route)
                     }
-                }
+                },
+                imageModifier = it.imageModifier
             )
         }
     }
