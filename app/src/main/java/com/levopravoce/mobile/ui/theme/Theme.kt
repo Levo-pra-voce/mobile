@@ -71,9 +71,9 @@ fun MobileTheme(
     content: @Composable () -> Unit
 ) {
 
-    val uistate = themeCustomizationViewModel.uiState.collectAsState();
+    val uiState = themeCustomizationViewModel.uiState.collectAsState();
 
-    val colors = when (uistate.value.themeMode) {
+    val colors = when (uiState.value.themeMode) {
         ThemeMode.DARK -> DarkColorSchema
         ThemeMode.LIGHT -> LightColorSchema
         ThemeMode.SYSTEM -> if (darkTheme) DarkColorSchema else LightColorSchema
