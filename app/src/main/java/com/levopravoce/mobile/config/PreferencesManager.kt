@@ -19,4 +19,8 @@ class PreferencesManager(context: Context) {
             else -> ThemeMode.SYSTEM
         }
     }
+
+    fun clear() {
+        sharedPreferences.edit().clear().apply()
+    }
 }
