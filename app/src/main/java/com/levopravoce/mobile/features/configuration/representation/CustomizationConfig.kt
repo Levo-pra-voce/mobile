@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.MobileTheme
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
@@ -31,7 +31,7 @@ fun CustomizationConfig() {
             title = "Customizar",
             description = "Costumize a aparência do seu aplicativo.",
             onClick = {
-                navController.navigate(Routes.Home.THEME_CUSTOMIZATION)
+                navController?.navigate(Routes.Home.THEME_CUSTOMIZATION)
             }
         )
         Row (modifier = Modifier.padding(top = 8.dp)) {

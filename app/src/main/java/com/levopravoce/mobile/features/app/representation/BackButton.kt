@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.navControllerContext
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
@@ -26,7 +26,7 @@ fun BackButton(
         contentScale = ContentScale.FillHeight,
         modifier = modifier
             .clickable {
-                navController.popBackStack()
+                navController?.popBackStack()
             }
     )
 }

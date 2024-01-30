@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.auth.domain
 
 import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
+import com.levopravoce.mobile.config.PreferencesManager
 import com.levopravoce.mobile.features.auth.data.AuthRepository
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
@@ -20,6 +21,7 @@ data class AuthUiState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val preferencesManager: PreferencesManager,
     private val authStore: AuthStore
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -28,6 +30,7 @@ class AuthViewModel @Inject constructor(
 
     suspend fun logout() {
         authStore.logout()
+        preferencesManager.clear()
         _uiState.value = AuthUiState()
     }
 

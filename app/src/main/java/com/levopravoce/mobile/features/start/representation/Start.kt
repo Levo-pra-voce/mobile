@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.Black100
 
 @Composable
@@ -75,7 +75,7 @@ private fun RegisterLink() {
     ) {
         TextButton(
             onClick = {
-                navControllerContext.navigate(
+                navControllerContext?.navigate(
                     route = Routes.Auth.REGISTER,
                 )
             },
@@ -121,7 +121,7 @@ private fun StartButton() {
     val navController = navControllerContext.current
     Button(
         onClick = {
-            navController.navigate(Routes.Auth.LOGIN)
+            navController?.navigate(Routes.Auth.LOGIN)
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -135,7 +135,7 @@ private fun StartButton() {
             horizontalArrangement = Arrangement.Center
         ) {
             Row(modifier = Modifier.offset(x = 16.dp)) {
-                Text(text = "Iniciar", fontSize = 22.sp)
+                Text(text = "Iniciar", fontSize = 22.sp, color = Color.White)
             }
             Row(
                 modifier = Modifier

@@ -14,8 +14,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.auth.domain.AuthViewModel
-import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
 
@@ -50,7 +50,7 @@ fun Authencation(
         }
 
         RequestStatus.ERROR -> {
-            navController.navigate(
+            navController?.navigate(
                 route = Routes.Auth.ROUTE,
             )
         }

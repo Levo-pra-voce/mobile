@@ -14,8 +14,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
-import com.levopravoce.mobile.navControllerContext
 import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 
@@ -82,7 +82,7 @@ fun RowOption(
                 title = it.title,
                 onClick = {
                     it.route?.let { route ->
-                        navController.navigate(route)
+                        navController?.navigate(route)
                     }
                 },
                 imageModifier = it.imageModifier
