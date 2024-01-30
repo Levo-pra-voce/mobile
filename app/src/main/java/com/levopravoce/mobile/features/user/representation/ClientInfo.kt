@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.register.representation
+package com.levopravoce.mobile.features.user.representation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

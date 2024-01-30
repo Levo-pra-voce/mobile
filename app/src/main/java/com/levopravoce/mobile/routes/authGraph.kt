@@ -9,7 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.login.representation.Login
-import com.levopravoce.mobile.features.register.representation.Register
+import com.levopravoce.mobile.features.user.representation.Register
 import com.levopravoce.mobile.features.start.representation.Start
 
 const val DURATION_MILLIS = 700
