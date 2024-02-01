@@ -54,4 +54,11 @@ class AuthViewModel @Inject constructor(
     fun isDeliveryMan(): Boolean {
         return uiState.value.data?.userType == UserType.ENTREGADOR
     }
+
+    fun getFirstName(): String? {
+        val name = uiState.value.data?.name ?: return null
+        val names = name.split(" ")
+
+        return names[0]
+    }
 }
