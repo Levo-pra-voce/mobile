@@ -6,17 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
+import com.levopravoce.mobile.features.auth.domain.AuthViewModel
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.launch
 
 
 private val firstLineDescriptorData = listOf(
@@ -47,15 +52,6 @@ private val secondLineDescriptorData = listOf(
     ),
 )
 
-private val thirdLineDescriptorData = listOf(
-    IconDescriptorData(
-        id = R.drawable.configuration_icon,
-        contentDescription = "icone para ver as configurações",
-        title = "Configurações",
-        route = Routes.Home.CONFIGURATION
-    ),
-)
-
 @Composable
 fun HomeClient() {
     Column {
@@ -68,7 +64,7 @@ fun HomeClient() {
 fun RowOption(
     horizontalArrangement: Arrangement.Horizontal,
     iconDescriptorData: List<IconDescriptorData>,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     val navController = navControllerContext.current
     Row(
@@ -81,8 +77,12 @@ fun RowOption(
                 contentDescription = it.contentDescription,
                 title = it.title,
                 onClick = {
-                    it.route?.let { route ->
-                        navController?.navigate(route)
+                    if (it.onClick != null) {
+                        it.onClick.invoke()
+                    } else {
+                        it.route?.let { route ->
+                            navController?.navigate(route)
+                        }
                     }
                 },
                 imageModifier = it.imageModifier
@@ -92,7 +92,31 @@ fun RowOption(
 }
 
 @Composable
-private fun UserOptions() {
+private fun UserOptions(
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    val thirdLineDescriptorData = listOf(
+        IconDescriptorData(
+            id = R.drawable.exit_icon,
+            contentDescription = "icone para sair do aplicativo",
+            title = "Sair",
+            imageModifier = Modifier.offset(x = -(10.dp)),
+            onClick = {
+                coroutineScope.launch {
+                    authViewModel.logout()
+                }
+            }
+        ),
+        IconDescriptorData(
+            id = R.drawable.configuration_icon,
+            contentDescription = "icone para ver as configurações",
+            title = "Configurações",
+            route = Routes.Home.CONFIGURATION
+        ),
+    )
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,12 +132,12 @@ private fun UserOptions() {
         RowOption(
             horizontalArrangement = Arrangement.SpaceBetween,
             iconDescriptorData = secondLineDescriptorData,
-            modifier = Modifier.padding(top = 128.dp)
+            modifier = Modifier.padding(top = 108.dp)
         )
         RowOption(
-            horizontalArrangement = Arrangement.Center,
+            horizontalArrangement = Arrangement.SpaceBetween,
             iconDescriptorData = thirdLineDescriptorData,
-            modifier = Modifier.padding(top = 48.dp)
+            modifier = Modifier.padding(top = 108.dp)
         )
     }
 }
