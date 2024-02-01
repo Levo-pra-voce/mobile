@@ -8,5 +8,6 @@ data class IconDescriptorData(
     val contentDescription: String,
     val title: String,
     val route: String? = null,
-    val imageModifier: Modifier = Modifier
+    val imageModifier: Modifier = Modifier,
+    val onClick: (() -> Unit)? = null,
 )
