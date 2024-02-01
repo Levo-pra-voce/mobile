@@ -36,7 +36,7 @@ fun UserInfo(
             ) {
 
                 Text(
-                    text = authViewModel.uiState.value.data?.firstName ?: "Nome não encontrado",
+                    text = authViewModel.uiState.value.data?.name ?: "Nome não encontrado",
                     color = MaterialTheme.customColorsShema.title,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 16.dp)

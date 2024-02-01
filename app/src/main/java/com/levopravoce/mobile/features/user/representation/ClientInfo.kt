@@ -1,6 +1,7 @@
 package com.levopravoce.mobile.features.user.representation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +12,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -26,6 +30,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
 import com.levopravoce.mobile.features.app.representation.BackButton
@@ -33,19 +39,27 @@ import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
+import com.levopravoce.mobile.features.user.domain.UserViewModel
+import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ClientInfo(
     userDTO: UserDTO = UserDTO(
         userType = UserType.CLIENTE
-    )
+    ),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
 
+    val userViewModelState = userViewModel.uiState.collectAsState()
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val navController = navControllerContext.current
 
     val hideKeyboard = {
         keyboardController?.hide()
@@ -55,9 +69,19 @@ fun ClientInfo(
         focusManager.moveFocus(FocusDirection.Next)
     }
 
+    LaunchedEffect(userViewModelState.value.status) {
+        if (userViewModelState.value.status == RequestStatus.SUCCESS) {
+            hideKeyboard()
+            navController?.navigate(Routes.Home.ROUTE)
+        }
+    }
+
     Screen {
         Column {
-            BackButton(Modifier.scale(1.5f))
+            BackButton(
+                Modifier.scale(1.5f),
+                userViewModelState.value.status != RequestStatus.LOADING
+            )
         }
 
         Column(
@@ -75,8 +99,10 @@ fun ClientInfo(
 
         Column {
             FormInputText(
-                onChange = { userDTORemember = userDTORemember.copy(firstName = it) },
-                value = userDTORemember.firstName ?: "",
+                onChange = {
+                           userDTORemember = userDTORemember.copy(name = it)
+                },
+                value = userDTORemember.name ?: "",
                 placeHolder = "Nome",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -85,11 +111,10 @@ fun ClientInfo(
             )
             FormInputText(
                 onChange = { userDTORemember = userDTORemember.copy(email = it) },
-                value = userDTORemember.cpf ?: "",
+                value = userDTORemember.email ?: "",
                 placeHolder = "Email",
                 withBorder = false,
                 onSubmitted = nextFocus,
-                visualTransformation = MaskVisualTransformation("###.###.###-##"),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -157,20 +182,31 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
         }
-        SubmitBotton()
+        SubmitBotton(userViewModel, userDTORemember)
     }
 }
 
 @Composable
 private fun SubmitBotton(
-
+    userViewModel: UserViewModel,
+    userDTO: UserDTO = UserDTO()
 ) {
+
+    val coroutineScope = rememberCoroutineScope()
+
     Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .background(MaterialTheme.customColorsShema.invertBackground),
+                .background(MaterialTheme.customColorsShema.invertBackground)
+                .clickable {
+                    if (!userViewModel.isLoading()) {
+                        coroutineScope.launch {
+                            userViewModel.register(UserType.CLIENTE, userDTO)
+                        }
+                    }
+                }
         ) {
             Row(
                 modifier = Modifier

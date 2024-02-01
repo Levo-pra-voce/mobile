@@ -1,8 +1,7 @@
 package com.levopravoce.mobile.features.auth.data.dto
 
 data class UserDTO (
-    var firstName: String? = null,
-    var lastName: String? = null,
+    var name: String? = null,
     var email: String? = null,
     var password: String? = null,
     var phone: String? = null,

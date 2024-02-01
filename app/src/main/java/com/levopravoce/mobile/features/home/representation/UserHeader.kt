@@ -20,9 +20,6 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 fun UserHeader(
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-
-    val uiState = authViewModel.uiState.collectAsState();
-
     Header {
         Image(
             painter = painterResource(R.drawable.person_icon),
@@ -30,7 +27,7 @@ fun UserHeader(
             contentScale = ContentScale.FillHeight,
         )
         Text(
-            text = "Olá, ${uiState.value.data?.firstName ?: "Nome não encontrado"}",
+            text = "Olá, ${authViewModel.getFirstName() ?: "Nome não encontrado"}",
             color = MaterialTheme.customColorsShema.title,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 12.dp)
