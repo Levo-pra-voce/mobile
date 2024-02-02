@@ -6,6 +6,7 @@ data class UserDTO (
     var password: String? = null,
     var phone: String? = null,
     var cpf: String? = null,
+    var cnh: String? = null,
     var city: String? = null,
     var contact: String? = null,
     var state: String? = null,
