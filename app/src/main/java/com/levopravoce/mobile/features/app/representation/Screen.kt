@@ -13,6 +13,7 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun Screen(
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     Column(
@@ -20,6 +21,7 @@ fun Screen(
             .fillMaxHeight()
             .fillMaxWidth()
             .background(color = MaterialTheme.customColorsShema.background)
+            .then(modifier)
     ) {
         Column(Modifier.padding(16.dp)) {
             content()

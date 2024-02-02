@@ -16,9 +16,7 @@ fun Register(
 
     when (registerType) {
         UserType.CLIENTE -> ClientInfo()
+        UserType.ENTREGADOR -> DeliveryInfo()
         null -> RegisterDecider { registerType = it }
-        else -> {
-
-        }
     }
 }

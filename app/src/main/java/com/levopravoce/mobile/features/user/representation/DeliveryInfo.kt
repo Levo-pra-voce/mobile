@@ -1,14 +1,11 @@
 package com.levopravoce.mobile.features.user.representation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,7 +24,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
@@ -43,13 +38,12 @@ import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ClientInfo(
+fun DeliveryInfo(
     userDTO: UserDTO = UserDTO(
-        userType = UserType.CLIENTE
+        userType = UserType.ENTREGADOR
     ),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
@@ -76,7 +70,12 @@ fun ClientInfo(
         }
     }
 
-    Screen {
+    Screen(
+        Modifier.verticalScroll(
+            enabled = true,
+            state = rememberScrollState()
+        )
+    ) {
         Column {
             BackButton(
                 Modifier.scale(1.5f),
@@ -100,7 +99,7 @@ fun ClientInfo(
         Column {
             FormInputText(
                 onChange = {
-                           userDTORemember = userDTORemember.copy(name = it)
+                    userDTORemember = userDTORemember.copy(name = it)
                 },
                 value = userDTORemember.name ?: "",
                 placeHolder = "Nome",
@@ -127,6 +126,18 @@ fun ClientInfo(
                 withBorder = false,
                 onSubmitted = nextFocus,
                 visualTransformation = MaskVisualTransformation("###.###.###-##"),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+            FormInputText(
+                onChange = { userDTORemember = userDTORemember.copy(cnh = it) },
+                value = userDTORemember.cnh ?: "",
+                placeHolder = "CNH",
+                withBorder = false,
+                onSubmitted = nextFocus,
+                visualTransformation = MaskVisualTransformation("########### "),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,51 +193,6 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
         }
-        SubmitBotton(userViewModel, userDTORemember, UserType.CLIENTE)
+        SubmitBotton(userViewModel, userDTORemember, UserType.ENTREGADOR)
     }
-}
-
-@Composable
-fun SubmitBotton(
-    userViewModel: UserViewModel,
-    userDTO: UserDTO = UserDTO(),
-    userType: UserType = UserType.CLIENTE
-) {
-
-    val coroutineScope = rememberCoroutineScope()
-
-    Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .background(MaterialTheme.customColorsShema.invertBackground)
-                .clickable {
-                    if (!userViewModel.isLoading()) {
-                        coroutineScope.launch {
-                            userViewModel.register(userType, userDTO)
-                        }
-                    }
-                }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = "Cadastrar",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.customColorsShema.title
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ClientRegisterPreview() {
-    ClientInfo()
 }
