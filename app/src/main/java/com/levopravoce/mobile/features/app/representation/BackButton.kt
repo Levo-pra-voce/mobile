@@ -15,7 +15,8 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 @Composable
 fun BackButton(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    onClick: (() -> Unit)? = null
 ) {
 
     val navController = navControllerContext.current
@@ -28,7 +29,7 @@ fun BackButton(
         modifier = modifier
             .clickable {
                 if (enabled) {
-                    navController?.popBackStack()
+                    if (onClick == null) navController?.popBackStack() else onClick()
                 }
             }
     )
