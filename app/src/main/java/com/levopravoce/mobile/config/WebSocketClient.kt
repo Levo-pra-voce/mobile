@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.first
 import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import okhttp3.WebSocket
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,6 +37,11 @@ class WebSocketClient @Inject constructor(
 
     private val webSocketListener: okhttp3.WebSocketListener = object : okhttp3.WebSocketListener(
     ) {
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+            super.onFailure(webSocket, t, response)
+        }
+
         override fun onMessage(webSocket: WebSocket, text: String) {
             super.onMessage(webSocket, text)
 
@@ -55,24 +61,26 @@ class WebSocketClient @Inject constructor(
             isConnected = false
         }
 
-        override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+        override fun onOpen(webSocket: WebSocket, response: Response) {
             super.onOpen(webSocket, response)
             isConnected = true
         }
     }
 
     suspend fun connect() {
-        val token: String? = authStore.getAccessToken.first {
-            it?.isNotEmpty() ?: false
+        if (!isConnected) {
+            val token: String? = authStore.getAccessToken.first {
+                it?.isNotEmpty() ?: false
+            }
+
+            val request = Request.Builder()
+                .header("Authorization", "Bearer $token")
+                .url(BuildConfig.SOCKET_URL).build()
+            val client = OkHttpClient.Builder().build()
+            val websocket = client.newWebSocket(request, webSocketListener)
+
+            this.webSocket = websocket
         }
-
-        val request = Request.Builder()
-            .header("Authorization", "Bearer $token")
-            .url(BuildConfig.API_URL).build()
-        val client = OkHttpClient.Builder().build()
-        val websocket = client.newWebSocket(request, webSocketListener)
-
-        this.webSocket = websocket
     }
 
     fun subscribe(destination: String, callback: (String, Headers) -> Unit) {

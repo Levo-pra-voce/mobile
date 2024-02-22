@@ -3,7 +3,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id ("kotlin-kapt")
+    id("kotlin-kapt")
     id("com.google.dagger.hilt.android") version "2.47" apply true
     id("dagger.hilt.android.plugin")
 }
@@ -38,6 +38,7 @@ android {
                 }
             }
             buildConfigField("String", "API_URL", properties.getProperty("API_URL"))
+            buildConfigField("String", "SOCKET_URL", properties.getProperty("SOCKET_URL"))
         }
     }
     fun readProperties(propertiesFile: File) = Properties().apply {
