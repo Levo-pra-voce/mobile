@@ -17,16 +17,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.ui.theme.MobileTheme
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun AddressConfig(
-    authViewModel: AuthViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
 
-    val authState = authViewModel.uiState.collectAsState()
+    val authState = mainViewModel.authUiStateStateFlow.collectAsState()
 
     Column(Modifier.padding(20.dp)) {
         Text(
@@ -40,7 +40,7 @@ fun AddressConfig(
             text = authState.value.data?.street ?: "Endereço não encontrado"
         )
 
-        if (authViewModel.isDeliveryMan()) {
+        if (mainViewModel.isDeliveryMan()) {
             Column (Modifier.padding(top = 8.dp)) {
                 ListElement(
                     resourceId = R.drawable.vehicle_icon,

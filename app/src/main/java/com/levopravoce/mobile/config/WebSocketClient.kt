@@ -2,9 +2,12 @@ package com.levopravoce.mobile.config
 
 import com.google.gson.Gson
 import com.levopravoce.mobile.BuildConfig
+import com.levopravoce.mobile.features.app.data.dto.MessageSocketDTO
 import com.levopravoce.mobile.features.auth.domain.AuthStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -12,17 +15,29 @@ import okhttp3.WebSocket
 import javax.inject.Inject
 import javax.inject.Singleton
 
-object Command {
-    const val SUBSCRIBE = "SUBSCRIBE"
-    const val UNSUBSCRIBE = "UNSUBSCRIBE"
-    const val SEND = "SEND"
-}
-
 private data class Event(
     val command: String,
     val headers: Map<String, String>,
     val body: String? = null
 )
+
+
+class WebSocketEventDTO(headers: Map<String, String>, body: String?) {
+    val headers: Map<String, String>? = null
+    val body: String? = null
+    val isValid: Boolean
+        get() = headers != null && headers.containsKey("destination") && body != null
+
+    enum class HEADERS(
+        val value: String
+    ) {
+        DESTINATION("destination")
+    }
+}
+
+enum class Destination(val value: String) {
+    CHAT("/chat"),
+}
 
 @Singleton
 class WebSocketClient @Inject constructor(
@@ -30,10 +45,9 @@ class WebSocketClient @Inject constructor(
 ) {
     private var webSocket: WebSocket? = null
     private var isConnected: Boolean = false
-    private var subscriptions: MutableMap<String, Pair<Int, (String, Headers) -> Unit>> =
-        mutableMapOf()
-    private var counter = 0
     private val gson = Gson()
+
+    val messagesFlow = MutableStateFlow<MessageSocketDTO?>(null);
 
     private val webSocketListener: okhttp3.WebSocketListener = object : okhttp3.WebSocketListener(
     ) {
@@ -43,17 +57,12 @@ class WebSocketClient @Inject constructor(
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
-            super.onMessage(webSocket, text)
-
-            val event = gson.fromJson(text, Event::class.java)
-
-            val subscription = event.headers["subscription"]
-
-            val callback = subscriptions[subscription]?.second
-
-            if (callback != null) {
-                callback(event.body ?: "", Headers.of(event.headers))
+            try {
+                messagesFlow.value = gson.fromJson(text, MessageSocketDTO::class.java)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
+            super.onMessage(webSocket, text)
         }
 
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
@@ -83,29 +92,6 @@ class WebSocketClient @Inject constructor(
         }
     }
 
-    fun subscribe(destination: String, callback: (String, Headers) -> Unit) {
-
-        val header = mapOf(Pair("destination", destination), Pair("id", "sub-${counter++}"))
-        val event = Event(Command.SUBSCRIBE, header)
-
-        this.subscriptions[destination] = Pair(counter, callback)
-
-        webSocket?.send(gson.toJson(event))
-    }
-
-    fun unsubscribe(destination: String) {
-        val subscription = this.subscriptions[destination]
-
-        if (subscription != null) {
-
-            val (id) = subscription
-            val event = Event(Command.UNSUBSCRIBE, mapOf("id" to "sub-${id}"))
-
-            webSocket?.send(gson.toJson(event))
-            this.subscriptions.remove(destination)
-        }
-    }
-
     fun disconnect() {
         webSocket?.close(1000, null)
     }
@@ -114,10 +100,22 @@ class WebSocketClient @Inject constructor(
         return isConnected
     }
 
-    fun send(destination: String, body: Any? = null) {
-        val header = mapOf("destination" to destination)
-        val event = Event(Command.SEND, header, if (body is String) body else gson.toJson(body))
+    fun <T> send(destination: Destination, body: T? = null) {
+        send<Any>(destination, mutableMapOf(), body)
+    }
 
-        webSocket?.send(gson.toJson(event))
+    fun <T> send(
+        destination: Destination,
+        headers: MutableMap<String, String> = mutableMapOf(),
+        body: T? = null
+    ) {
+        headers[WebSocketEventDTO.HEADERS.DESTINATION.value] = destination.value
+
+        val webSocketEventDTO = WebSocketEventDTO(
+            headers = headers,
+            body = gson.toJson(body)
+        )
+
+        webSocket?.send(gson.toJson(webSocketEventDTO))
     }
 }

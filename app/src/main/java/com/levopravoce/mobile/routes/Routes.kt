@@ -9,6 +9,7 @@ object Routes {
     }
 
     object Home {
+        val MESSAGES: String = "messages"
         val ROUTE = "home"
         val INICIAL = "inicial"
         val CONFIGURATION = "configuration"

@@ -54,7 +54,6 @@ fun ClientInfo(
     userViewModel: UserViewModel = hiltViewModel()
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
-
     val userViewModelState = userViewModel.uiState.collectAsState()
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -100,7 +99,7 @@ fun ClientInfo(
         Column {
             FormInputText(
                 onChange = {
-                           userDTORemember = userDTORemember.copy(name = it)
+                   userDTORemember = userDTORemember.copy(name = it)
                 },
                 value = userDTORemember.name ?: "",
                 placeHolder = "Nome",
@@ -192,7 +191,6 @@ fun SubmitBotton(
     userDTO: UserDTO = UserDTO(),
     userType: UserType = UserType.CLIENTE
 ) {
-
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {

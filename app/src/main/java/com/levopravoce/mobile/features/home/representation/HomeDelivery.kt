@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.ui.theme.customColorsShema
@@ -59,7 +59,7 @@ fun HomeDelivery() {
 
 @Composable
 private fun UserOptions(
-    authViewModel: AuthViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -71,7 +71,7 @@ private fun UserOptions(
             imageModifier = Modifier.offset(x = -(10.dp)),
             onClick = {
                 coroutineScope.launch {
-                    authViewModel.logout()
+                    mainViewModel.logout()
                 }
             }
         ),

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.features.app.representation.Loading
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
@@ -22,10 +22,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun Authencation(
     content: @Composable () -> Unit,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     val navController = navControllerContext.current
-    val authUiState = viewModel.uiState.collectAsState()
+    val authUiState = viewModel.authUiStateStateFlow.collectAsState()
 
     if (authUiState.value.data != null) {
         content()

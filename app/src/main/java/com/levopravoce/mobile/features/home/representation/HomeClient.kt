@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
@@ -48,7 +48,8 @@ private val secondLineDescriptorData = listOf(
     IconDescriptorData(
         id = R.drawable.message_icon,
         contentDescription = "icone para ver a lista de mensagens",
-        title = "Mensagens"
+        title = "Mensagens",
+        route = Routes.Home.MESSAGES
     ),
 )
 
@@ -93,7 +94,7 @@ fun RowOption(
 
 @Composable
 private fun UserOptions(
-    authViewModel: AuthViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -105,7 +106,7 @@ private fun UserOptions(
             imageModifier = Modifier.offset(x = -(10.dp)),
             onClick = {
                 coroutineScope.launch {
-                    authViewModel.logout()
+                    mainViewModel.logout()
                 }
             }
         ),

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -13,12 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.features.app.representation.Header
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun UserHeader(
-    authViewModel: AuthViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     Header {
         Image(
@@ -27,7 +26,7 @@ fun UserHeader(
             contentScale = ContentScale.FillHeight,
         )
         Text(
-            text = "Olá, ${authViewModel.getFirstName() ?: "Nome não encontrado"}",
+            text = "Olá, ${mainViewModel.getFirstName() ?: "Nome não encontrado"}",
             color = MaterialTheme.customColorsShema.title,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 12.dp)

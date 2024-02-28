@@ -13,12 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.levopravoce.mobile.features.auth.domain.AuthViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun UserInfo(
-    authViewModel: AuthViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     Row(
         modifier = Modifier
@@ -36,19 +36,19 @@ fun UserInfo(
             ) {
 
                 Text(
-                    text = authViewModel.uiState.value.data?.name ?: "Nome não encontrado",
+                    text = mainViewModel.authUiStateStateFlow.value.data?.name ?: "Nome não encontrado",
                     color = MaterialTheme.customColorsShema.title,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
-                    text = authViewModel.uiState.value.data?.contact ?: "Contato não encontrado",
+                    text = mainViewModel.authUiStateStateFlow.value.data?.contact ?: "Contato não encontrado",
                     color = MaterialTheme.customColorsShema.title,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 Text(
-                    text = authViewModel.uiState.value.data?.email ?: "E-mail não encontrado",
+                    text = mainViewModel.authUiStateStateFlow.value.data?.email ?: "E-mail não encontrado",
                     color = MaterialTheme.customColorsShema.title,
                     fontSize = 16.sp,
                     modifier = Modifier.padding(top = 8.dp)
