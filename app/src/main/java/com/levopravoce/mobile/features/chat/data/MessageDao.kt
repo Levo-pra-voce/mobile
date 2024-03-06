@@ -19,10 +19,10 @@ interface MessageDao {
     fun getMessagesByChannelAndRange(channelId: Long, date: Long): Flow<List<Message>>
 
     @Query("""
-        SELECT COUNT(*), MAX(date) from messages
+        SELECT MAX(date) from messages
             WHERE channelId = :channelId
     """)
-    fun getMessagesSizeAndMaxDateMessageByChannel(channelId: Long): Pair<Int, Long?>
+    fun getMaxDateByChannel(channelId: Long): Long?
 
     @Query("""
         SELECT MAX(m.date)

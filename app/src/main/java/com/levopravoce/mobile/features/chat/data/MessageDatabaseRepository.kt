@@ -27,9 +27,9 @@ class MessageDatabaseRepository @Inject constructor(
         date: Long
     ): Flow<List<Message>> = messageDao.getMessagesByChannelAndRange(channelId, date);
 
-    fun getMessagesSizeAndMaxDateMessageByChannel(
+    fun getMaxDateByChannel(
         channelId: Long
-    ) = messageDao.getMessagesSizeAndMaxDateMessageByChannel(channelId);
+    ) = messageDao.getMaxDateByChannel(channelId);
 
     suspend fun saveSocketImageMessage(
         messageSocketDto: MessageSocketDTO

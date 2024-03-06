@@ -7,8 +7,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.levopravoce.mobile.features.app.data.dto.MessageSocketDTO
 import com.levopravoce.mobile.features.chat.data.entity.Message
+import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun Message(
@@ -17,7 +17,8 @@ fun Message(
     Column(Modifier.padding(16.dp)) {
         Text(
             text = message.text ?: "dapklçç~dlaaldlk,as,l",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.customColorsShema.title
         )
     }
 }

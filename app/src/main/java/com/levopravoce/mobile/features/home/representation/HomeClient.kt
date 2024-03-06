@@ -49,7 +49,7 @@ private val secondLineDescriptorData = listOf(
         id = R.drawable.message_icon,
         contentDescription = "icone para ver a lista de mensagens",
         title = "Mensagens",
-        route = Routes.Home.MESSAGES
+        route = Routes.Home.CHAT_LIST
     ),
 )
 

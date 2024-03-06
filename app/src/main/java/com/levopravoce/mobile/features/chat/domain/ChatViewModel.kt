@@ -2,19 +2,18 @@ package com.levopravoce.mobile.features.chat.domain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.levopravoce.mobile.config.Destination
 import com.levopravoce.mobile.config.WebSocketClient
 import com.levopravoce.mobile.features.app.data.dto.MessageSocketDTO
 import com.levopravoce.mobile.features.chat.data.ChatRepository
 import com.levopravoce.mobile.features.chat.data.MessageDatabaseRepository
 import com.levopravoce.mobile.features.chat.data.entity.Message
-import com.levopravoce.mobile.features.chat.representation.mockMessages
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.cancellable
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,26 +22,26 @@ class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository,
     private val messageDatabaseRepository: MessageDatabaseRepository
 ) : ViewModel() {
-    var currentMessagesFlow: SharedFlow<List<Message>> = MutableStateFlow(mockMessages);
+    private val _currentMessages: MutableStateFlow<List<Message>> = MutableStateFlow(emptyList())
+    val currentMessages = _currentMessages.asStateFlow()
 
     init {
-        webSocketClient.messagesFlow.onEach { message ->
-            if (message != null) {
-                messageDatabaseRepository.saveSocketMessage(message)
+        webSocketClient.callback = {
+            viewModelScope.launch {
+                persistMessageInDatabase(it)
             }
         }
     }
 
-    fun mountMessageChannelFlow(channelId: Long) {
+    suspend fun mountMessageChannelFlow(channelId: Long) {
         messageDatabaseRepository.getMessagesByChannel(channelId)
-            .shareIn(viewModelScope, SharingStarted.Eagerly)
-            .run {
-                currentMessagesFlow = this
+            .collect {
+                _currentMessages.value = it
             }
     }
 
     fun getMessagesSizeAndMaxDateMessageByChannel(channelId: Long) =
-        messageDatabaseRepository.getMessagesSizeAndMaxDateMessageByChannel(channelId)
+        messageDatabaseRepository.getMaxDateByChannel(channelId)
 
     suspend fun persistMessageInDatabase(message: MessageSocketDTO) {
         messageDatabaseRepository.saveSocketMessage(message)
@@ -52,5 +51,8 @@ class ChatViewModel @Inject constructor(
         return chatRepository.getMessagesByChannel(channelId)
     }
 
-    fun getMessagesByChannelAndDate(channelId: Long, date: Long) = messageDatabaseRepository.getMessagesByChannelAndRange(channelId, date)
+    suspend fun getMessagesByChannelAndDate(channelId: Long, date: Long) =
+        chatRepository.getMessagesByChannelAndDate(channelId, date)
+
+    suspend fun getChatList() = chatRepository.getChatList()
 }
