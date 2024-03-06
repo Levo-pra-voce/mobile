@@ -1,35 +1,23 @@
 package com.levopravoce.mobile.features.chat.representation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.chat.domain.ChatViewModel
-import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Chat(
     channelId: Long,
@@ -73,7 +61,7 @@ fun Chat(
     Screen(verticalArrangement = Arrangement.Bottom, padding = 0.dp) {
         LazyColumn(
             state = listState,
-            reverseLayout = true
+            reverseLayout = false
         ) {
             items(messagesState.size) { index ->
                 Message(message = messagesState[index])
