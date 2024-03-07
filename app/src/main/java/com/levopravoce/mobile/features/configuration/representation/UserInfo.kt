@@ -12,13 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun UserInfo(
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltSharedViewModel()
 ) {
     Row(
         modifier = Modifier

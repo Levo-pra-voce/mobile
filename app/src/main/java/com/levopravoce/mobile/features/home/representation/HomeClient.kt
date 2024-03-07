@@ -14,8 +14,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.routes.Routes
@@ -94,7 +94,7 @@ fun RowOption(
 
 @Composable
 private fun UserOptions(
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltSharedViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
 

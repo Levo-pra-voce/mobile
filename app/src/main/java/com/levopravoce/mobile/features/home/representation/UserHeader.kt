@@ -9,15 +9,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
-import com.levopravoce.mobile.features.app.representation.Header
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.domain.MainViewModel
+import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun UserHeader(
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltSharedViewModel()
 ) {
     Header {
         Image(
