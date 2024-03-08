@@ -26,10 +26,7 @@ private data class Event(
 )
 
 
-class WebSocketEventDTO(headers: Map<String, String>, body: String?) {
-    val headers: Map<String, String>? = null
-    val body: String? = null
-
+data class WebSocketEventDTO(private val headers: Map<String, String>, private val body: String?) {
     enum class HEADERS(
         val value: String
     ) {

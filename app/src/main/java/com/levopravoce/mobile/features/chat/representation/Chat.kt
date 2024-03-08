@@ -121,7 +121,11 @@ fun Chat(
                     Message(message = messagesState[index])
                 }
             }
-            ChatBar(currentMessageState = currentMessageState)
+            ChatBar(
+                currentMessageState = currentMessageState,
+                chatViewModel = chatViewModel,
+                channelId = channelId
+            )
         }
     }
 
