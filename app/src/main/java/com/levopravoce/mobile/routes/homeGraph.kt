@@ -1,11 +1,5 @@
 package com.levopravoce.mobile.routes
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -50,10 +44,15 @@ fun NavGraphBuilder.homeGraph() {
         }
         composable(route = Routes.Home.MESSAGES, arguments = listOf(navArgument("channelId") {
             type = NavType.LongType
-        })) {backStackEntry ->
+        }, navArgument("channelName") {
+            type = NavType.StringType
+        })) { backStackEntry ->
             Authencation(content = {
-                    Chat(backStackEntry.arguments?.getLong("channelId") ?: 0L)
-                }
+                Chat(
+                    channelId = backStackEntry.arguments?.getLong("channelId") ?: 0L,
+                    channelName = backStackEntry.arguments?.getString("channelName") ?: ""
+                )
+            }
             )
         }
     }

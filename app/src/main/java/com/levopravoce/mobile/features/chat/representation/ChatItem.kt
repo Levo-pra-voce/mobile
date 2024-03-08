@@ -31,7 +31,7 @@ fun ChatItem(
         Modifier
             .padding(top = 24.dp)
             .clickable {
-                navController?.navigate(Routes.Home.MESSAGES.substringBefore('/') + "/${chatUserDTO.channelId}")
+                navController?.navigate(Routes.Home.MESSAGES.substringBefore('/') + "/${chatUserDTO.channelId}/${chatUserDTO.name}")
             }) {
         Image(
             painter = painterResource(R.drawable.person_icon),

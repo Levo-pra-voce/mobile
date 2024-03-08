@@ -9,7 +9,7 @@ object Routes {
     }
 
     object Home {
-        val MESSAGES = "messages/{channelId}"
+        val MESSAGES = "messages/{channelId}/{channelName}"
         val CHAT_LIST = "chat_list"
         val ROUTE = "home"
         val INICIAL = "inicial"
