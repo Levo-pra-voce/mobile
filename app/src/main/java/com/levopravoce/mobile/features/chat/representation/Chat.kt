@@ -43,17 +43,13 @@ fun Chat(
     chatViewModel: ChatViewModel = hiltSharedViewModel()
 ) {
     val listState = rememberLazyListState()
-    val isScrolledToBottom = !listState.canScrollForward;
     val messagesFlow = chatViewModel.currentMessages;
     val messagesState by messagesFlow.collectAsStateWithLifecycle(emptyList())
     val currentMessageState = remember {
         mutableStateOf("")
     }
-
-    LaunchedEffect(isScrolledToBottom) {
-        if (isScrolledToBottom) {
-//            listState.scrollToItem(messagesState.size - 1)
-        }
+    LaunchedEffect(messagesState) {
+        listState.animateScrollToItem(messagesState.size)
     }
 
     LaunchedEffect(channelId) {
@@ -78,44 +74,12 @@ fun Chat(
         }
     }
     Screen(padding = 0.dp) {
-        Header(horizontal = Alignment.Start) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-                    .fillMaxHeight(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                BackButton(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .offset(y = (-16).dp)
-                )
-                Image(
-                    painter = painterResource(R.drawable.person_icon),
-                    contentDescription = "icone do $channelName",
-                    contentScale = ContentScale.FillHeight,
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                )
-                Text(
-                    text = channelName.maxLength(20),
-                    color = MaterialTheme.customColorsShema.title,
-                    style = MaterialTheme.typography.displaySmall,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-        }
-        Column(
-            verticalArrangement = Arrangement.Bottom,
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth()
-        ) {
+        Column {
+            ChatHeader(channelName = channelName)
             LazyColumn(
                 state = listState,
-                reverseLayout = false
+                reverseLayout = false,
+                modifier = Modifier.weight(1f)
             ) {
                 items(messagesState.size) { index ->
                     Message(message = messagesState[index])
@@ -128,5 +92,39 @@ fun Chat(
             )
         }
     }
+}
 
+@Composable
+private fun ChatHeader(
+    channelName: String
+) {
+    Header(horizontal = Alignment.Start) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp)
+                .fillMaxHeight(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            BackButton(
+                modifier = Modifier
+                    .size(20.dp)
+                    .offset(y = (-16).dp)
+            )
+            Image(
+                painter = painterResource(R.drawable.person_icon),
+                contentDescription = "icone do $channelName",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+            )
+            Text(
+                text = channelName.maxLength(20),
+                color = MaterialTheme.customColorsShema.title,
+                style = MaterialTheme.typography.displaySmall,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
 }
