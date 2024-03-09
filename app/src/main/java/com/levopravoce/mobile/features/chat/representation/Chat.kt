@@ -66,28 +66,12 @@ fun Chat(
         }
     }
 
-
     LaunchedEffect(channelId) {
         withContext(Dispatchers.IO) {
-            val maxMessageDate = chatViewModel.getMessagesSizeAndMaxDateMessageByChannel(
-                channelId
-            )
-
-            if (maxMessageDate == null) {
-                val allMessages = chatViewModel.getAllMessagesByChannel(channelId)
-                allMessages.forEach {
-                    chatViewModel.persistMessageInDatabase(it)
-                }
-            } else {
-                chatViewModel.getMessagesByChannelAndDate(channelId, maxMessageDate)
-                    .forEach {
-                        chatViewModel.persistMessageInDatabase(it)
-                    }
-            }
-
-            chatViewModel.mountMessageChannelFlow(channelId)
+            chatViewModel.getLastMessages(channelId)
         }
     }
+
     Screen(padding = 0.dp) {
         Column {
             ChatHeader(channelName = channelName)
@@ -96,7 +80,7 @@ fun Chat(
                 reverseLayout = false,
                 modifier = Modifier.weight(1f)
             ) {
-                itemsIndexed(messagesState) { index, item ->
+                itemsIndexed(messagesState) { _, item ->
                     Message(message = item, isCurrentUser = authState.data?.email == item.sender)
                 }
             }

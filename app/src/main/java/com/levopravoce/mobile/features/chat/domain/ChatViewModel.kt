@@ -37,27 +37,6 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    suspend fun mountMessageChannelFlow(channelId: Long) {
-        messageDatabaseRepository.getMessagesByChannel(channelId)
-            .collect {
-                _currentMessages.value = it
-            }
-    }
-
-    fun getMessagesSizeAndMaxDateMessageByChannel(channelId: Long) =
-        messageDatabaseRepository.getMaxDateByChannel(channelId)
-
-    suspend fun persistMessageInDatabase(message: MessageSocketDTO) {
-        messageDatabaseRepository.saveSocketMessage(message)
-    }
-
-    suspend fun getAllMessagesByChannel(channelId: Long): List<MessageSocketDTO> {
-        return chatRepository.getMessagesByChannel(channelId)
-    }
-
-    suspend fun getMessagesByChannelAndDate(channelId: Long, date: Long) =
-        chatRepository.getMessagesByChannelAndDate(channelId, date)
-
     suspend fun getChatList() = chatRepository.getChatList()
     suspend fun sendMessage(value: String, channelId: Long) = withContext(Dispatchers.IO) {
         val currentTimestamp = System.currentTimeMillis()
@@ -71,5 +50,30 @@ class ChatViewModel @Inject constructor(
         webSocketClient.send(Destination.CHAT, message)
     }
 
+    suspend fun getLastMessages(channelId: Long) {
+        val maxMessageDate = messageDatabaseRepository.getMaxDateByChannel(channelId)
+
+        if (maxMessageDate == null) {
+            val allMessages = chatRepository.getMessagesByChannel(channelId)
+            allMessages.forEach {
+                this.persistMessageInDatabase(it)
+            }
+        } else {
+            chatRepository.getMessagesByChannelAndDate(channelId, maxMessageDate)
+                .forEach {
+                    this.persistMessageInDatabase(it)
+                }
+        }
+
+        messageDatabaseRepository.getMessagesByChannel(channelId)
+            .collect {
+                _currentMessages.value = it
+            }
+    }
+
     suspend fun retryConnection() = this.webSocketClient.connect()
+
+    private suspend fun persistMessageInDatabase(message: MessageSocketDTO) {
+        messageDatabaseRepository.saveSocketMessage(message)
+    }
 }
