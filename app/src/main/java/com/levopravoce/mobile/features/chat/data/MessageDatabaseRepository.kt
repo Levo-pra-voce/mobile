@@ -9,6 +9,7 @@ import com.levopravoce.mobile.features.chat.data.entity.Message
 import kotlinx.coroutines.flow.Flow
 import java.sql.Date
 import java.util.Base64
+import java.util.Collections
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -58,7 +59,21 @@ class MessageDatabaseRepository @Inject constructor(
     }
 
     suspend fun saveSocketMessage(messageSocketDto: MessageSocketDTO) {
-        val messageEntity = Message(
+        val messageEntity = mountMessageEntity(messageSocketDto)
+
+        messageDao.save(messageEntity)
+    }
+
+    suspend fun saveSocketMessages(messages: List<MessageSocketDTO>) {
+        messages.map { messageSocketDto ->
+            mountMessageEntity(messageSocketDto)
+        }.let {
+            messageDao.saveAll(it)
+        }
+    }
+
+    private fun mountMessageEntity(messageSocketDto: MessageSocketDTO): Message {
+        return Message(
             channelId = messageSocketDto.channelId,
             date = Date(messageSocketDto.timestamp ?: System.currentTimeMillis()),
             text = messageSocketDto.message,
@@ -66,7 +81,5 @@ class MessageDatabaseRepository @Inject constructor(
             imagePath = null,
             sender = messageSocketDto.sender ?: ""
         )
-
-        messageDao.save(messageEntity)
     }
 }

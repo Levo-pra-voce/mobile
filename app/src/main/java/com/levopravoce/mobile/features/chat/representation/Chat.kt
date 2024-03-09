@@ -35,6 +35,8 @@ import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
+import com.levopravoce.mobile.features.chat.data.entity.Message
+import com.levopravoce.mobile.features.chat.domain.ApiResult
 import com.levopravoce.mobile.features.chat.domain.ChatViewModel
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
@@ -51,12 +53,18 @@ fun Chat(
     val listState = rememberLazyListState()
     val authState by mainViewModel.authUiStateStateFlow.collectAsStateWithLifecycle()
     val messagesFlow = chatViewModel.currentMessages;
-    val messagesState by messagesFlow.collectAsStateWithLifecycle(emptyList())
+    val messagesState by messagesFlow.collectAsStateWithLifecycle(ApiResult.Loading)
     val currentMessageState = remember {
         mutableStateOf("")
     }
     LaunchedEffect(messagesState) {
-        listState.animateScrollToItem(messagesState.size)
+        when (messagesState) {
+            is ApiResult.Success -> {
+                listState.scrollToItem((messagesState as ApiResult.Success<List<Message>>).data?.size ?: 0)
+            }
+
+            else -> {}
+        }
     }
 
     val lifecycle = LocalLifecycleOwner.current
@@ -75,13 +83,34 @@ fun Chat(
     Screen(padding = 0.dp) {
         Column {
             ChatHeader(channelName = channelName)
-            LazyColumn(
-                state = listState,
-                reverseLayout = false,
-                modifier = Modifier.weight(1f)
-            ) {
-                itemsIndexed(messagesState) { _, item ->
-                    Message(message = item, isCurrentUser = authState.data?.email == item.sender)
+            when (messagesState) {
+                is ApiResult.Loading -> {
+                    Text(
+                        text = "Carregando mensagens...",
+                        color = MaterialTheme.customColorsShema.title,
+                        style = MaterialTheme.typography.displaySmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                is ApiResult.Error -> {
+                    Text(
+                        text = "Erro ao carregar mensagens",
+                        color = MaterialTheme.customColorsShema.title,
+                        style = MaterialTheme.typography.displaySmall,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                is ApiResult.Success -> {
+                    val messages = (messagesState as ApiResult.Success<List<Message>>).data ?: emptyList()
+                    LazyColumn(
+                        state = listState,
+                        reverseLayout = false,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        itemsIndexed(messages) { _, item ->
+                            Message(message = item, isCurrentUser = authState.data?.email == item.sender)
+                        }
+                    }
                 }
             }
             ChatBar(

@@ -34,4 +34,7 @@ interface MessageDao {
 
     @Insert
     suspend fun save(message: Message)
+
+    @Insert
+    suspend fun saveAll(messages: List<Message>)
 }

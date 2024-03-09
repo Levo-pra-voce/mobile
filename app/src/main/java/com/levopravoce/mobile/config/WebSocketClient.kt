@@ -54,6 +54,7 @@ class WebSocketClient @Inject constructor(
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             super.onFailure(webSocket, t, response)
+            isConnected = false
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
