@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,12 +22,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
@@ -40,9 +45,11 @@ import kotlinx.coroutines.withContext
 fun Chat(
     channelId: Long,
     channelName: String,
-    chatViewModel: ChatViewModel = hiltSharedViewModel()
+    chatViewModel: ChatViewModel = hiltSharedViewModel(),
+    mainViewModel: MainViewModel = hiltSharedViewModel()
 ) {
     val listState = rememberLazyListState()
+    val authState by mainViewModel.authUiStateStateFlow.collectAsStateWithLifecycle()
     val messagesFlow = chatViewModel.currentMessages;
     val messagesState by messagesFlow.collectAsStateWithLifecycle(emptyList())
     val currentMessageState = remember {
@@ -51,6 +58,14 @@ fun Chat(
     LaunchedEffect(messagesState) {
         listState.animateScrollToItem(messagesState.size)
     }
+
+    val lifecycle = LocalLifecycleOwner.current
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            chatViewModel.retryConnection()
+        }
+    }
+
 
     LaunchedEffect(channelId) {
         withContext(Dispatchers.IO) {
@@ -81,8 +96,8 @@ fun Chat(
                 reverseLayout = false,
                 modifier = Modifier.weight(1f)
             ) {
-                items(messagesState.size) { index ->
-                    Message(message = messagesState[index])
+                itemsIndexed(messagesState) { index, item ->
+                    Message(message = item, isCurrentUser = authState.data?.email == item.sender)
                 }
             }
             ChatBar(

@@ -70,4 +70,6 @@ class ChatViewModel @Inject constructor(
 
         webSocketClient.send(Destination.CHAT, message)
     }
+
+    suspend fun retryConnection() = this.webSocketClient.connect()
 }
