@@ -11,12 +11,9 @@ interface MessageDao {
     @Query("""
         SELECT * FROM messages
             WHERE channelId = :channelId
-        ORDER BY date
+        ORDER BY date desc
     """)
     fun getMessagesByChannel(channelId: Long): Flow<List<Message>>
-
-    @Query("SELECT * FROM messages WHERE channelId = :channelId AND date >= :date")
-    fun getMessagesByChannelAndRange(channelId: Long, date: Long): Flow<List<Message>>
 
     @Query("""
         SELECT MAX(date) from messages

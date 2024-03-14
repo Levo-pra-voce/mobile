@@ -23,11 +23,6 @@ class MessageDatabaseRepository @Inject constructor(
         channelId: Long,
     ): Flow<List<Message>> = messageDao.getMessagesByChannel(channelId);
 
-    fun getMessagesByChannelAndRange(
-        channelId: Long,
-        date: Long
-    ): Flow<List<Message>> = messageDao.getMessagesByChannelAndRange(channelId, date);
-
     fun getMaxDateByChannel(
         channelId: Long
     ) = messageDao.getMaxDateByChannel(channelId);

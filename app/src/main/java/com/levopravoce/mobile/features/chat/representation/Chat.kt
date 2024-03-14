@@ -104,7 +104,7 @@ fun Chat(
                     val messages = (messagesState as ApiResult.Success<List<Message>>).data ?: emptyList()
                     LazyColumn(
                         state = listState,
-                        reverseLayout = false,
+                        reverseLayout = true,
                         modifier = Modifier.weight(1f)
                     ) {
                         itemsIndexed(messages) { _, item ->
