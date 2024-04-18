@@ -1,5 +1,5 @@
 # Levo pra você - mobile
-> Aplicativo de entregas ou frete
+> Aplicativo de entregas
 
 ![image](https://github.com/Levo-pra-voce/mobile/assets/77634037/65c6684e-c90e-40f9-9f21-40a50aaf7dc1)
 
