@@ -33,8 +33,6 @@ Projeto responsavel por conversa em tempo real entre entregador e cliente, rastr
 ## Desenvolvedores
 
 [Luiz Eduardo](https://github.com/luiz-eduardo14)
-[Raquel Niehues](https://github.com/ahnaoRaquel)
-[Eliezer Silva](https://github.com/Eliezer-TEC)
 [Gabriel Vitorino](https://github.com/Tr00vuada)
 
 ## Modelo de desenvolvimento 
