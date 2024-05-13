@@ -111,7 +111,7 @@ fun Login(
                         .fillMaxWidth()
                 )
             }
-            Column {
+            Column(modifier = Modifier.padding(bottom = 24.dp)) {
                 FormInputText(
                     onChange = { password = it },
                     value = password,
@@ -122,6 +122,19 @@ fun Login(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier
                         .fillMaxWidth()
+                )
+            }
+
+            Column {
+                Text(
+                    text = "Esqueceu sua senha?",
+                    color = MaterialTheme.customColorsShema.placeholder,
+                    fontSize = 14.sp,
+                    modifier = Modifier
+                        .clickable {
+                            navController?.navigate(Routes.Auth.FORGOT_PASSWORD)
+                        }
+                        .padding(top = 16.dp)
                 )
             }
 

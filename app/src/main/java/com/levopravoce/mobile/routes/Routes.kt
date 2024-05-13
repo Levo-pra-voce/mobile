@@ -6,6 +6,7 @@ object Routes {
         val START = "start"
         val LOGIN = "login"
         val REGISTER = "register"
+        val FORGOT_PASSWORD = "forgot_password"
     }
 
     object Home {

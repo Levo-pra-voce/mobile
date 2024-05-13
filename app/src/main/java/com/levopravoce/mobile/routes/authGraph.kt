@@ -8,11 +8,12 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.levopravoce.mobile.features.forgotPassword.representation.ForgotPasswordMail
 import com.levopravoce.mobile.features.login.representation.Login
-import com.levopravoce.mobile.features.user.representation.Register
 import com.levopravoce.mobile.features.start.representation.Start
+import com.levopravoce.mobile.features.user.representation.Register
 
-const val DURATION_MILLIS = 700
+const val DURATION_MILLIS = 300
 
 enum class SlideDirection {
     Left, Right
@@ -84,6 +85,10 @@ fun NavGraphBuilder.authGraph() {
             ),
         ) {
             Register()
+        }
+
+        composable(Routes.Auth.FORGOT_PASSWORD) {
+            ForgotPasswordMail()
         }
     }
 }
