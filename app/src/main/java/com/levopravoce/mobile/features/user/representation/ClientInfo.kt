@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,11 +69,47 @@ fun ClientInfo(
         focusManager.moveFocus(FocusDirection.Next)
     }
 
+    var showErrorAlert by remember { mutableStateOf(false) }
+
     LaunchedEffect(userViewModelState.value.status) {
-        if (userViewModelState.value.status == RequestStatus.SUCCESS) {
-            hideKeyboard()
-            navController?.navigate(Routes.Home.ROUTE)
+        when (userViewModelState.value.status) {
+            RequestStatus.ERROR -> {
+                hideKeyboard()
+                showErrorAlert = true
+            }
+            RequestStatus.SUCCESS -> {
+                hideKeyboard()
+                navController?.navigate(Routes.Home.ROUTE)
+            }
+            else -> {}
         }
+    }
+
+    if (showErrorAlert) {
+        AlertDialog(
+            onDismissRequest = {
+                showErrorAlert = false
+            },
+            text = {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = userViewModelState.value.error ?: "Erro desconhecido",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.customColorsShema.title
+                    )
+                }
+            },
+            confirmButton = {
+                Text(
+                    text = "OK",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.customColorsShema.title,
+                    modifier = Modifier.clickable {
+                        showErrorAlert = false
+                    }
+                )
+            },
+        )
     }
 
     Screen {
@@ -181,12 +218,12 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
         }
-        SubmitBotton(userViewModel, userDTORemember, UserType.CLIENTE)
+        SubmitButton(userViewModel, userDTORemember, UserType.CLIENTE)
     }
 }
 
 @Composable
-fun SubmitBotton(
+fun SubmitButton(
     userViewModel: UserViewModel,
     userDTO: UserDTO = UserDTO(),
     userType: UserType = UserType.CLIENTE
