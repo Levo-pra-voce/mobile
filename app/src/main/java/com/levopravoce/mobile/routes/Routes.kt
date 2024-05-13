@@ -16,5 +16,6 @@ object Routes {
         val INICIAL = "inicial"
         val CONFIGURATION = "configuration"
         val THEME_CUSTOMIZATION = "theme_customization"
+        val USER_EDIT = "user_edit"
     }
 }

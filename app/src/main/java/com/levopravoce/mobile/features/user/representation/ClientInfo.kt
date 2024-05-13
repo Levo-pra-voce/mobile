@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
@@ -127,7 +128,7 @@ fun ClientInfo(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Cadastrar Conta",
+                text = if (userDTORemember.id == null) "Cadastrar conta" else "Editar perfil",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.customColorsShema.title
             )
@@ -139,13 +140,14 @@ fun ClientInfo(
                    userDTORemember = userDTORemember.copy(name = it)
                 },
                 value = userDTORemember.name ?: "",
-                placeHolder = "Nome",
+                placeHolder = "Nome Completo",
                 withBorder = false,
                 onSubmitted = nextFocus,
                 modifier = Modifier
                     .fillMaxWidth()
             )
             FormInputText(
+                enabled = userDTORemember.id == null,
                 onChange = { userDTORemember = userDTORemember.copy(email = it) },
                 value = userDTORemember.email ?: "",
                 placeHolder = "Email",
@@ -157,8 +159,9 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
+                enabled = userDTORemember.id == null,
                 onChange = { userDTORemember = userDTORemember.copy(cpf = it.maxLength(11)) },
-                value = userDTORemember.cpf ?: "",
+                value = if (userDTORemember.id == null) userDTORemember.cpf ?: "" else "***.***.***-**",
                 placeHolder = "CPF",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -199,24 +202,32 @@ fun ClientInfo(
                 value = userDTORemember.complement ?: "",
                 placeHolder = "Complemento",
                 withBorder = false,
-                onSubmitted = nextFocus,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-            FormInputText(
-                onChange = { userDTORemember = userDTORemember.copy(password = it) },
-                value = userDTORemember.password ?: "",
-                placeHolder = "Senha",
-                withBorder = false,
-                visualTransformation = PasswordVisualTransformation(),
                 onSubmitted = {
-                    hideKeyboard()
+                      if (userDTORemember.id == null) {
+                          hideKeyboard()
+                      } else {
+                          nextFocus()
+                      }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
+            if (userDTORemember.id == null) {
+                FormInputText(
+                    onChange = { userDTORemember = userDTORemember.copy(password = it) },
+                    value = userDTORemember.password ?: "",
+                    placeHolder = "Senha",
+                    withBorder = false,
+                    visualTransformation = PasswordVisualTransformation(),
+                    onSubmitted = {
+                        hideKeyboard()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+            }
         }
         SubmitButton(userViewModel, userDTORemember, UserType.CLIENTE)
     }
@@ -226,7 +237,8 @@ fun ClientInfo(
 fun SubmitButton(
     userViewModel: UserViewModel,
     userDTO: UserDTO = UserDTO(),
-    userType: UserType = UserType.CLIENTE
+    userType: UserType = UserType.CLIENTE,
+    mainViewModel: MainViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -239,7 +251,14 @@ fun SubmitButton(
                 .clickable {
                     if (!userViewModel.isLoading()) {
                         coroutineScope.launch {
-                            userViewModel.register(userType, userDTO)
+                            if (userDTO.id == null) {
+                                userViewModel.register(userType, userDTO)
+                            } else {
+                                val success = userViewModel.update(userDTO)
+                                if (success) {
+                                    mainViewModel.meRequest()
+                                }
+                            }
                         }
                     }
                 }
@@ -251,7 +270,7 @@ fun SubmitButton(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Cadastrar",
+                    text = if (userDTO.id == null) "Cadastrar" else "Atualizar",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.customColorsShema.title
                 )

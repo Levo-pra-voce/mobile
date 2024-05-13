@@ -32,7 +32,8 @@ fun FormInputText(
     onSubmitted: () -> Any? = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    withBorder: Boolean = true
+    withBorder: Boolean = true,
+    enabled: Boolean = true
 ) {
 
     Column {
@@ -45,6 +46,7 @@ fun FormInputText(
             )
         }
         TextField(
+            enabled = enabled,
             value = value,
             onValueChange = onChange,
             visualTransformation = visualTransformation,

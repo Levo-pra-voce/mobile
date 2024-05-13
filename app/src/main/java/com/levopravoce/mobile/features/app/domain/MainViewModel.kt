@@ -11,7 +11,6 @@ import com.levopravoce.mobile.features.auth.domain.AuthStore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 data class AuthUiState(
@@ -70,5 +69,9 @@ class MainViewModel @Inject constructor(
         val names = name.split(" ")
 
         return names[0]
+    }
+
+    fun updateUser(updatedUser: UserDTO?) {
+        _uiState.value = AuthUiState(data = updatedUser, status = RequestStatus.SUCCESS)
     }
 }

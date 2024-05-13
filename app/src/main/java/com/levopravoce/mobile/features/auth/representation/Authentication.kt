@@ -20,7 +20,7 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
 
 @Composable
-fun Authencation(
+fun Authentication(
     content: @Composable () -> Unit,
     viewModel: MainViewModel = hiltSharedViewModel()
 ) {

@@ -10,19 +10,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
+import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.MobileTheme
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.launch
 
 @Composable
-fun CustomizationConfig() {
-
+fun CustomizationConfig(
+    userViewModel: UserViewModel = hiltSharedViewModel(),
+    mainViewModel: MainViewModel = hiltSharedViewModel()
+) {
     val navController = navControllerContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     Column(Modifier.padding(20.dp)) {
         Text(text = "Opções", style = MaterialTheme.typography.titleMedium, color = Color(0xFF535AFF), modifier = Modifier.padding(bottom = 24.dp))
@@ -38,7 +47,21 @@ fun CustomizationConfig() {
             ItemOption(
                 title = "Editar",
                 description = "Edite as informações do seu perfíl.",
-                onClick = {}
+                onClick = {
+                    navController?.navigate(Routes.Home.USER_EDIT)
+                }
+            )
+        }
+        Row (modifier = Modifier.padding(top = 8.dp)) {
+            ItemOption(
+                title = "Excluir",
+                description = "Exclua sua conta",
+                onClick = {
+                    coroutineScope.launch {
+                        userViewModel.delete()
+                        mainViewModel.logout()
+                    }
+                }
             )
         }
     }
