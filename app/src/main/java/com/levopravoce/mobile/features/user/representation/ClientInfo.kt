@@ -204,9 +204,9 @@ fun ClientInfo(
                 withBorder = false,
                 onSubmitted = {
                       if (userDTORemember.id == null) {
-                          hideKeyboard()
-                      } else {
                           nextFocus()
+                      } else {
+                          hideKeyboard()
                       }
                 },
                 modifier = Modifier
@@ -220,9 +220,7 @@ fun ClientInfo(
                     placeHolder = "Senha",
                     withBorder = false,
                     visualTransformation = PasswordVisualTransformation(),
-                    onSubmitted = {
-                        hideKeyboard()
-                    },
+                    onSubmitted = hideKeyboard,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)

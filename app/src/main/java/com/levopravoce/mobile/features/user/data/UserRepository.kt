@@ -2,7 +2,6 @@ package com.levopravoce.mobile.features.user.data
 
 import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

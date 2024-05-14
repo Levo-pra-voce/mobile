@@ -56,9 +56,7 @@ fun Configuration(
 @Composable
 @Preview
 fun ConfigurationPreview() {
-    MobileTheme(
-        darkTheme = true
-    ) {
+    MobileTheme {
         Configuration()
     }
 }

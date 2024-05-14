@@ -1,12 +1,8 @@
 package com.levopravoce.mobile.features.app
 
 import android.content.Context
-import androidx.room.Room
 import com.levopravoce.mobile.config.PreferencesManager
-import com.levopravoce.mobile.database.LevoPraVoceDatabase
 import com.levopravoce.mobile.features.auth.domain.AuthStore
-import com.levopravoce.mobile.features.chat.data.MessageDao
-import com.levopravoce.mobile.features.chat.data.MessageDatabaseRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,29 +28,4 @@ class AppModule {
     ): PreferencesManager {
         return PreferencesManager(appContext)
     }
-
-    @Provides
-    @Singleton
-    fun provideAppDatabase(
-        @ApplicationContext appContext: Context
-    ): LevoPraVoceDatabase {
-        return Room.databaseBuilder(
-            appContext,
-            LevoPraVoceDatabase::class.java,
-            LevoPraVoceDatabase.DATABASE_NAME
-        ).build();
-    }
-
-    @Provides
-    @Singleton
-    fun provideMessageDao(
-        database: LevoPraVoceDatabase
-    ) = database.messageDao()
-
-    @Provides
-    @Singleton
-    fun provideMessageDatabaseRepository(
-        messageDao: MessageDao,
-        @ApplicationContext context: Context
-    ) = MessageDatabaseRepository(messageDao, context)
 }

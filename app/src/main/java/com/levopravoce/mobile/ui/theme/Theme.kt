@@ -66,18 +66,9 @@ enum class ThemeMode {
 
 @Composable
 fun MobileTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    themeCustomizationViewModel: ThemeCustomizationViewModel = hiltViewModel(),
     content: @Composable () -> Unit
 ) {
-
-    val uiState = themeCustomizationViewModel.uiState.collectAsState();
-
-    val colors = when (uiState.value.themeMode) {
-        ThemeMode.DARK -> DarkColorSchema
-        ThemeMode.LIGHT -> LightColorSchema
-        ThemeMode.SYSTEM -> if (darkTheme) DarkColorSchema else LightColorSchema
-    }
+    val colors = DarkColorSchema
 
     CompositionLocalProvider(
         LocalColors provides colors

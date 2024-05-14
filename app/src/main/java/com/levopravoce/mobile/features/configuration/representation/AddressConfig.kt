@@ -79,7 +79,7 @@ private fun ListElement(
 @Composable
 @Preview
 private fun AddressConfigPreview() {
-    MobileTheme(darkTheme = true) {
+    MobileTheme {
         AddressConfig()
     }
 }

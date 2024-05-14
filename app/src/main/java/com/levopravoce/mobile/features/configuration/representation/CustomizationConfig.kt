@@ -95,7 +95,7 @@ private fun ItemOption(
 @Composable
 @Preview(showSystemUi = true)
 private fun CustomizationConfigPreview() {
-    MobileTheme(darkTheme = true) {
+    MobileTheme {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.customColorsShema.background)
