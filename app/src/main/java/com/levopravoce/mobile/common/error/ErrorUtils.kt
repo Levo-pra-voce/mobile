@@ -1,21 +1,16 @@
 package com.levopravoce.mobile.common.error
 
+import com.google.gson.GsonBuilder
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Response
 import java.io.IOException
 
 
-//object ErrorUtils {
-//    fun parseError(response: Response<*>): APIError {
-//        val converter: Converter<ResponseBody, APIError> = ServiceGenerator.retrofit()
-//            .responseBodyConverter(APIError::class.java, arrayOfNulls<Annotation>(0))
-//        val error: APIError
-//        error = try {
-//            converter.convert(response.errorBody())
-//        } catch (e: IOException) {
-//            return APIError()
-//        }
-//        return error
-//    }
-//}
+object ErrorUtils {
+    fun parseError(response: Response<*>): String {
+        val gson = GsonBuilder().serializeNulls().create()
+        val error = gson.fromJson(response.errorBody()?.string(), APIError::class.java)
+        return error.message ?: "Unknown error"
+    }
+}

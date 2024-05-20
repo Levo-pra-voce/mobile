@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.GsonBuilder
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.error.APIError
+import com.levopravoce.mobile.common.error.ErrorUtils
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.auth.domain.AuthStore
@@ -39,9 +40,7 @@ class UserViewModel @Inject constructor(
                 authStore.saveToken(user.token)
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
-                val gson = GsonBuilder().serializeNulls().create()
-                val error = gson.fromJson(data.errorBody()?.string(), APIError::class.java)
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = error.message)
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
             }
 
         } catch (
@@ -60,9 +59,7 @@ class UserViewModel @Inject constructor(
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
                 return true;
             } else {
-                val gson = GsonBuilder().serializeNulls().create()
-                val error = gson.fromJson(data.errorBody()?.string(), APIError::class.java)
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = error.message)
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
             }
 
         } catch (
@@ -83,9 +80,7 @@ class UserViewModel @Inject constructor(
             if (data.isSuccessful) {
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
-                val gson = GsonBuilder().serializeNulls().create()
-                val error = gson.fromJson(data.errorBody()?.string(), APIError::class.java)
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = error.message)
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
             }
 
         } catch (
