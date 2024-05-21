@@ -92,7 +92,11 @@ fun ClientInfo(
                 showErrorAlert = false
             },
             text = {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = userViewModelState.value.error ?: "Erro desconhecido",
                         style = MaterialTheme.typography.titleMedium,
@@ -137,7 +141,7 @@ fun ClientInfo(
         Column {
             FormInputText(
                 onChange = {
-                   userDTORemember = userDTORemember.copy(name = it)
+                    userDTORemember = userDTORemember.copy(name = it)
                 },
                 value = userDTORemember.name ?: "",
                 placeHolder = "Nome Completo",
@@ -161,7 +165,8 @@ fun ClientInfo(
             FormInputText(
                 enabled = userDTORemember.id == null,
                 onChange = { userDTORemember = userDTORemember.copy(cpf = it.maxLength(11)) },
-                value = if (userDTORemember.id == null) userDTORemember.cpf ?: "" else "***.***.***-**",
+                value = if (userDTORemember.id == null) userDTORemember.cpf
+                    ?: "" else "***.***.***-**",
                 placeHolder = "CPF",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -203,11 +208,11 @@ fun ClientInfo(
                 placeHolder = "Complemento",
                 withBorder = false,
                 onSubmitted = {
-                      if (userDTORemember.id == null) {
-                          nextFocus()
-                      } else {
-                          hideKeyboard()
-                      }
+                    if (userDTORemember.id == null) {
+                        nextFocus()
+                    } else {
+                        hideKeyboard()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

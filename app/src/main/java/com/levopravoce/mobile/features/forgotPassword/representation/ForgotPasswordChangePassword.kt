@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -25,16 +23,20 @@ import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.app.representation.Submit
 import com.levopravoce.mobile.features.forgotPassword.domain.ForgotPasswordViewModel
+import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordMail(
+fun ForgotPasswordChangePassword(
     model: ForgotPasswordViewModel,
     forgotPasswordEnum: MutableState<ForgotPasswordState>
 ) {
     val state = model.uiState.collectAsStateWithLifecycle();
     val isLoading = state.value.status == RequestStatus.LOADING
     val coroutineScope = rememberCoroutineScope()
+    val navController = navControllerContext.current
+
     val showError = remember {
         mutableStateOf(false)
     }
@@ -42,8 +44,8 @@ fun ForgotPasswordMail(
     LaunchedEffect(state.value.status) {
         when (state.value.status) {
             RequestStatus.SUCCESS -> {
-                forgotPasswordEnum.value = ForgotPasswordState.CODE
-                model.resetRequestStatus()
+                forgotPasswordEnum.value = ForgotPasswordState.PASSWORD
+                navController?.navigate(Routes.Auth.LOGIN)
             }
             RequestStatus.ERROR -> {
                 showError.value = true
@@ -55,7 +57,8 @@ fun ForgotPasswordMail(
     Alert(show = showError, message = state.value.error)
 
     Screen(padding = 24.dp) {
-        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var repeatPassword by remember { mutableStateOf("") }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -63,11 +66,21 @@ fun ForgotPasswordMail(
             verticalArrangement = Arrangement.Center
         ) {
             FormInputText(
-                onChange = { email = it },
-                value = email,
+                onChange = { password = it },
+                value = password,
                 enabled = !isLoading,
-                placeHolder = "email@*****.com",
-                label = "Digite seu e-mail:",
+                placeHolder = "********",
+                label = "Digite sua nova senha:",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            FormInputText(
+                onChange = { repeatPassword = it },
+                value = repeatPassword,
+                enabled = !isLoading,
+                placeHolder = "********",
+                label = "Digite sua nova senha:",
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -75,11 +88,11 @@ fun ForgotPasswordMail(
             Submit(
                 onSubmit = {
                     coroutineScope.launch {
-                        model.sendEmail(email)
+                        model.resetPassword(password, repeatPassword)
                     }
                 },
                 isLoading = isLoading,
-                title = "Enviar e-mail"
+                title = "Enviar nova senha"
             )
         }
     }

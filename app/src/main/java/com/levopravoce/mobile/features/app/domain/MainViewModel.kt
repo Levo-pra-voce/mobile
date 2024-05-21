@@ -37,13 +37,19 @@ class MainViewModel @Inject constructor(
     suspend fun meRequest() {
         _uiState.value = AuthUiState(status = RequestStatus.LOADING)
         try {
-            val data = authRepository.me()
+            val response = authRepository.me()
 
-            if (data.token != null) {
-                authStore.saveToken(data.token)
+            if (response.isSuccessful) {
+                val data = response.body()
+                if (data?.token != null) {
+                    authStore.saveToken(data.token)
+                }
+
+                _uiState.value = AuthUiState(data = data, status = RequestStatus.SUCCESS)
+            } else {
+                authStore.logout()
+                _uiState.value = AuthUiState(status = RequestStatus.ERROR, error = response.message())
             }
-
-            _uiState.value = AuthUiState(data = data, status = RequestStatus.SUCCESS)
         } catch (
             e: Exception
         ) {

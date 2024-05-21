@@ -8,7 +8,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.levopravoce.mobile.features.forgotPassword.representation.ForgotPasswordMail
+import com.levopravoce.mobile.features.forgotPassword.representation.ForgotPassword
 import com.levopravoce.mobile.features.login.representation.Login
 import com.levopravoce.mobile.features.start.representation.Start
 import com.levopravoce.mobile.features.user.representation.Register
@@ -88,7 +88,7 @@ fun NavGraphBuilder.authGraph() {
         }
 
         composable(Routes.Auth.FORGOT_PASSWORD) {
-            ForgotPasswordMail()
+            ForgotPassword()
         }
     }
 }

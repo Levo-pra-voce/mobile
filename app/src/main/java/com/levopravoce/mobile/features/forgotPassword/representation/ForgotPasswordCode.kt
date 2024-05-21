@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -28,7 +26,7 @@ import com.levopravoce.mobile.features.forgotPassword.domain.ForgotPasswordViewM
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordMail(
+fun ForgotPasswordCode(
     model: ForgotPasswordViewModel,
     forgotPasswordEnum: MutableState<ForgotPasswordState>
 ) {
@@ -38,11 +36,11 @@ fun ForgotPasswordMail(
     val showError = remember {
         mutableStateOf(false)
     }
-
+    
     LaunchedEffect(state.value.status) {
         when (state.value.status) {
             RequestStatus.SUCCESS -> {
-                forgotPasswordEnum.value = ForgotPasswordState.CODE
+                forgotPasswordEnum.value = ForgotPasswordState.PASSWORD
                 model.resetRequestStatus()
             }
             RequestStatus.ERROR -> {
@@ -55,7 +53,7 @@ fun ForgotPasswordMail(
     Alert(show = showError, message = state.value.error)
 
     Screen(padding = 24.dp) {
-        var email by remember { mutableStateOf("") }
+        var code by remember { mutableStateOf("") }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -63,11 +61,11 @@ fun ForgotPasswordMail(
             verticalArrangement = Arrangement.Center
         ) {
             FormInputText(
-                onChange = { email = it },
-                value = email,
+                onChange = { code = it },
+                value = code,
                 enabled = !isLoading,
-                placeHolder = "email@*****.com",
-                label = "Digite seu e-mail:",
+                placeHolder = "********",
+                label = "Digite seu código:",
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -75,11 +73,11 @@ fun ForgotPasswordMail(
             Submit(
                 onSubmit = {
                     coroutineScope.launch {
-                        model.sendEmail(email)
+                        model.checkCode(code)
                     }
                 },
                 isLoading = isLoading,
-                title = "Enviar e-mail"
+                title = "Enviar código de verificação"
             )
         }
     }
