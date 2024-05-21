@@ -6,9 +6,7 @@ import com.levopravoce.mobile.features.forgotPassword.data.PasswordCodeDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
-import retrofit2.http.GET
 import retrofit2.http.Headers
-import retrofit2.http.OPTIONS
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -35,13 +33,13 @@ interface UserRepository {
         @Path("email") email: String
     ): Response<Unit>
 
-    @POST("/forgot-password/exist-code")
+    @POST("/api/user/forgot-password/exist-code")
     @Headers("isAuthorized: false")
     suspend fun existCode(
         @Body passwordCodeDTO: PasswordCodeDTO
     ): Response<Unit>
 
-    @POST("/api/user/forgot-password/change-password")
+    @PUT("/api/user/forgot-password/change-password")
     @Headers("isAuthorized: false")
     suspend fun changePassword(
         @Body passwordCodeDTO: PasswordCodeDTO
