@@ -3,13 +3,19 @@ package com.levopravoce.mobile.features.order.represatation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,10 +26,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
@@ -100,6 +109,7 @@ fun OrderInfo(
             modifier = Modifier
                 .padding(top = 48.dp, bottom = 24.dp)
                 .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
             Text(
                 text = "Solicitar entrega",
@@ -111,9 +121,12 @@ fun OrderInfo(
         Column {
             FormInputText(
                 onChange = {
-                    orderDTORemember = orderDTORemember.copy(height = it.toDouble())
+                    if (it.toDoubleOrNull() != null) {
+                        val number = it.toDouble()
+                        orderDTORemember = orderDTORemember.copy(height = number)
+                    }
                 },
-                value = orderDTORemember.height.toString(),
+                value = orderDTORemember.height?.toString() ?: "",
                 placeHolder = "Largura:",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -124,9 +137,12 @@ fun OrderInfo(
             FormInputText(
                 enabled = orderDTORemember.id == null,
                 onChange = {
-                    orderDTORemember = orderDTORemember.copy(width = it.toDouble())
+                    if (it.toDoubleOrNull() != null) {
+                        val number = it.toDouble()
+                        orderDTORemember = orderDTORemember.copy(width = number)
+                    }
                 },
-                value = orderDTORemember.width.toString(),
+                value = orderDTORemember.width?.toString() ?: "",
                 placeHolder = "Altura:",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -138,9 +154,12 @@ fun OrderInfo(
             FormInputText(
                 enabled = orderDTORemember.id == null,
                 onChange = {
-                    orderDTORemember = orderDTORemember.copy(maxWeight = it.toDouble())
+                    if (it.toDoubleOrNull() != null) {
+                        val number = it.toDouble()
+                        orderDTORemember = orderDTORemember.copy(maxWeight = number)
+                    }
                 },
-                value = orderDTORemember.maxWeight.toString(),
+                value = orderDTORemember.maxWeight?.toString() ?: "",
                 placeHolder = "Peso máximo:",
                 withBorder = false,
                 onSubmitted = nextFocus,
@@ -152,9 +171,11 @@ fun OrderInfo(
             FormInputText(
                 enabled = orderDTORemember.id == null,
                 onChange = {
-                    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                    val date = LocalDate.parse(it, formatter)
-                    orderDTORemember = orderDTORemember.copy(deliveryDate = date)
+                    if (it.matches("\\d{2}-\\d{2}-\\d{4}".toRegex())) {
+                        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                        val date = LocalDate.parse(it, formatter)
+                        orderDTORemember = orderDTORemember.copy(deliveryDate = date)
+                    }
                 },
                 value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) ?: "",
                 placeHolder = "Data de entrega:",
@@ -166,22 +187,52 @@ fun OrderInfo(
                     .padding(top = 8.dp)
             )
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
             ) {
-                Checkbox(
+                Text(
+                    modifier = Modifier
+                        .padding(top = 8.dp),
+                    text = "Adicionar seguro:",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.customColorsShema.title
+                )
+                RoundedCheckbox(
+                    modifier = Modifier.padding(start = 8.dp, top = 10.dp),
                     checked = orderDTORemember.haveSecurity ?: false,
                     onCheckedChange = {
                         orderDTORemember = orderDTORemember.copy(haveSecurity = it)
                     }
                 )
-                Text(
-                    text = "Possui seguro?",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.customColorsShema.title
-                )
             }
         }
         EnterButton(model, orderDTORemember)
+    }
+}
+
+@Composable
+fun RoundedCheckbox(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .size(18.dp)
+            .clip(RoundedCornerShape(50))
+            .background(if (checked) Color.Green else Color.Gray)
+            .clickable { onCheckedChange(!checked) },
+        contentAlignment = Alignment.Center
+    ) {
+        if (checked) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Checked",
+                tint = Color.White,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
     }
 }
 

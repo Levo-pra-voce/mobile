@@ -29,7 +29,8 @@ private val firstLineDescriptorData = listOf(
         id = R.drawable.delivery_ok,
         contentDescription = "icone para solicitar entrega",
         title = "Solicitar\n" +
-                "entrega"
+                "entrega",
+        route = Routes.Home.SELECT_ORDER
     ),
     IconDescriptorData(
         id = R.drawable.delivery_call,
