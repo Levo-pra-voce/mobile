@@ -12,6 +12,7 @@ import javax.inject.Inject
 data class OrderUiState(
     val orderDTO: OrderDTO? = null,
     val status: RequestStatus = RequestStatus.IDLE,
+    val error: String? = null
 )
 
 @HiltViewModel
@@ -39,4 +40,6 @@ class OrderViewModel @Inject constructor(
             _uiState.value = OrderUiState(status = RequestStatus.ERROR)
         }
     }
+
+    fun isLoading() = uiState.value.status == RequestStatus.LOADING
 }

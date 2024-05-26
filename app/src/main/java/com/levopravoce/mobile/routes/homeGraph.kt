@@ -6,6 +6,7 @@ import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.auth.representation.Authentication
 import com.levopravoce.mobile.features.configuration.representation.Configuration
 import com.levopravoce.mobile.features.home.representation.HomeDecider
+import com.levopravoce.mobile.features.order.represatation.OrderInfo
 import com.levopravoce.mobile.features.themeCustomization.representation.ThemeCustomization
 import com.levopravoce.mobile.features.user.representation.UserEdit
 
@@ -38,6 +39,12 @@ fun NavGraphBuilder.homeGraph() {
         composable(route = Routes.Home.USER_EDIT) {
             Authentication(content = {
                  UserEdit()
+            })
+        }
+
+        composable(route = Routes.Home.SELECT_ORDER) {
+            Authentication(content = {
+                OrderInfo()
             })
         }
     }
