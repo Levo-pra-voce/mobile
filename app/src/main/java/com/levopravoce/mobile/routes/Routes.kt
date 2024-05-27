@@ -18,5 +18,6 @@ object Routes {
         val THEME_CUSTOMIZATION = "theme_customization"
         val USER_EDIT = "user_edit"
         val SELECT_ORDER = "select_order"
+        val RELATORY = "relatory"
     }
 }

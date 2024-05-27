@@ -31,7 +31,8 @@ private val firstLineDescriptorData = listOf(
         id = R.drawable.report_icon,
         contentDescription = "icone para acompanhar entrega",
         title = "Relatórios",
-        imageModifier = Modifier.offset(x = -(12.dp), y = 4.dp)
+        imageModifier = Modifier.offset(x = -(12.dp), y = 4.dp),
+        route = Routes.Home.RELATORY
     ),
 )
 

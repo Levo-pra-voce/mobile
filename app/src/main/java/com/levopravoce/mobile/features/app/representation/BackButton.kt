@@ -24,7 +24,7 @@ fun BackButton(
     Image(
         painter = painterResource(id = R.drawable.baseline_arrow_back_16),
         contentDescription = "Voltar",
-        colorFilter = ColorFilter.tint(MaterialTheme.customColorsShema.title),
+        colorFilter = ColorFilter.tint(MaterialTheme.customColorsShema.placeholder),
         contentScale = ContentScale.FillHeight,
         modifier = modifier
             .clickable {

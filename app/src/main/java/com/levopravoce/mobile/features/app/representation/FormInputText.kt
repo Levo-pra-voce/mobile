@@ -60,10 +60,20 @@ fun FormInputText(
             placeholder = {
                 Text(text = placeHolder, color = MaterialTheme.customColorsShema.placeholder)
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.customColorsShema.title,
-                containerColor = MaterialTheme.customColorsShema.background,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.customColorsShema.title,
+                unfocusedTextColor = MaterialTheme.customColorsShema.title,
+                disabledTextColor = MaterialTheme.customColorsShema.title,
+                errorTextColor = MaterialTheme.customColorsShema.title,
+                focusedContainerColor = MaterialTheme.customColorsShema.background,
+                unfocusedContainerColor = MaterialTheme.customColorsShema.background,
+                disabledContainerColor = MaterialTheme.customColorsShema.background,
+                errorContainerColor = MaterialTheme.customColorsShema.background,
             ),
+//            colors = TextFieldDefaults.textFieldColors(
+//                textColor = MaterialTheme.customColorsShema.title,
+//                containerColor = MaterialTheme.customColorsShema.background,
+//            ),
             modifier = when (withBorder) {
                 true -> modifier
                     .border(1.dp, MaterialTheme.customColorsShema.border)

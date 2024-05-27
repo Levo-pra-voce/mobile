@@ -81,9 +81,15 @@ fun <T> LargeDropdownMenu(
                     contentDescription = null,
                 )
             },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.customColorsShema.title,
-                containerColor = MaterialTheme.customColorsShema.background,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.customColorsShema.title,
+                unfocusedTextColor = MaterialTheme.customColorsShema.title,
+                disabledTextColor = MaterialTheme.customColorsShema.title,
+                errorTextColor = MaterialTheme.customColorsShema.title,
+                focusedContainerColor = MaterialTheme.customColorsShema.background,
+                unfocusedContainerColor = MaterialTheme.customColorsShema.background,
+                disabledContainerColor = MaterialTheme.customColorsShema.background,
+                errorContainerColor = MaterialTheme.customColorsShema.background,
             ),
             placeholder = {
                 Text(text = placeHolder, color = MaterialTheme.customColorsShema.placeholder)
