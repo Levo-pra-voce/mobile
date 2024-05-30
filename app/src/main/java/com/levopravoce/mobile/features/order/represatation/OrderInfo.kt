@@ -172,9 +172,7 @@ fun OrderInfo(
                 enabled = orderDTORemember.id == null,
                 onChange = {
                     if (it.matches("\\d{2}-\\d{2}-\\d{4}".toRegex())) {
-                        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                        val date = LocalDate.parse(it, formatter)
-                        orderDTORemember = orderDTORemember.copy(deliveryDate = date)
+                        orderDTORemember = orderDTORemember.copy(deliveryDate = it)
                     }
                 },
                 value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) ?: "",

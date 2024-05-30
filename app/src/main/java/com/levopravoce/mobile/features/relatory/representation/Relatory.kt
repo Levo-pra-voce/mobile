@@ -2,7 +2,6 @@ package com.levopravoce.mobile.features.relatory.representation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,46 +23,70 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.DateUtils
+import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.formatCurrency
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
+import com.levopravoce.mobile.features.relatory.data.dto.RelatoryDTO
+import com.levopravoce.mobile.features.relatory.domain.RelatoryViewModel
 import com.levopravoce.mobile.features.start.representation.bottomBorder
 import com.levopravoce.mobile.ui.theme.White100
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-data class MockData(
-    val clientName: String,
-    val deliveryDate: LocalDate,
-    val value: Double,
-)
-
-// columns = nome do cliente, valor e data de entrega
-
 @Composable
-fun Relatory() {
-    val mockList = List(10) {
-        MockData(
-            clientName = "Cliente $it",
-            deliveryDate = LocalDate.now(),
-            value = it * 100.0
-        )
+fun Relatory(
+    relatoryViewModel: RelatoryViewModel = hiltViewModel()
+) {
+    val uiState = relatoryViewModel.uiState.collectAsState();
+    val deliveryList = uiState.value.relatories
+
+    val deliveryDateState: MutableState<LocalDate?> = remember {
+        mutableStateOf(null)
     }
 
-    Screen(
-        padding = 0.dp
-    ) {
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        relatoryViewModel.getRelatories()
+    }
+    
+    LaunchedEffect(key1 = uiState.value.status) {
+        when (uiState.value.status) {
+            RequestStatus.LOADING -> {
+                println("Loading")
+            }
+            RequestStatus.SUCCESS -> {
+                println("Success")
+            }
+            RequestStatus.ERROR -> {
+                println("Error")
+            }
+            else -> {
+                println("Idle")
+            }
+        }
+    }
+
+    Screen(padding = 0.dp) {
         Header(
             horizontal = Alignment.Start
         ) {
@@ -83,7 +106,7 @@ fun Relatory() {
         }
 
         Column {
-            DatePickerInput()
+            DatePickerInput(deliveryDateState = deliveryDateState)
         }
         Row(
             modifier = Modifier
@@ -93,23 +116,37 @@ fun Relatory() {
         ) {
             ButtonStyled(
                 text = "Exportar",
-                onClick = {}
+                onClick = {
+//                    coroutineScope.launch {
+//                        relatoryViewModel.export(
+//                            deliveryDate = deliveryDate.value
+//                        )
+//                    }
+                },
+                disabled = relatoryViewModel.isLoading()
             )
             ButtonStyled(
                 text = "Buscar",
-                onClick = {}
+                onClick = {
+                    coroutineScope.launch {
+                        relatoryViewModel.getRelatories(
+                            deliveryDate = deliveryDateState.value
+                        )
+                    }
+                },
+                disabled = relatoryViewModel.isLoading()
             )
         }
         LazyColumn {
-            items(mockList.size) { item ->
-                RenderRelatoryItem(mockList[item], item == mockList.size - 1)
+            items(deliveryList.size) { item ->
+                RenderRelatoryItem(deliveryList[item], item == deliveryList.size - 1)
             }
         }
     }
 }
 
 @Composable
-fun RenderRelatoryItem(data: MockData, isLast: Boolean) {
+fun RenderRelatoryItem(data: RelatoryDTO, isLast: Boolean) {
     var rowModifier = Modifier
         .padding(top = 24.dp, start = 8.dp)
         .fillMaxWidth()
@@ -132,13 +169,16 @@ fun RenderRelatoryItem(data: MockData, isLast: Boolean) {
             )
         }
         Column {
-            Text(text = data.clientName, color = MaterialTheme.customColorsShema.placeholder)
+            Text(
+                text = data.clientName ?: "Cliente não informado",
+                color = MaterialTheme.customColorsShema.placeholder
+            )
             Text(
                 text = "Valor: ${formatCurrency(data.value)}",
                 color = MaterialTheme.customColorsShema.placeholder
             )
             Text(
-                text = "Data da entrega: ${data.deliveryDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}",
+                text = "Data da entrega: ${data.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "Data não informada"}",
                 color = MaterialTheme.customColorsShema.placeholder
             )
         }
@@ -147,20 +187,24 @@ fun RenderRelatoryItem(data: MockData, isLast: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerInput() {
+fun DatePickerInput(
+    deliveryDateState: MutableState<LocalDate?>
+) {
     val currentYear = LocalDate.now().year
 
     val dateState = rememberDatePickerState(
         initialDisplayMode = DisplayMode.Input,
-        initialSelectedDateMillis = LocalDate.now().plusDays(1).atStartOfDay(ZoneOffset.UTC)
-            .toInstant()
-            .toEpochMilli(),
         yearRange = currentYear..currentYear,
     )
 
     LaunchedEffect(key1 = dateState.selectedDateMillis) {
-        val millisToLocalDate = dateState.selectedDateMillis?.let {
-            DateUtils.convertMillisToLocalDate(it)
+        if (dateState.selectedDateMillis != null) {
+            val millisToLocalDate = dateState.selectedDateMillis?.let {
+                DateUtils.convertMillisToLocalDate(it)
+            }
+            deliveryDateState.value = millisToLocalDate?.plusDays(1)
+        } else {
+            deliveryDateState.value = null
         }
     }
 
@@ -196,7 +240,8 @@ fun DatePickerInput() {
 @Composable
 fun ButtonStyled(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    disabled: Boolean = false
 ) {
     Row(
         modifier = Modifier
@@ -204,7 +249,9 @@ fun ButtonStyled(
             .clip(RoundedCornerShape(20))
             .background(MaterialTheme.customColorsShema.invertBackground)
             .clickable {
-                onClick()
+               if (!disabled) {
+                   onClick()
+               }
             },
         horizontalArrangement = Arrangement.Center
     ) {
@@ -217,26 +264,6 @@ fun ButtonStyled(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.customColorsShema.title
             )
-        }
-    }
-}
-
-@Composable
-fun RenderRow(data: List<String>) {
-    Row(horizontalArrangement = Arrangement.SpaceBetween) {
-        data.forEach {
-            Column(
-                modifier = Modifier
-                    .weight(1f, true)
-                    .border(1.dp, MaterialTheme.customColorsShema.placeholder),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = it,
-                    color = MaterialTheme.customColorsShema.title,
-                    modifier = Modifier.padding(12.dp)
-                )
-            }
         }
     }
 }

@@ -9,7 +9,7 @@ data class OrderDTO (
     var height: Double? = null,
     var width: Double? = null,
     var maxWeight: Double? = null,
-    var deliveryDate: LocalDate? = null,
+    var deliveryDate: String? = null,
     var haveSecurity: Boolean? = null,
     var status: OrderStatus? = null,
     var value: Double? = null,
