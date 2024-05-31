@@ -117,7 +117,7 @@ fun Login(
                     value = password,
                     placeHolder = "*****",
                     label = "Digite sua senha:",
-                    visualTransformation = PasswordVisualTransformation(),
+//                    visualTransformation = PasswordVisualTransformation(),
                     onSubmitted = hideKeyboard,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier

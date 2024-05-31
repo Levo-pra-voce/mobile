@@ -39,6 +39,7 @@ import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.DateUtils
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.formatCurrency
+import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
@@ -49,15 +50,14 @@ import com.levopravoce.mobile.ui.theme.White100
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun Relatory(
     relatoryViewModel: RelatoryViewModel = hiltViewModel()
 ) {
-    val uiState = relatoryViewModel.uiState.collectAsState();
-    val deliveryList = uiState.value.relatories
+    val state = relatoryViewModel.uiState.collectAsState();
+    val deliveryList = state.value.relatories
 
     val deliveryDateState: MutableState<LocalDate?> = remember {
         mutableStateOf(null)
@@ -65,26 +65,21 @@ fun Relatory(
 
     val coroutineScope = rememberCoroutineScope()
 
+    val showError = remember {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(Unit) {
         relatoryViewModel.getRelatories()
     }
     
-    LaunchedEffect(key1 = uiState.value.status) {
-        when (uiState.value.status) {
-            RequestStatus.LOADING -> {
-                println("Loading")
-            }
-            RequestStatus.SUCCESS -> {
-                println("Success")
-            }
-            RequestStatus.ERROR -> {
-                println("Error")
-            }
-            else -> {
-                println("Idle")
-            }
+    LaunchedEffect(key1 = state.value.status) {
+        if (state.value.status == RequestStatus.ERROR) {
+            showError.value = true
         }
     }
+
+    Alert(show = showError, message = state.value.error)
 
     Screen(padding = 0.dp) {
         Header(
@@ -117,11 +112,11 @@ fun Relatory(
             ButtonStyled(
                 text = "Exportar",
                 onClick = {
-//                    coroutineScope.launch {
-//                        relatoryViewModel.export(
-//                            deliveryDate = deliveryDate.value
-//                        )
-//                    }
+                    coroutineScope.launch {
+                        relatoryViewModel.getRelatoryXlsx(
+                            deliveryDate = deliveryDateState.value
+                        )
+                    }
                 },
                 disabled = relatoryViewModel.isLoading()
             )
