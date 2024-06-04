@@ -84,7 +84,12 @@ fun DeliveryInfo(
     Alert(show = showErrorAlert, message = userViewModelState.value.error ?: "Erro desconhecido")
 
     if (vehicleDetailsDisplay.value) {
-        Screen {
+        Screen(
+            Modifier.verticalScroll(
+                enabled = true,
+                state = rememberScrollState()
+            )
+        ) {
             VehicleInfo(
                 userDTO = userDTORemember,
                 userViewModelState = userViewModelState,
