@@ -1,13 +1,12 @@
 package com.levopravoce.mobile.features.user.representation
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +16,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.features.app.representation.BackButton
+import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
@@ -53,19 +53,18 @@ fun RegisterDecider(
             }
 
             Column(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ClientOption(
-                    value = UserType.CLIENTE,
-                    title = "Sou cliente !",
-                    onClick = onClick
+                    value = UserType.CLIENTE, title = "Sou cliente !", onClick = onClick
                 )
                 Column(Modifier.padding(top = 48.dp)) {
                     ClientOption(
-                        value = UserType.ENTREGADOR,
-                        title = "Sou entregador !",
-                        onClick = onClick
+                        value = UserType.ENTREGADOR, title = "Sou entregador !", onClick = onClick
                     )
                 }
             }
@@ -75,37 +74,20 @@ fun RegisterDecider(
 
 @Composable
 private fun ClientOption(
-    value: UserType,
-    title: String,
-    onClick: (UserType) -> Unit = {}
+    value: UserType, title: String, onClick: (UserType) -> Unit = {}
 ) {
-    Row(
+    Button(
+        text = title,
+        onClick = { onClick(value) },
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .background(MaterialTheme.customColorsShema.invertBackground)
-            .clickable(onClick = { onClick(value) }),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.customColorsShema.title
-            )
-        }
-    }
+            .width(300.dp)
+    )
 }
 
 @Composable
 @Preview
 fun RegisterDeciderPreview() {
     ClientOption(
-        value = UserType.CLIENTE,
-        title = "Sou cliente !"
+        value = UserType.CLIENTE, title = "Sou cliente !"
     )
 }
