@@ -1,24 +1,18 @@
 package com.levopravoce.mobile.features.user.representation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,9 +29,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
+import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
+import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.app.representation.FormInputText
-import com.levopravoce.mobile.features.app.representation.LargeDropdownMenu
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.app.representation.Title
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
@@ -45,7 +40,6 @@ import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
-import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun DeliveryInfo(
@@ -60,7 +54,7 @@ fun DeliveryInfo(
     val focusManager = LocalFocusManager.current
     val navController = navControllerContext.current
     val vehicleDetailsDisplay = remember { mutableStateOf(false) }
-    val isEditing = userDTORemember.id == null
+    val isEditing = userDTORemember.id != null
 
     val hideKeyboard = {
         keyboardController?.hide()
@@ -70,51 +64,24 @@ fun DeliveryInfo(
         focusManager.moveFocus(FocusDirection.Next)
     }
 
-    var showErrorAlert by remember { mutableStateOf(false) }
+    val showErrorAlert = remember { mutableStateOf(false) }
     LaunchedEffect(userViewModelState.value.status) {
         when (userViewModelState.value.status) {
             RequestStatus.ERROR -> {
                 hideKeyboard()
-                showErrorAlert = true
+                showErrorAlert.value = true
             }
+
             RequestStatus.SUCCESS -> {
                 hideKeyboard()
                 navController?.navigate(Routes.Home.ROUTE)
             }
+
             else -> {}
         }
     }
 
-    if (showErrorAlert) {
-        AlertDialog(
-            onDismissRequest = {
-                showErrorAlert = false
-            },
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = userViewModelState.value.error ?: "Erro desconhecido",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.customColorsShema.title
-                    )
-                }
-            },
-            confirmButton = {
-                Text(
-                    text = "OK",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.customColorsShema.title,
-                    modifier = Modifier.clickable {
-                        showErrorAlert = false
-                    }
-                )
-            },
-        )
-    }
+    Alert(show = showErrorAlert, message = userViewModelState.value.error ?: "Erro desconhecido")
 
     if (vehicleDetailsDisplay.value) {
         Screen {
@@ -241,54 +208,22 @@ fun DeliveryInfo(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
-
-                var selectedIndex by remember { mutableIntStateOf(-1) }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                ) {
-                    LargeDropdownMenu(
-                        label = "Tamanho",
-                        placeHolder = "Tamanho",
-                        items = listOf("Pequeno", "Médio", "Grande"),
-                        selectedIndex = selectedIndex,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        onItemSelected = { index, _ -> selectedIndex = index },
-                    )
-                }
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
-                    .padding(top = 24.dp),
+                    .padding(top = 24.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .background(MaterialTheme.customColorsShema.invertBackground)
-                        .clickable {
-                            vehicleDetailsDisplay.value = true
-                        }
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            text = if (isEditing) "Editar Veículo" else "Cadastrar Veículo",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.customColorsShema.title
-                        )
-                    }
-                }
+                Button(
+                    text = if (isEditing) "Editar Veículo" else "Cadastrar Veículo",
+                    onClick = {
+                        vehicleDetailsDisplay.value = true
+                    }, modifier = Modifier.width(200.dp)
+                )
             }
 
             SubmitButton(userViewModel, userDTORemember, UserType.ENTREGADOR)
