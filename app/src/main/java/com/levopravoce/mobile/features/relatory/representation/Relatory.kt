@@ -1,18 +1,13 @@
 package com.levopravoce.mobile.features.relatory.representation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DisplayMode
@@ -30,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +35,7 @@ import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.formatCurrency
 import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
+import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.relatory.data.dto.RelatoryDTO
@@ -109,7 +104,7 @@ fun Relatory(
                 .padding(horizontal = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            ButtonStyled(
+            Button(
                 text = "Exportar",
                 onClick = {
                     coroutineScope.launch {
@@ -120,7 +115,7 @@ fun Relatory(
                 },
                 disabled = relatoryViewModel.isLoading()
             )
-            ButtonStyled(
+            Button(
                 text = "Buscar",
                 onClick = {
                     coroutineScope.launch {
@@ -232,33 +227,3 @@ fun DatePickerInput(
     }
 }
 
-@Composable
-fun ButtonStyled(
-    text: String,
-    onClick: () -> Unit,
-    disabled: Boolean = false
-) {
-    Row(
-        modifier = Modifier
-            .width(100.dp)
-            .clip(RoundedCornerShape(20))
-            .background(MaterialTheme.customColorsShema.invertBackground)
-            .clickable {
-               if (!disabled) {
-                   onClick()
-               }
-            },
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.customColorsShema.title
-            )
-        }
-    }
-}
