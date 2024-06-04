@@ -127,6 +127,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
 
+    // Photo picker
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
 }
 
 kapt {

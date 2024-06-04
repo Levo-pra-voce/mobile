@@ -1,14 +1,15 @@
 package com.levopravoce.mobile.features.user.representation
 
-import androidx.compose.foundation.background
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,10 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
@@ -35,7 +34,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
-import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
@@ -45,9 +43,7 @@ import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ClientInfo(
     userDTO: UserDTO = UserDTO(
@@ -57,10 +53,13 @@ fun ClientInfo(
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
     val userViewModelState = userViewModel.uiState.collectAsState()
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val navController = navControllerContext.current
+    val isEditing = userDTORemember.id != null
+    var selectedImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
 
     val hideKeyboard = {
         keyboardController?.hide()
@@ -71,17 +70,18 @@ fun ClientInfo(
     }
 
     var showErrorAlert by remember { mutableStateOf(false) }
-
     LaunchedEffect(userViewModelState.value.status) {
         when (userViewModelState.value.status) {
             RequestStatus.ERROR -> {
                 hideKeyboard()
                 showErrorAlert = true
             }
+
             RequestStatus.SUCCESS -> {
                 hideKeyboard()
                 navController?.navigate(Routes.Home.ROUTE)
             }
+
             else -> {}
         }
     }
@@ -117,7 +117,9 @@ fun ClientInfo(
         )
     }
 
-    Screen {
+    Screen(
+        Modifier.verticalScroll(rememberScrollState())
+    ) {
         Column {
             BackButton(
                 Modifier.scale(1.5f),
@@ -132,7 +134,7 @@ fun ClientInfo(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = if (userDTORemember.id == null) "Cadastrar conta" else "Editar perfil",
+                text = if (isEditing) "Editar perfil" else "Cadastrar conta",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.customColorsShema.title
             )
@@ -151,7 +153,7 @@ fun ClientInfo(
                     .fillMaxWidth()
             )
             FormInputText(
-                enabled = userDTORemember.id == null,
+                enabled = !isEditing,
                 onChange = { userDTORemember = userDTORemember.copy(email = it) },
                 value = userDTORemember.email ?: "",
                 placeHolder = "Email",
@@ -163,9 +165,9 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                enabled = userDTORemember.id == null,
+                enabled = !isEditing,
                 onChange = { userDTORemember = userDTORemember.copy(cpf = it.maxLength(11)) },
-                value = if (userDTORemember.id == null) userDTORemember.cpf
+                value = if (!isEditing) userDTORemember.cpf
                     ?: "" else "***.***.***-**",
                 placeHolder = "CPF",
                 withBorder = false,
@@ -208,7 +210,7 @@ fun ClientInfo(
                 placeHolder = "Complemento",
                 withBorder = false,
                 onSubmitted = {
-                    if (userDTORemember.id == null) {
+                    if (isEditing) {
                         nextFocus()
                     } else {
                         hideKeyboard()
@@ -218,7 +220,7 @@ fun ClientInfo(
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
-            if (userDTORemember.id == null) {
+            if (!isEditing) {
                 FormInputText(
                     onChange = { userDTORemember = userDTORemember.copy(password = it) },
                     value = userDTORemember.password ?: "",
@@ -232,52 +234,8 @@ fun ClientInfo(
                 )
             }
         }
-        SubmitButton(userViewModel, userDTORemember, UserType.CLIENTE)
-    }
-}
-
-@Composable
-fun SubmitButton(
-    userViewModel: UserViewModel,
-    userDTO: UserDTO = UserDTO(),
-    userType: UserType = UserType.CLIENTE,
-    mainViewModel: MainViewModel = hiltViewModel()
-) {
-    val coroutineScope = rememberCoroutineScope()
-
-    Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .background(MaterialTheme.customColorsShema.invertBackground)
-                .clickable {
-                    if (!userViewModel.isLoading()) {
-                        coroutineScope.launch {
-                            if (userDTO.id == null) {
-                                userViewModel.register(userType, userDTO)
-                            } else {
-                                val success = userViewModel.update(userDTO)
-                                if (success) {
-                                    mainViewModel.meRequest()
-                                }
-                            }
-                        }
-                    }
-                }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = if (userDTO.id == null) "Cadastrar" else "Atualizar",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.customColorsShema.title
-                )
-            }
+        Column(modifier = Modifier.padding(top = 16.dp)) {
+            SubmitButton(userViewModel, userDTORemember, UserType.CLIENTE)
         }
     }
 }
