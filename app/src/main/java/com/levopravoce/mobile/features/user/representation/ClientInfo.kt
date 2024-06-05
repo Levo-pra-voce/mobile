@@ -211,9 +211,9 @@ fun ClientInfo(
                 withBorder = false,
                 onSubmitted = {
                     if (isEditing) {
-                        nextFocus()
-                    } else {
                         hideKeyboard()
+                    } else {
+                        nextFocus()
                     }
                 },
                 modifier = Modifier
