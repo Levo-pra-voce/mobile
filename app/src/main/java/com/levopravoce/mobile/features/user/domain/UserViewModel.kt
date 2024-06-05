@@ -22,8 +22,7 @@ data class UserUiState(
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val authStore: AuthStore
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserUiState())
@@ -34,10 +33,7 @@ class UserViewModel @Inject constructor(
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
         try {
             val data = userRepository.register(userType.name, user)
-
             if (data.isSuccessful) {
-                val user = data.body() ?: throw Exception("User not found")
-                authStore.saveToken(user.token)
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
                 _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))

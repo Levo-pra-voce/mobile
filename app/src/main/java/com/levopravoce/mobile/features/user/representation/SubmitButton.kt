@@ -10,22 +10,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.user.domain.UserViewModel
+import com.levopravoce.mobile.routes.Routes
+import com.levopravoce.mobile.routes.navControllerContext
 import kotlinx.coroutines.launch
 
 @Composable
 fun SubmitButton(
     userViewModel: UserViewModel,
     userDTO: UserDTO = UserDTO(),
-    userType: UserType = UserType.CLIENTE,
-    mainViewModel: MainViewModel = hiltViewModel()
+    userType: UserType = UserType.CLIENTE
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val navController = navControllerContext.current
 
     Column(
         modifier = Modifier
@@ -43,7 +43,7 @@ fun SubmitButton(
                         } else {
                             val success = userViewModel.update(userDTO)
                             if (success) {
-                                mainViewModel.meRequest()
+                                navController?.navigate(Routes.Auth.LOGIN)
                             }
                         }
                     }
