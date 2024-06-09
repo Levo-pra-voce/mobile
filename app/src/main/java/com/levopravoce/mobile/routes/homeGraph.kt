@@ -9,6 +9,7 @@ import com.levopravoce.mobile.features.home.representation.HomeDecider
 import com.levopravoce.mobile.features.order.represatation.OrderInfo
 import com.levopravoce.mobile.features.relatory.representation.Relatory
 import com.levopravoce.mobile.features.themeCustomization.representation.ThemeCustomization
+import com.levopravoce.mobile.features.user.representation.ChangePassword
 import com.levopravoce.mobile.features.user.representation.UserEdit
 
 fun NavGraphBuilder.homeGraph() {
@@ -52,6 +53,12 @@ fun NavGraphBuilder.homeGraph() {
         composable(route = Routes.Home.RELATORY) {
             Authentication(content = {
                 Relatory()
+            })
+        }
+
+        composable(route = Routes.Home.CHANGE_PASSWORD) {
+            Authentication(content = {
+                ChangePassword()
             })
         }
     }

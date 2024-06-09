@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.forgotPassword.representation
+package com.levopravoce.mobile.features.user.representation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,19 +19,21 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.levopravoce.mobile.common.RequestStatus
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.app.representation.Submit
 import com.levopravoce.mobile.features.forgotPassword.domain.ForgotPasswordViewModel
+import com.levopravoce.mobile.features.forgotPassword.representation.ForgotPasswordState
+import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import kotlinx.coroutines.launch
 
 @Composable
-fun ForgotPasswordChangePassword(
-    model: ForgotPasswordViewModel,
-    forgotPasswordEnum: MutableState<ForgotPasswordState>
+fun ChangePassword(
+    model: UserViewModel = hiltSharedViewModel(),
 ) {
     val state = model.uiState.collectAsStateWithLifecycle();
     val isLoading = state.value.status == RequestStatus.LOADING
@@ -45,7 +47,6 @@ fun ForgotPasswordChangePassword(
     LaunchedEffect(state.value.status) {
         when (state.value.status) {
             RequestStatus.SUCCESS -> {
-                forgotPasswordEnum.value = ForgotPasswordState.PASSWORD
                 navController?.navigate(Routes.Auth.LOGIN)
             }
             RequestStatus.ERROR -> {
@@ -91,7 +92,7 @@ fun ForgotPasswordChangePassword(
             Submit(
                 onSubmit = {
                     coroutineScope.launch {
-                        model.resetPassword(password, repeatPassword)
+                        model.changePassword(password, repeatPassword)
                     }
                 },
                 isLoading = isLoading,

@@ -19,5 +19,6 @@ object Routes {
         val USER_EDIT = "user_edit"
         val SELECT_ORDER = "select_order"
         val RELATORY = "relatory"
+        val CHANGE_PASSWORD = "change_password"
     }
 }

@@ -45,6 +45,15 @@ fun CustomizationConfig(
         )
         Row (modifier = Modifier.padding(top = 8.dp)) {
             ItemOption(
+                title = "Mudar Senha",
+                description = "Mude a senha da sua conta.",
+                onClick = {
+                    navController?.navigate(Routes.Home.CHANGE_PASSWORD)
+                }
+            )
+        }
+        Row (modifier = Modifier.padding(top = 8.dp)) {
+            ItemOption(
                 title = "Editar",
                 description = "Edite as informações do seu perfíl.",
                 onClick = {

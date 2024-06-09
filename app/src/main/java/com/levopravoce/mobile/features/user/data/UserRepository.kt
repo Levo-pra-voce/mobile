@@ -45,5 +45,10 @@ interface UserRepository {
         @Body passwordCodeDTO: PasswordCodeDTO
     ): Response<Unit>
 
+    @PUT("/api/user/change-password")
+    suspend fun changePasswordAuth(
+        @Body passwordCodeDTO: PasswordCodeDTO
+    ): Response<Unit>
+
 
 }
