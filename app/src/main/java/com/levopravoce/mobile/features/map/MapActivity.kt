@@ -8,6 +8,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -17,7 +19,11 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.levopravoce.mobile.R
+import com.levopravoce.mobile.common.awaitMap
+import com.levopravoce.mobile.common.rememberMapViewWithLifecycle
 import com.levopravoce.mobile.features.map.representation.MapTheme
+import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.order.domain.OrderUiState
 import kotlinx.coroutines.launch
 import org.maplibre.android.MapLibre
 import org.maplibre.android.WellKnownTileServer

@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
@@ -40,12 +42,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
+import com.levopravoce.mobile.common.rememberMapViewWithLifecycle
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
+import com.levopravoce.mobile.features.map.MapActivity
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.domain.OrderViewModel
 import com.levopravoce.mobile.routes.Routes
@@ -66,6 +70,7 @@ fun OrderInfo(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val navController = navControllerContext.current
+    val mapViewDisplay = remember { mutableStateOf(false) }
 
     val hideKeyboard = {
         keyboardController?.hide()
@@ -97,113 +102,136 @@ fun OrderInfo(
 
     Alert(show = showError, message = state.value.error)
 
-    Screen {
-        Column {
-            BackButton(
-                Modifier.scale(1.5f),
-                state.value.status != RequestStatus.LOADING
+    if(mapViewDisplay.value){
+        Screen (
+            Modifier.verticalScroll(
+                enabled = true,
+                state = rememberScrollState()
             )
-        }
-
-        Column (
-            modifier = Modifier
-                .padding(top = 48.dp, bottom = 24.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Text(
-                text = "Solicitar entrega",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.customColorsShema.title
+            rememberMapViewWithLifecycle(
+                orderDTO = orderDTORemember,
+                orderViewModelState = state,
+                mapDetailsDisplay = mapViewDisplay,
+                isEditing = orderDTORemember.id != null,
+                hideKeyboard = hideKeyboard,
+                nextFocus = nextFocus
             )
         }
-
-        Column {
-            FormInputText(
-                onChange = {
-                    if (it.toDoubleOrNull() != null) {
-                        val number = it.toDouble()
-                        orderDTORemember = orderDTORemember.copy(height = number)
-                    }
-                },
-                value = orderDTORemember.height?.toString() ?: "",
-                placeHolder = "Largura:",
-                withBorder = false,
-                onSubmitted = nextFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier
-                    .fillMaxWidth()
+    } else{
+        Screen(
+            Modifier.verticalScroll(
+                enabled = !mapViewDisplay.value,
+                state = rememberScrollState()
             )
-            FormInputText(
-                enabled = orderDTORemember.id == null,
-                onChange = {
-                    if (it.toDoubleOrNull() != null) {
-                        val number = it.toDouble()
-                        orderDTORemember = orderDTORemember.copy(width = number)
-                    }
-                },
-                value = orderDTORemember.width?.toString() ?: "",
-                placeHolder = "Altura:",
-                withBorder = false,
-                onSubmitted = nextFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-            FormInputText(
-                enabled = orderDTORemember.id == null,
-                onChange = {
-                    if (it.toDoubleOrNull() != null) {
-                        val number = it.toDouble()
-                        orderDTORemember = orderDTORemember.copy(maxWeight = number)
-                    }
-                },
-                value = orderDTORemember.maxWeight?.toString() ?: "",
-                placeHolder = "Peso máximo:",
-                withBorder = false,
-                onSubmitted = nextFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-            FormInputText(
-                enabled = orderDTORemember.id == null,
-                onChange = {
-                    orderDTORemember = orderDTORemember.copy(deliveryDate = it)
-                },
-                value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "",
-                placeHolder = "Data de entrega:",
-                withBorder = false,
-                onSubmitted = nextFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 8.dp),
-                    text = "Adicionar seguro:",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.customColorsShema.title
-                )
-                RoundedCheckbox(
-                    modifier = Modifier.padding(start = 8.dp, top = 10.dp),
-                    checked = orderDTORemember.haveSecurity ?: false,
-                    onCheckedChange = {
-                        orderDTORemember = orderDTORemember.copy(haveSecurity = it)
-                    }
+        ) {
+            Column {
+                BackButton(
+                    Modifier.scale(1.5f),
+                    state.value.status != RequestStatus.LOADING
                 )
             }
+
+            Column (
+                modifier = Modifier
+                    .padding(top = 48.dp, bottom = 24.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    text = "Solicitar entrega",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.customColorsShema.title
+                )
+            }
+
+            Column {
+                FormInputText(
+                    onChange = {
+                        if (it.toDoubleOrNull() != null) {
+                            val number = it.toDouble()
+                            orderDTORemember = orderDTORemember.copy(height = number)
+                        }
+                    },
+                    value = orderDTORemember.height?.toString() ?: "",
+                    placeHolder = "Largura:",
+                    withBorder = false,
+                    onSubmitted = nextFocus,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                FormInputText(
+                    enabled = orderDTORemember.id == null,
+                    onChange = {
+                        if (it.toDoubleOrNull() != null) {
+                            val number = it.toDouble()
+                            orderDTORemember = orderDTORemember.copy(width = number)
+                        }
+                    },
+                    value = orderDTORemember.width?.toString() ?: "",
+                    placeHolder = "Altura:",
+                    withBorder = false,
+                    onSubmitted = nextFocus,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+                FormInputText(
+                    enabled = orderDTORemember.id == null,
+                    onChange = {
+                        if (it.toDoubleOrNull() != null) {
+                            val number = it.toDouble()
+                            orderDTORemember = orderDTORemember.copy(maxWeight = number)
+                        }
+                    },
+                    value = orderDTORemember.maxWeight?.toString() ?: "",
+                    placeHolder = "Peso máximo:",
+                    withBorder = false,
+                    onSubmitted = nextFocus,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+                FormInputText(
+                    enabled = orderDTORemember.id == null,
+                    onChange = {
+                        orderDTORemember = orderDTORemember.copy(deliveryDate = it)
+                    },
+                    value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "",
+                    placeHolder = "Data de entrega:",
+                    withBorder = false,
+                    onSubmitted = nextFocus,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 8.dp),
+                        text = "Adicionar seguro:",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.customColorsShema.title
+                    )
+                    RoundedCheckbox(
+                        modifier = Modifier.padding(start = 8.dp, top = 10.dp),
+                        checked = orderDTORemember.haveSecurity ?: false,
+                        onCheckedChange = {
+                            orderDTORemember = orderDTORemember.copy(haveSecurity = it)
+                        }
+                    )
+                }
+            }
+            EnterButton(model, orderDTORemember)
         }
-        EnterButton(model, orderDTORemember)
     }
 }
 
@@ -260,7 +288,7 @@ fun EnterButton(
                 horizontalArrangement = Arrangement.Center,
             ){
                 Text(
-                    text = "Solicitar entrega",
+                    text = "Avançar",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.customColorsShema.title
                 )

@@ -4,23 +4,31 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.compose.runtime.State
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.order.domain.OrderUiState
 import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapView
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-/**
- * Remembers a MapView and gives it the lifecycle of the current LifecycleOwner
- */
 @Composable
-fun rememberMapViewWithLifecycle(): MapView {
+fun rememberMapViewWithLifecycle(
+    orderDTO: OrderDTO,
+    orderViewModelState: State<OrderUiState>,
+    mapDetailsDisplay: MutableState<Boolean>,
+    isEditing : Boolean,
+    hideKeyboard: () -> Unit?,
+    nextFocus: () -> Boolean
+): MapView {
     val context = LocalContext.current
     val mapView = remember { MapView(context) }
 
