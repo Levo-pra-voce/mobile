@@ -137,6 +137,28 @@ fun VehicleInfo(
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             )
+            FormInputText(
+                onChange = { vehicle = vehicle.copy(priceBase = it.toDoubleOrNull()) },
+                value = vehicle.priceBase?.toString() ?: "",
+                placeHolder = "Preço base por viagem",
+                withBorder = false,
+                onSubmitted = nextFocus,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+            FormInputText(
+                onChange = { vehicle = vehicle.copy(pricePerKm = it.toDoubleOrNull()) },
+                value = vehicle.pricePerKm?.toString() ?: "",
+                placeHolder = "Preço cobrado por quilômetro rodado",
+                withBorder = false,
+                onSubmitted = hideKeyboard,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
 
             Column(
                 modifier = Modifier
