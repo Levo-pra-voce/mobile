@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
@@ -41,6 +42,7 @@ import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DeliveryInfo(
     userDTO: UserDTO = UserDTO(
