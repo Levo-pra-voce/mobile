@@ -130,6 +130,11 @@ dependencies {
     // Photo picker
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // Map
+    implementation("org.maplibre.gl:android-sdk:11.0.0")
+    implementation("com.google.android.gms:play-services:12.0.1")
+    implementation ("com.google.accompanist:accompanist-permissions:0.24.13-rc")
+
 }
 
 kapt {

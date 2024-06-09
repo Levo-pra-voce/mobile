@@ -14,6 +14,9 @@ data class OrderDTO (
     var status: OrderStatus? = null,
     var value: Double? = null,
     var deliveryman: UserDTO? = null,
-    var client: UserDTO? = null, //    private VehicleDTO vehicle;
-    //    private PaymentDTO payment;
+    var client: UserDTO? = null,
+    var originLatitude: Double? = null,
+    var originLongitude: Double? = null,
+    var destinationLatitude: Double? = null,
+    var destinationLongitude: Double? = null,
 )
