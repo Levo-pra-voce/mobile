@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -29,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -38,8 +38,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
@@ -54,12 +56,11 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OrderInfo(
     model: OrderViewModel = hiltSharedViewModel()
 ) {
-    var orderDTORemember by remember { mutableStateOf(OrderDTO()) }
+    var orderDTOState by remember { mutableStateOf(OrderDTO()) }
     val state = model.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -101,14 +102,64 @@ fun OrderInfo(
         Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .fillMaxSize()) {
+    ) {
         if (mapViewDisplay.value) {
             Screen(
                 Modifier
-                    .background(Color.Transparent)
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
             ) {
-                MapSelectDestination()
+                Column(
+                    Modifier
+                        .background(MaterialTheme.customColorsShema.background)
+                        .padding(vertical = 16.dp)
+                ) {
+                    BackButton(
+                        Modifier.scale(1.5f),
+                        state.value.status != RequestStatus.LOADING
+                    ) {
+                        mapViewDisplay.value = false
+                    }
+                    Row(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Selecione o ponto de partida e destino",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.customColorsShema.title,
+                            textAlign = TextAlign.Center,
+                        )
+                    }
+                }
+                val showFinishButton = remember {
+                    mutableStateOf(false)
+                }
+                Box {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        MapSelectDestination { originLng, destinationLng ->
+                            orderDTOState.destinationLongitude = destinationLng.longitude
+                            orderDTOState.destinationLatitude = destinationLng.latitude
+                            orderDTOState.originLongitude = originLng.longitude
+                            orderDTOState.originLatitude = originLng.latitude
+                            showFinishButton.value = true
+                        }
+                    }
+                    if (showFinishButton.value) {
+                        Box(
+                            Modifier
+                                .zIndex(1f)
+                        ) {
+                            EnterButton("Finalizar") {
+                                coroutineScope.launch {
+                                    model.createOrder(orderDTOState)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } else {
             Screen(
@@ -117,13 +168,14 @@ fun OrderInfo(
                     state = rememberScrollState()
                 )
             ) {
-                Column {
+                Column(
+                    Modifier.padding(vertical = 16.dp)
+                ) {
                     BackButton(
                         Modifier.scale(1.5f),
                         state.value.status != RequestStatus.LOADING
                     )
                 }
-
                 Column(
                     modifier = Modifier
                         .padding(top = 48.dp, bottom = 24.dp)
@@ -142,10 +194,10 @@ fun OrderInfo(
                         onChange = {
                             if (it.toDoubleOrNull() != null) {
                                 val number = it.toDouble()
-                                orderDTORemember = orderDTORemember.copy(height = number)
+                                orderDTOState = orderDTOState.copy(height = number)
                             }
                         },
-                        value = orderDTORemember.height?.toString() ?: "",
+                        value = orderDTOState.height?.toString() ?: "",
                         placeHolder = "Largura:",
                         withBorder = false,
                         onSubmitted = nextFocus,
@@ -154,14 +206,14 @@ fun OrderInfo(
                             .fillMaxWidth()
                     )
                     FormInputText(
-                        enabled = orderDTORemember.id == null,
+                        enabled = orderDTOState.id == null,
                         onChange = {
                             if (it.toDoubleOrNull() != null) {
                                 val number = it.toDouble()
-                                orderDTORemember = orderDTORemember.copy(width = number)
+                                orderDTOState = orderDTOState.copy(width = number)
                             }
                         },
-                        value = orderDTORemember.width?.toString() ?: "",
+                        value = orderDTOState.width?.toString() ?: "",
                         placeHolder = "Altura:",
                         withBorder = false,
                         onSubmitted = nextFocus,
@@ -171,14 +223,14 @@ fun OrderInfo(
                             .padding(top = 8.dp)
                     )
                     FormInputText(
-                        enabled = orderDTORemember.id == null,
+                        enabled = orderDTOState.id == null,
                         onChange = {
                             if (it.toDoubleOrNull() != null) {
                                 val number = it.toDouble()
-                                orderDTORemember = orderDTORemember.copy(maxWeight = number)
+                                orderDTOState = orderDTOState.copy(maxWeight = number)
                             }
                         },
-                        value = orderDTORemember.maxWeight?.toString() ?: "",
+                        value = orderDTOState.maxWeight?.toString() ?: "",
                         placeHolder = "Peso máximo:",
                         withBorder = false,
                         onSubmitted = nextFocus,
@@ -188,11 +240,15 @@ fun OrderInfo(
                             .padding(top = 8.dp)
                     )
                     FormInputText(
-                        enabled = orderDTORemember.id == null,
+                        enabled = orderDTOState.id == null,
                         onChange = {
-                            orderDTORemember = orderDTORemember.copy(deliveryDate = it)
+                            orderDTOState = orderDTOState.copy(deliveryDate = it)
                         },
-                        value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        value = orderDTOState.deliveryDate?.format(
+                            DateTimeFormatter.ofPattern(
+                                "dd/MM/yyyy"
+                            )
+                        )
                             ?: "",
                         placeHolder = "Data de entrega:",
                         withBorder = false,
@@ -216,14 +272,14 @@ fun OrderInfo(
                         )
                         RoundedCheckbox(
                             modifier = Modifier.padding(start = 8.dp, top = 10.dp),
-                            checked = orderDTORemember.haveSecurity ?: false,
+                            checked = orderDTOState.haveSecurity ?: false,
                             onCheckedChange = {
-                                orderDTORemember = orderDTORemember.copy(haveSecurity = it)
+                                orderDTOState = orderDTOState.copy(haveSecurity = it)
                             }
                         )
                     }
                 }
-                EnterButton(model) {
+                EnterButton("Avançar") {
                     coroutineScope.launch {
                         mapViewDisplay.value = true
                     }
@@ -260,8 +316,8 @@ fun RoundedCheckbox(
 
 @Composable
 fun EnterButton(
-    orderViewModel: OrderViewModel,
-    onSubmit: () -> Unit = {}
+    title: String,
+    onSubmit: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
         Row(
@@ -270,9 +326,7 @@ fun EnterButton(
                 .padding(16.dp)
                 .background(MaterialTheme.customColorsShema.invertBackground)
                 .clickable {
-                    if (!orderViewModel.isLoading()) {
-                        onSubmit()
-                    }
+                    onSubmit()
                 }
         ) {
             Row(
@@ -282,7 +336,7 @@ fun EnterButton(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = "Avançar",
+                    text = title,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.customColorsShema.title
                 )
