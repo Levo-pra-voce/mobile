@@ -46,6 +46,9 @@ fun MapSelectDestination() {
 
     val locationPermissions = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
+    val pickupPosition = remember { mutableStateOf<LatLng?>(null) }
+    val destinationPosition = remember { mutableStateOf<LatLng?>(null) }
+
     LaunchedEffect(locationPermissions.status) {
         if (locationPermissions.status == PermissionStatus.Granted) {
             if (ActivityCompat.checkSelfPermission(
@@ -74,5 +77,15 @@ fun MapSelectDestination() {
         cameraPositionState = cameraPositionState,
         properties = properties,
         uiSettings = uiSettings,
+        onMapClick = { latLng ->
+          if (pickupPosition.value == null){
+              pickupPosition.value = latLng
+          } else if(destinationPosition.value == null){
+            destinationPosition.value = latLng
+          } else{
+            pickupPosition.value = latLng
+            destinationPosition.value = null
+          }
+        },
     )
 }
