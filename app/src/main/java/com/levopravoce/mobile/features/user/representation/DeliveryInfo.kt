@@ -45,8 +45,7 @@ import com.levopravoce.mobile.routes.navControllerContext
 fun DeliveryInfo(
     userDTO: UserDTO = UserDTO(
         userType = UserType.ENTREGADOR
-    ),
-    userViewModel: UserViewModel = hiltViewModel()
+    ), userViewModel: UserViewModel = hiltViewModel()
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
     val userViewModelState = userViewModel.uiState.collectAsState()
@@ -86,8 +85,7 @@ fun DeliveryInfo(
     if (vehicleDetailsDisplay.value) {
         Screen(
             Modifier.verticalScroll(
-                enabled = true,
-                state = rememberScrollState()
+                enabled = true, state = rememberScrollState()
             )
         ) {
             VehicleInfo(
@@ -102,13 +100,11 @@ fun DeliveryInfo(
     } else {
         Screen(
             Modifier.verticalScroll(
-                enabled = !vehicleDetailsDisplay.value,
-                state = rememberScrollState()
+                enabled = !vehicleDetailsDisplay.value, state = rememberScrollState()
             )
         ) {
             BackButton(
-                Modifier.scale(1.5f),
-                userViewModelState.value.status != RequestStatus.LOADING
+                Modifier.scale(1.5f), userViewModelState.value.status != RequestStatus.LOADING
             )
 
             Title(text = if (isEditing) "Editar Conta" else "Cadastrar Conta")
@@ -122,8 +118,7 @@ fun DeliveryInfo(
                     placeHolder = "Nome",
                     withBorder = false,
                     onSubmitted = nextFocus,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 )
                 FormInputText(
                     onChange = { userDTORemember = userDTORemember.copy(email = it) },
@@ -200,19 +195,24 @@ fun DeliveryInfo(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
-                FormInputText(
-                    onChange = { userDTORemember = userDTORemember.copy(password = it) },
-                    value = userDTORemember.password ?: "",
-                    placeHolder = "Senha",
-                    withBorder = false,
-                    visualTransformation = PasswordVisualTransformation(),
-                    onSubmitted = {
-                        hideKeyboard()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp)
-                )
+                if (!isEditing) {
+                    FormInputText(
+                        onChange = { userDTORemember = userDTORemember.copy(password = it) },
+                        value = userDTORemember.password ?: "",
+                        placeHolder = "Senha",
+                        withBorder = false,
+                        visualTransformation = PasswordVisualTransformation(),
+                        onSubmitted = {
+                            hideKeyboard()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp)
+                    )
+                    Terms {
+                        userDTORemember = userDTORemember.copy(acceptTerms = it)
+                    }
+                }
             }
 
             Column(
@@ -224,8 +224,7 @@ fun DeliveryInfo(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    text = if (isEditing) "Editar Veículo" else "Cadastrar Veículo",
-                    onClick = {
+                    text = if (isEditing) "Editar Veículo" else "Cadastrar Veículo", onClick = {
                         vehicleDetailsDisplay.value = true
                     }, modifier = Modifier.width(200.dp)
                 )
