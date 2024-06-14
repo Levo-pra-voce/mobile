@@ -70,7 +70,7 @@ fun MapSelectDestination(
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                     location?.let {
                         val lastLocation: Location = it
                         val newLat = LatLng(lastLocation.latitude, lastLocation.longitude)

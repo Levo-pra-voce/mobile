@@ -41,5 +41,6 @@ class OrderViewModel @Inject constructor(
         }
     }
 
+
     fun isLoading() = uiState.value.status == RequestStatus.LOADING
 }

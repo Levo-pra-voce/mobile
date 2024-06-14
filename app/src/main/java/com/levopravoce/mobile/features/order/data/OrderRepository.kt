@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.order.data
 
 import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
+import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.order.data.dto.GoogleDistanceMatrixRequestDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import retrofit2.Response
@@ -30,5 +31,9 @@ interface OrderRepository {
         @Query("destinationLng") destinationLng: Double
     ): Response<GoogleDistanceMatrixRequestDTO>
 
+    @GET("/api/order")
+    suspend fun getAvailableDeliveryUsers(
+        @Query("userType") userType: UserType
+    ): Response<List<UserDTO>>
 
 }

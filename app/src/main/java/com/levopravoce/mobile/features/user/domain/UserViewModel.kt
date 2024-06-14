@@ -85,4 +85,24 @@ class UserViewModel @Inject constructor(
             _uiState.value = UserUiState(status = RequestStatus.ERROR, error = e.message)
         }
     }
+
+    suspend fun getUser(): UserDTO? {
+        _uiState.value = UserUiState(status = RequestStatus.LOADING)
+        try {
+            val data = userRepository.getUser("id")
+
+            if (data.isSuccessful) {
+                _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
+            } else {
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+            }
+
+        } catch (
+            e: Exception
+        ) {
+            _uiState.value = UserUiState(status = RequestStatus.ERROR, error = e.message)
+        }
+
+        return null
+    }
 }
