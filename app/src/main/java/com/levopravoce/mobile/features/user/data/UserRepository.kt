@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.user.data
 
 import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
+import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.forgotPassword.data.PasswordCodeDTO
 import retrofit2.Response
 import retrofit2.http.Body
@@ -11,6 +12,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserRepository {
 
@@ -47,10 +49,9 @@ interface UserRepository {
     ): Response<Unit>
 
     @GET("/api/user/{id}")
-    @Headers("isAuthorized: false")
-    suspend fun getUser(
-        @Path("id") id: String
-    ): Response<Unit>
+    suspend fun getUserByType(
+        @Query("userType")userType: UserType
+    ): Response<List<UserDTO>>
 
 
 }

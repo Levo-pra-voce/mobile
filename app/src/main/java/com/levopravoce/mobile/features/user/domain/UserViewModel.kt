@@ -16,6 +16,7 @@ import javax.inject.Inject
 
 data class UserUiState(
     val data: UserDTO? = null,
+    val users: List<UserDTO>? = null,
     val status: RequestStatus = RequestStatus.IDLE,
     val error: String? = null
 )
@@ -28,6 +29,14 @@ class UserViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UserUiState())
 
     val uiState: StateFlow<UserUiState> = _uiState
+
+    init{
+        _uiState.value = UserUiState(
+            data = UserDTO(
+                userType = UserType.ENTREGADOR
+            )
+        )
+    }
 
     suspend fun register(userType: UserType, user: UserDTO) {
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
@@ -86,13 +95,12 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    suspend fun getUser(): UserDTO? {
+    suspend fun fetchUsersByType(userType: UserType) {
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
         try {
-            val data = userRepository.getUser("id")
-
+            val data = userRepository.getUserByType(userType)
             if (data.isSuccessful) {
-                _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
+                _uiState.value = UserUiState(users = data.body(), status = RequestStatus.SUCCESS)
             } else {
                 _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
             }
@@ -102,7 +110,6 @@ class UserViewModel @Inject constructor(
         ) {
             _uiState.value = UserUiState(status = RequestStatus.ERROR, error = e.message)
         }
-
-        return null
     }
+
 }
