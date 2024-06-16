@@ -171,15 +171,13 @@ fun OrderInfo(
             FormInputText(
                 enabled = orderDTORemember.id == null,
                 onChange = {
-                    if (it.matches("\\d{2}-\\d{2}-\\d{4}".toRegex())) {
-                        orderDTORemember = orderDTORemember.copy(deliveryDate = it)
-                    }
+                    orderDTORemember = orderDTORemember.copy(deliveryDate = it)
                 },
-                value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")) ?: "",
+                value = orderDTORemember.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "",
                 placeHolder = "Data de entrega:",
                 withBorder = false,
                 onSubmitted = nextFocus,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
