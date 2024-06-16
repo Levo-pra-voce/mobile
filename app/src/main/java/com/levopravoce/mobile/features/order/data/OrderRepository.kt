@@ -6,6 +6,7 @@ import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -19,4 +20,11 @@ interface OrderRepository {
         @Body user: OrderDTO
     ): Response<OrderDTO>
 
+    @GET("/api/order/deliveries-pending")
+    suspend fun findAllPending(): List<OrderDTO>
+
+    @GET("/api/order/{id}")
+    suspend fun findById(
+        @Path("id") id: String
+    ): OrderDTO
 }

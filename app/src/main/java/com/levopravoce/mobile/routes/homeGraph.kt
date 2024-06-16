@@ -5,6 +5,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.auth.representation.Authentication
 import com.levopravoce.mobile.features.configuration.representation.Configuration
+import com.levopravoce.mobile.features.deliveryList.representation.DeliveryDetails
+import com.levopravoce.mobile.features.deliveryList.representation.DeliveryList
 import com.levopravoce.mobile.features.home.representation.HomeDecider
 import com.levopravoce.mobile.features.order.represatation.OrderInfo
 import com.levopravoce.mobile.features.relatory.representation.Relatory
@@ -59,6 +61,19 @@ fun NavGraphBuilder.homeGraph() {
         composable(route = Routes.Home.CHANGE_PASSWORD) {
             Authentication(content = {
                 ChangePassword()
+            })
+        }
+
+        composable(route = Routes.Home.DELIVERY_LIST) {
+            Authentication(content = {
+                DeliveryList()
+            })
+        }
+
+        composable(route = Routes.Home.DELIVERY_DETAILS) {
+            val deliveryId = it.arguments?.getString("deliveryId") ?: ""
+            Authentication(content = {
+                DeliveryDetails(deliveryId)
             })
         }
     }
