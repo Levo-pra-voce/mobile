@@ -25,7 +25,8 @@ private val firstLineDescriptorData = listOf(
         id = R.drawable.truck_icon,
         contentDescription = "icone para solicitar entrega",
         title = "Suas entregas",
-        imageModifier = Modifier.offset(x = -(18.dp), y = 4.dp)
+        imageModifier = Modifier.offset(x = -(18.dp), y = 4.dp),
+        route = Routes.Home.DELIVERY_LIST
     ),
     IconDescriptorData(
         id = R.drawable.report_icon,
