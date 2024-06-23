@@ -21,7 +21,6 @@ import com.levopravoce.mobile.ui.theme.MobileTheme
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInputText(
     value: String,
@@ -70,10 +69,6 @@ fun FormInputText(
                 disabledContainerColor = MaterialTheme.customColorsShema.background,
                 errorContainerColor = MaterialTheme.customColorsShema.background,
             ),
-//            colors = TextFieldDefaults.textFieldColors(
-//                textColor = MaterialTheme.customColorsShema.title,
-//                containerColor = MaterialTheme.customColorsShema.background,
-//            ),
             modifier = when (withBorder) {
                 true -> modifier
                     .border(1.dp, MaterialTheme.customColorsShema.border)

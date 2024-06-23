@@ -21,6 +21,5 @@ data class OrderDTO (
     var destinationAddress: String? = null,
     var originAddress: String? = null,
     var price: Double? = null,
-    //    private VehicleDTO vehicle;
-    //    private PaymentDTO payment;
+    var carPlate: String? = null,
 )

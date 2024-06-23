@@ -2,8 +2,10 @@ package com.levopravoce.mobile.features.order.domain
 
 import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
+import com.levopravoce.mobile.common.error.ErrorUtils
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.OrderRepository
+import com.levopravoce.mobile.features.user.domain.UserUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,13 +20,11 @@ data class OrderUiState(
 @HiltViewModel
 class OrderViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
-) : ViewModel(){
-
+) : ViewModel() {
     private val _uiState = MutableStateFlow(OrderUiState())
-
     val uiState: StateFlow<OrderUiState> = _uiState
 
-    suspend fun createOrder(order: OrderDTO){
+    suspend fun createOrder(order: OrderDTO) {
         _uiState.value = OrderUiState(status = RequestStatus.LOADING)
         try {
             val data = orderRepository.requestOrder(order)
@@ -33,13 +33,16 @@ class OrderViewModel @Inject constructor(
                 val response = data.body() ?: throw Exception("Order not found")
                 _uiState.value = OrderUiState(status = RequestStatus.SUCCESS, orderDTO = response)
             } else {
-                _uiState.value = OrderUiState(status = RequestStatus.ERROR)
+                _uiState.value = OrderUiState(
+                    status = RequestStatus.ERROR,
+                    error = ErrorUtils.parseError(response = data)
+                )
             }
-
         } catch (e: Exception) {
-            _uiState.value = OrderUiState(status = RequestStatus.ERROR)
+            _uiState.value = OrderUiState(status = RequestStatus.ERROR, error = e.message)
         }
     }
+
 
     fun isLoading() = uiState.value.status == RequestStatus.LOADING
 }

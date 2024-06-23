@@ -2,14 +2,17 @@ package com.levopravoce.mobile.features.user.data
 
 import com.levopravoce.mobile.features.auth.data.dto.JwtResponseDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
+import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.forgotPassword.data.PasswordCodeDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserRepository {
 
@@ -44,6 +47,11 @@ interface UserRepository {
     suspend fun changePassword(
         @Body passwordCodeDTO: PasswordCodeDTO
     ): Response<Unit>
+
+    @GET("/api/user/{id}")
+    suspend fun getUserByType(
+        @Query("userType")userType: UserType
+    ): Response<List<UserDTO>>
 
     @PUT("/api/user/change-password")
     suspend fun changePasswordAuth(

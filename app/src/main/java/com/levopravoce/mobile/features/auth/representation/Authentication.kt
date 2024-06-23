@@ -21,8 +21,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Authentication(
-    content: @Composable () -> Unit,
-    viewModel: MainViewModel = hiltSharedViewModel()
+    viewModel: MainViewModel = hiltSharedViewModel(),
+    content: @Composable () -> Unit
 ) {
     val navController = navControllerContext.current
     val authUiState = viewModel.authUiStateStateFlow.collectAsState()
