@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.order.domain
 
 import androidx.lifecycle.ViewModel
 import com.levopravoce.mobile.common.RequestStatus
+import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.OrderRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,6 +12,7 @@ import javax.inject.Inject
 
 data class OrderUiState(
     val orderDTO: OrderDTO? = null,
+    val users: List<UserDTO>? = null,
     val status: RequestStatus = RequestStatus.IDLE,
     val error: String? = null
 )
@@ -32,6 +34,23 @@ class OrderViewModel @Inject constructor(
             if (data.isSuccessful) {
                 val response = data.body() ?: throw Exception("Order not found")
                 _uiState.value = OrderUiState(status = RequestStatus.SUCCESS, orderDTO = response)
+            } else {
+                _uiState.value = OrderUiState(status = RequestStatus.ERROR)
+            }
+
+        } catch (e: Exception) {
+            _uiState.value = OrderUiState(status = RequestStatus.ERROR)
+        }
+    }
+
+    suspend fun listDeliverymans(){
+        _uiState.value = OrderUiState(status = RequestStatus.LOADING)
+        try {
+            val data = orderRepository.getAvailableDeliveryUsers()
+
+            if (data.isSuccessful) {
+                val response = data.body() ?: throw Exception("Deliverymans not found")
+                _uiState.value = OrderUiState(status = RequestStatus.SUCCESS, users = response)
             } else {
                 _uiState.value = OrderUiState(status = RequestStatus.ERROR)
             }

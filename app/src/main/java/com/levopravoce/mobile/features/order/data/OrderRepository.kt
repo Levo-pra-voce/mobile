@@ -31,9 +31,7 @@ interface OrderRepository {
         @Query("destinationLng") destinationLng: Double
     ): Response<GoogleDistanceMatrixRequestDTO>
 
-//    @GET("/api/order")
-//    suspend fun getAvailableDeliveryUsers(
-//        @Query("userType") userType: UserType
-//    ): Response<List<UserDTO>>
+    @GET("/api/order/deliverymans")
+    suspend fun getAvailableDeliveryUsers(): Response<List<UserDTO>>
 
 }
