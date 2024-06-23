@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -46,6 +45,7 @@ import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
+import com.levopravoce.mobile.features.app.representation.FormInputDate
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
@@ -54,7 +54,6 @@ import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun OrderInfo(
@@ -139,7 +138,12 @@ fun OrderInfo(
                 }
                 Box {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        MapSelectDestination { originLng, destinationLng ->
+                        MapSelectDestination(
+                            originLatitude = orderDTOState.originLatitude,
+                            originLongitude = orderDTOState.originLongitude,
+                            destinationLatitude = orderDTOState.destinationLatitude,
+                            destinationLongitude = orderDTOState.destinationLongitude
+                        ) { originLng, destinationLng ->
                             orderDTOState.destinationLongitude = destinationLng.longitude
                             orderDTOState.destinationLatitude = destinationLng.latitude
                             orderDTOState.originLongitude = originLng.longitude
@@ -239,25 +243,15 @@ fun OrderInfo(
                             .fillMaxWidth()
                             .padding(top = 8.dp)
                     )
-                    FormInputText(
-                        enabled = orderDTOState.id == null,
-                        onChange = {
-                            orderDTOState = orderDTOState.copy(deliveryDate = it)
-                        },
-                        value = orderDTOState.deliveryDate?.format(
-                            DateTimeFormatter.ofPattern(
-                                "dd/MM/yyyy"
-                            )
-                        )
-                            ?: "",
+                    FormInputDate(
+                        value = orderDTOState.deliveryDate ?: "",
                         placeHolder = "Data de entrega:",
-                        withBorder = false,
-                        onSubmitted = nextFocus,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp)
-                    )
+                    ) {
+                        orderDTOState = orderDTOState.copy(deliveryDate = it)
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -325,6 +319,7 @@ fun EnterButton(
                 .fillMaxWidth()
                 .padding(16.dp)
                 .background(MaterialTheme.customColorsShema.invertBackground)
+                .clip(RoundedCornerShape(20))
                 .clickable {
                     onSubmit()
                 }
