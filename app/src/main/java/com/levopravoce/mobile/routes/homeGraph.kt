@@ -109,12 +109,12 @@ fun NavGraphBuilder.homeGraph() {
             DeliveryTracking()
         }
 
-//        authComposable(route = Routes.Home.CLIENT_PAYMENT) {
-//            ClientPayment()
-//        }
-//
-//        authComposable(route = Routes.Home.DELIVERY_PAYMENT) {
-//            DeliveryPayment()
-//        }
+        authComposable(route = Routes.Home.CLIENT_PAYMENT) {
+            ClientPayment()
+        }
+
+        authComposable(route = Routes.Home.DELIVERY_PAYMENT) {
+            DeliveryPayment()
+        }
     }
 }

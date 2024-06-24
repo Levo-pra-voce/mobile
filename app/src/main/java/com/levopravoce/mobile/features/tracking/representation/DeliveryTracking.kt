@@ -49,6 +49,7 @@ import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.app.representation.Screen
+import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingDTO
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingStatus
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
@@ -106,7 +107,6 @@ fun DeliveryTracking(
                     }
                 }
             }
-
             val orderState by trackingViewModel.orderState.collectAsState()
             LaunchedEffect(Unit) {
                 trackingViewModel.connectWebSocket()
@@ -117,6 +117,15 @@ fun DeliveryTracking(
                         orderInTracking.originLongitude ?: 0.0
                     )
                     cameraPositionState.move(CameraUpdateFactory.newLatLng(latLng))
+                }
+            }
+            LaunchedEffect(orderState?.status) {
+                if (orderState?.status == OrderStatus.ENTREGADO) {
+                    navController?.navigate(Routes.Home.DELIVERY_PAYMENT) {
+                        popUpTo(Routes.Home.DELIVERY_TRACKING_DRIVER) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
             val properties by remember {
@@ -217,7 +226,11 @@ fun DeliveryTracking(
                             Button("Finalizar") {
                                 coroutineScope.launch {
                                     trackingViewModel.finishOrder()
-                                    navController?.navigate(Routes.Home.DELIVERY_PAYMENT)
+                                    navController?.navigate(Routes.Home.DELIVERY_PAYMENT) {
+                                        popUpTo(Routes.Home.DELIVERY_TRACKING_DRIVER) {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                             }
                         }
