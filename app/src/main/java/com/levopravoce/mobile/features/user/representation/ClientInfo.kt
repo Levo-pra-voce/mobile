@@ -1,7 +1,5 @@
 package com.levopravoce.mobile.features.user.representation
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,14 +33,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
 import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
-import com.levopravoce.mobile.config.termsLink
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
-import com.levopravoce.mobile.features.order.represatation.RoundedCheckbox
-import com.levopravoce.mobile.features.start.representation.bottomBorder
 import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
@@ -62,9 +56,6 @@ fun ClientInfo(
     val focusManager = LocalFocusManager.current
     val navController = navControllerContext.current
     val isEditing = userDTORemember.id != null
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
 
     val hideKeyboard = {
         keyboardController?.hide()

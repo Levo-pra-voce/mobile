@@ -77,7 +77,11 @@ fun ClientTracking(
             val trackingDTO =
                 gson.fromJson(messageState.value?.message, OrderTrackingDTO::class.java)
             if (trackingDTO.status == OrderTrackingStatus.FINISHED) {
-                navController?.navigate(Routes.Home.CLIENT_PAYMENT)
+                navController?.navigate(Routes.Home.CLIENT_PAYMENT) {
+                    popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                        inclusive = true
+                    }
+                }
             }
 
             val location = LatLng(trackingDTO?.latitude ?: 0.0, trackingDTO?.longitude ?: 0.0)
@@ -94,6 +98,8 @@ fun ClientTracking(
                 orderInTracking.originLatitude ?: 0.0, orderInTracking.originLongitude ?: 0.0
             )
             cameraPositionState.move(CameraUpdateFactory.newLatLng(latLng))
+        } else {
+            navController?.popBackStack()
         }
     }
 
