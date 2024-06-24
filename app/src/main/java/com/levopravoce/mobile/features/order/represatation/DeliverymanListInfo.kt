@@ -2,6 +2,8 @@ package com.levopravoce.mobile.features.order.represatation
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -54,12 +56,17 @@ val orderViewModel = hiltSharedViewModel<OrderViewModel>()
     LaunchedEffect(key1 = orderViewModel) {
         Log.d("DeliverymanListInfo", "Calling listDeliverymans")
         orderViewModel.listDeliverymans()
+        Log.d("DeliverymanListInfo", "Status after calling listDeliverymans: ${orderViewModel.uiState.value.status}")
     }
 
     val deliveryMan = orderViewModel.uiState.collectAsState().value.users
 
-    Alert(show = showError, message = orderViewModelState.value.error ?: "Erro ao carregar entregadores")
-    Screen {
+    Screen(
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),
+    ){
+        Alert(show = showError, message = orderViewModelState.value.error ?: "Erro ao carregar entregadores")
         Column(
             Modifier.padding(vertical = 16.dp)
         ){

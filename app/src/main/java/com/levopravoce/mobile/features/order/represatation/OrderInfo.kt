@@ -108,11 +108,6 @@ fun OrderInfo(
             .fillMaxHeight()
     ) {
         when (orderInfoState) {
-            OrderInfoState.CREATE_DELIVERYMAN_LIST -> {
-                DeliverymanListInfo(
-                    order = orderDTOState
-                )
-            }
             OrderInfoState.CREATE_ORDER_FIELDS -> {
                 Screen(
                     Modifier.verticalScroll(
@@ -279,14 +274,23 @@ fun OrderInfo(
                             Box(
                                 Modifier.zIndex(1f)
                             ) {
-                                EnterButton("Finalizar") {
+                                EnterButton("Avançar") {
                                     coroutineScope.launch {
-                                        model.createOrder(orderDTOState)
                                         orderInfoState = OrderInfoState.CREATE_DELIVERYMAN_LIST
                                     }
                                 }
                             }
                         }
+                    }
+                }
+            }
+            OrderInfoState.CREATE_DELIVERYMAN_LIST -> {
+                DeliverymanListInfo(
+                    order = orderDTOState
+                )
+                EnterButton("Finalizar") {
+                    coroutineScope.launch {
+                        model.createOrder(orderDTOState)
                     }
                 }
             }
