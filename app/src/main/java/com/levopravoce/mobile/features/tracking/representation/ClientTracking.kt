@@ -92,7 +92,7 @@ fun ClientTracking(
 
     LaunchedEffect(Unit) {
         trackingViewModel.connectWebSocket()
-        val orderInTracking = trackingViewModel.getCurrentTracking()
+        val orderInTracking = trackingViewModel.getCurrentOrderInProgress()
         if (orderInTracking != null) {
             val latLng = LatLng(
                 orderInTracking.originLatitude ?: 0.0, orderInTracking.originLongitude ?: 0.0

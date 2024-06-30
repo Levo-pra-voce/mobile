@@ -4,6 +4,7 @@ import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.order.data.dto.GoogleDistanceMatrixRequestDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.order.data.dto.RecommendUserDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -34,14 +35,20 @@ interface OrderRepository {
         @Query("destinationLng") destinationLng: Double
     ): Response<GoogleDistanceMatrixRequestDTO>
 
-    @GET("/api/order")
-    suspend fun getAvailableDeliveryUsers(
-        @Query("userType") userType: UserType
-    ): Response<List<UserDTO>>
+    @GET("/api/order/deliverymans")
+    suspend fun getAvailableDeliveryUsers(): Response<List<RecommendUserDTO>>
 
     @GET("/api/order/last-progress")
     suspend fun getLastProgress(): Response<OrderDTO?>
 
+    @GET("/api/order/last-pending")
+    suspend fun getLastPending(): Response<OrderDTO?>
+
     @PUT("/api/order/finish")
     suspend fun finishOrder(): Response<Unit>
+
+    @POST("api/order/assign-deliveryman/{deliverymanId}")
+    suspend fun assignDeliveryman(
+        @Path("deliverymanId") deliverymanId: Long
+    ): Response<Unit>
 }
