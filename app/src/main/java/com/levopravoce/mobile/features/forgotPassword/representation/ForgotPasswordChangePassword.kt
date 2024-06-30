@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.levopravoce.mobile.common.RequestStatus
@@ -71,6 +72,7 @@ fun ForgotPasswordChangePassword(
                 enabled = !isLoading,
                 placeHolder = "********",
                 label = "Digite sua nova senha:",
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -80,7 +82,8 @@ fun ForgotPasswordChangePassword(
                 value = repeatPassword,
                 enabled = !isLoading,
                 placeHolder = "********",
-                label = "Digite sua nova senha:",
+                label = "Repite a nova senha:",
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
             )

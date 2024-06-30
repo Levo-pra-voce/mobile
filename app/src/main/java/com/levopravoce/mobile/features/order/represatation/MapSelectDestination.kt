@@ -1,6 +1,7 @@
 package com.levopravoce.mobile.features.order.represatation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
@@ -10,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -30,9 +32,14 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
 
+@SuppressLint("MissingPermission")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapSelectDestination(
+    originLatitude: Double?,
+    originLongitude: Double?,
+    destinationLatitude: Double?,
+    destinationLongitude: Double?,
     onDestinationSelect: (origin: LatLng, destination: LatLng) -> Unit
 ) {
     val context = LocalContext.current
@@ -57,8 +64,20 @@ fun MapSelectDestination(
 
     val locationPermissions = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    val originPosition = remember { mutableStateOf<LatLng?>(null) }
-    val destinationPosition = remember { mutableStateOf<LatLng?>(null) }
+    var originPosition by remember { mutableStateOf(
+        if (originLatitude != null && originLongitude != null) {
+            LatLng(originLatitude, originLongitude)
+        } else {
+            null
+        }
+    ) }
+    var destinationPosition by remember { mutableStateOf(
+        if (destinationLatitude != null && destinationLongitude != null) {
+            LatLng(destinationLatitude, destinationLongitude)
+        } else {
+            null
+        }
+    )}
 
     LaunchedEffect(locationPermissions.status) {
         if (locationPermissions.status == PermissionStatus.Granted) {
@@ -70,7 +89,7 @@ fun MapSelectDestination(
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                     location?.let {
                         val lastLocation: Location = it
                         val newLat = LatLng(lastLocation.latitude, lastLocation.longitude)
@@ -83,9 +102,9 @@ fun MapSelectDestination(
         }
     }
 
-    LaunchedEffect(originPosition.value, destinationPosition.value) {
-        if (originPosition.value != null && destinationPosition.value != null) {
-            onDestinationSelect(originPosition.value!!, destinationPosition.value!!)
+    LaunchedEffect(originPosition, destinationPosition) {
+        if (originPosition != null && destinationPosition != null) {
+            onDestinationSelect(originPosition!!, destinationPosition!!)
         }
     }
 
@@ -95,17 +114,17 @@ fun MapSelectDestination(
         properties = properties,
         uiSettings = uiSettings,
         onMapClick = { latLng ->
-            if (originPosition.value == null) {
-                originPosition.value = latLng
-            } else if (destinationPosition.value == null) {
-                destinationPosition.value = latLng
+            if (originPosition == null) {
+                originPosition = latLng
+            } else if (destinationPosition == null) {
+                destinationPosition = latLng
             } else {
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle("Você já selecionou o ponto de partida e destino")
                 builder.setMessage("Deseja alterar o ponto de partida ou destino?")
                 builder.setPositiveButton("Sim") { _dialog, _which ->
-                    originPosition.value = null
-                    destinationPosition.value = null
+                    originPosition = null
+                    destinationPosition = null
                 }
                 builder.setNegativeButton("Não") { dialog, _which ->
                     dialog.dismiss()
@@ -115,11 +134,11 @@ fun MapSelectDestination(
             }
         },
     ) {
-        originPosition.value?.let {
+        originPosition?.let {
             val markerState = MarkerState(position = it)
             Marker(state = markerState)
         }
-        destinationPosition.value?.let {
+        destinationPosition?.let {
             val markerState = MarkerState(position = it)
             Marker(state = markerState)
         }

@@ -138,6 +138,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.android.gms:play-services-base:18.5.0")
+    // https://mvnrepository.com/artifact/com.google.zxing/core
+    implementation("com.google.zxing:core:3.5.3")
 }
 
 kapt {

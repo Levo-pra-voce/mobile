@@ -48,5 +48,15 @@ interface UserRepository {
         @Body passwordCodeDTO: PasswordCodeDTO
     ): Response<Unit>
 
+    @GET("/api/user/{id}")
+    suspend fun getUserByType(
+        @Query("userType")userType: UserType
+    ): Response<List<UserDTO>>
+
+    @PUT("/api/user/change-password")
+    suspend fun changePasswordAuth(
+        @Body passwordCodeDTO: PasswordCodeDTO
+    ): Response<Unit>
+
 
 }

@@ -9,5 +9,7 @@ data class Vehicle(
     var maxWeight: Double? = null,
     var manufacturer: String? = null,
     var renavam: String? = null,
-    var vehicleType: VehicleType? = null
+    var vehicleType: VehicleType? = null,
+    var priceBase: Double? = null,
+    var pricePerKm: Double? = null,
 )

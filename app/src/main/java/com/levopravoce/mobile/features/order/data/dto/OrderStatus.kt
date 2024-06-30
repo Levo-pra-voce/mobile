@@ -2,8 +2,10 @@ package com.levopravoce.mobile.features.order.data.dto
 
 
 enum class OrderStatus {
-    PENDING,
-    IN_PROGRESS,
-    DELIVERED,
-    CANCELED
+    CANCELADO,
+    ESPERANDO,
+    ACEITO,
+    EM_PROGRESSO,
+    ENTREGADO,
+    FEITO_PAGAMENTO
 }

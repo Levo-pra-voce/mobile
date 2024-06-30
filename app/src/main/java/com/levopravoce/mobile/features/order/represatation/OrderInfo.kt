@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -46,15 +45,18 @@ import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.BackButton
+import com.levopravoce.mobile.features.app.representation.FormInputDate
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.order.domain.OrderViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
+import kotlinx.coroutines.withContext
 
 enum class OrderInfoState {
     CREATE_MAP_SELECTION, CREATE_ORDER_FIELDS, CREATE_DELIVERYMAN_LIST,
@@ -62,10 +64,10 @@ enum class OrderInfoState {
 
 @Composable
 fun OrderInfo(
-    model: OrderViewModel = hiltSharedViewModel()
+    orderViewModel: OrderViewModel = hiltSharedViewModel()
 ) {
     var orderDTOState by remember { mutableStateOf(OrderDTO()) }
-    val state = model.uiState.collectAsState()
+    val state = orderViewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -98,6 +100,18 @@ fun OrderInfo(
             }
 
             else -> {}
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            val lastOrderInPending = orderViewModel.getCurrentOrderInPending()
+            if (lastOrderInPending != null) {
+                if (lastOrderInPending.status == OrderStatus.ESPERANDO) {
+                    orderDTOState = lastOrderInPending
+                    orderInfoState = OrderInfoState.CREATE_DELIVERYMAN_LIST
+                }
+            }
         }
     }
 
@@ -183,24 +197,15 @@ fun OrderInfo(
                                 .fillMaxWidth()
                                 .padding(top = 8.dp)
                         )
-                        FormInputText(
-                            enabled = orderDTOState.id == null,
-                            onChange = {
-                                orderDTOState = orderDTOState.copy(deliveryDate = it)
-                            },
-                            value = orderDTOState.deliveryDate?.format(
-                                DateTimeFormatter.ofPattern(
-                                    "dd/MM/yyyy"
-                                )
-                            ) ?: "",
+                        FormInputDate(
+                            value = orderDTOState.deliveryDate ?: "",
                             placeHolder = "Data de entrega:",
-                            withBorder = false,
-                            onSubmitted = nextFocus,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp)
-                        )
+                        ) {
+                            orderDTOState = orderDTOState.copy(deliveryDate = it)
+                        }
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -262,7 +267,12 @@ fun OrderInfo(
                     }
                     Box {
                         Box(modifier = Modifier.fillMaxSize()) {
-                            MapSelectDestination { originLng, destinationLng ->
+                            MapSelectDestination(
+                                originLatitude = orderDTOState.originLatitude,
+                                originLongitude = orderDTOState.originLongitude,
+                                destinationLatitude = orderDTOState.destinationLatitude,
+                                destinationLongitude = orderDTOState.destinationLongitude
+                            ) { originLng, destinationLng ->
                                 orderDTOState.destinationLongitude = destinationLng.longitude
                                 orderDTOState.destinationLatitude = destinationLng.latitude
                                 orderDTOState.originLongitude = originLng.longitude
@@ -276,7 +286,10 @@ fun OrderInfo(
                             ) {
                                 EnterButton("Avançar") {
                                     coroutineScope.launch {
-                                        orderInfoState = OrderInfoState.CREATE_DELIVERYMAN_LIST
+                                        val isSuccess = orderViewModel.createOrder(orderDTOState)
+                                        if (isSuccess) {
+                                            orderInfoState = OrderInfoState.CREATE_DELIVERYMAN_LIST
+                                        }
                                     }
                                 }
                             }
@@ -288,11 +301,6 @@ fun OrderInfo(
                 DeliverymanListInfo(
                     order = orderDTOState
                 )
-                EnterButton("Finalizar") {
-                    coroutineScope.launch {
-                        model.createOrder(orderDTOState)
-                    }
-                }
             }
         }
     }
@@ -330,6 +338,7 @@ fun EnterButton(
             .fillMaxWidth()
             .padding(16.dp)
             .background(MaterialTheme.customColorsShema.invertBackground)
+            .clip(RoundedCornerShape(20))
             .clickable {
                 onSubmit()
             }) {

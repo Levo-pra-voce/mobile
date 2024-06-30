@@ -77,17 +77,20 @@ class RelatoryViewModel @Inject constructor(
                     reportFile
                 )
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.setDataAndType(
-                    uri,
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    .setDataAndType(
+                        uri,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
         } catch (exception: Exception) {
             if (exception is ActivityNotFoundException) {
                 _uiState.value = this._uiState.value.copy(status = RequestStatus.ERROR, error = "Baixe um aplicativo para abrir arquivos Excel")
                 return
+            } else {
+                _uiState.value = this._uiState.value.copy(status = RequestStatus.ERROR, error = "Erro ao baixar o arquivo")
             }
         }
     }

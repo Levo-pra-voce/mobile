@@ -1,6 +1,5 @@
 package com.levopravoce.mobile.features.user.representation
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,9 +56,6 @@ fun ClientInfo(
     val focusManager = LocalFocusManager.current
     val navController = navControllerContext.current
     val isEditing = userDTORemember.id != null
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
 
     val hideKeyboard = {
         keyboardController?.hide()
@@ -211,9 +207,9 @@ fun ClientInfo(
                 withBorder = false,
                 onSubmitted = {
                     if (isEditing) {
-                        nextFocus()
-                    } else {
                         hideKeyboard()
+                    } else {
+                        nextFocus()
                     }
                 },
                 modifier = Modifier
@@ -232,6 +228,9 @@ fun ClientInfo(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
+                Terms {
+                    userDTORemember = userDTORemember.copy(acceptTerms = it)
+                }
             }
         }
         Column(modifier = Modifier.padding(top = 16.dp)) {

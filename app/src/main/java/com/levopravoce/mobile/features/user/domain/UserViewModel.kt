@@ -8,6 +8,8 @@ import com.levopravoce.mobile.common.error.ErrorUtils
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
 import com.levopravoce.mobile.features.auth.domain.AuthStore
+import com.levopravoce.mobile.features.forgotPassword.data.PasswordCodeDTO
+import com.levopravoce.mobile.features.forgotPassword.domain.ForgotPasswordUiState
 import com.levopravoce.mobile.features.user.data.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,10 +78,36 @@ class UserViewModel @Inject constructor(
     }
 
     fun isLoading() = uiState.value.status == RequestStatus.LOADING
+
     suspend fun delete() {
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
         try {
             val data = userRepository.delete()
+
+            if (data.isSuccessful) {
+                _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
+            } else {
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+            }
+
+        } catch (
+            e: Exception
+        ) {
+            _uiState.value = UserUiState(status = RequestStatus.ERROR, error = e.message)
+        }
+    }
+
+    suspend fun changePassword(newPassword: String, repeatPassword: String) {
+        _uiState.value = UserUiState(status = RequestStatus.LOADING)
+        try {
+            if (newPassword != repeatPassword) {
+                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = "As senhas não coincidem")
+                return
+            }
+
+            val passwordCodeDTO = PasswordCodeDTO()
+            passwordCodeDTO.password = newPassword
+            val data = userRepository.changePasswordAuth(passwordCodeDTO)
 
             if (data.isSuccessful) {
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)

@@ -20,4 +20,6 @@ data class UserDTO (
     val token: String? = null,
     var street: String? = null,
     var vehicle: Vehicle? = null,
+    var acceptTerms: Boolean? = null,
+    var averageRating: Double? = null,
 )

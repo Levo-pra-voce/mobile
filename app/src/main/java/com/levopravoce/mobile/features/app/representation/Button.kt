@@ -12,15 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun Button(
-    modifier: Modifier = Modifier,
     text: String,
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.customColorsShema.title,
+    padding: Int = 16,
     disabled: Boolean = false,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -35,12 +38,12 @@ fun Button(
     ) {
         Box(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(padding.dp)
         ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.customColorsShema.title
+                color = color
             )
         }
     }
