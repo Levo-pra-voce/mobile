@@ -50,21 +50,6 @@ private val firstLineDescriptorData = listOf(
         route = Routes.Home.DELIVERY_TRACKING_CLIENT
     ),
 )
-
-private val secondLineDescriptorData = listOf(
-    IconDescriptorData(
-        id = R.drawable.delivery_persons_icon,
-        contentDescription = "icone para para listagem de motoristas",
-        title = "Motoras"
-    ),
-    IconDescriptorData(
-        id = R.drawable.message_icon,
-        contentDescription = "icone para ver a lista de mensagens",
-        title = "Mensagens",
-        route = Routes.Home.CHAT_LIST
-    ),
-)
-
 @Composable
 fun HomeClient(
     trackingViewModel: TrackingViewModel = hiltSharedViewModel()
@@ -180,11 +165,6 @@ private fun UserOptions(
             horizontalArrangement = Arrangement.SpaceBetween,
             iconDescriptorData = firstLineDescriptorData,
             modifier = Modifier
-        )
-        RowOption(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            iconDescriptorData = secondLineDescriptorData,
-            modifier = Modifier.padding(top = 108.dp)
         )
         RowOption(
             horizontalArrangement = Arrangement.SpaceBetween,

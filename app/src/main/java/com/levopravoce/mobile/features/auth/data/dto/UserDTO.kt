@@ -21,4 +21,5 @@ data class UserDTO (
     var street: String? = null,
     var vehicle: Vehicle? = null,
     var acceptTerms: Boolean? = null,
+    var averageRating: Double? = null,
 )

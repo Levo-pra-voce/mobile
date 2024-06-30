@@ -52,20 +52,6 @@ private val firstLineDescriptorData = listOf(
     ),
 )
 
-private val secondLineDescriptorData = listOf(
-    IconDescriptorData(
-        id = R.drawable.schedule_icon,
-        contentDescription = "icone para para listagem de motoristas",
-        title = "Agenda",
-        imageModifier = Modifier.offset(x = -(12.dp))
-    ),
-    IconDescriptorData(
-        id = R.drawable.message_icon,
-        contentDescription = "icone para ver a lista de mensagens",
-        title = "Mensagens"
-    ),
-)
-
 @Composable
 fun HomeDelivery(
     trackingViewModel: TrackingViewModel = hiltSharedViewModel()
@@ -154,11 +140,6 @@ private fun UserOptions(
             horizontalArrangement = Arrangement.SpaceBetween,
             iconDescriptorData = firstLineDescriptorData,
             modifier = Modifier
-        )
-        RowOption(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            iconDescriptorData = secondLineDescriptorData,
-            modifier = Modifier.padding(top = 108.dp)
         )
         RowOption(
             horizontalArrangement = Arrangement.SpaceBetween,

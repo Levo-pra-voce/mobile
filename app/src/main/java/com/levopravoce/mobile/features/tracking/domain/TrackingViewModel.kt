@@ -68,7 +68,7 @@ class TrackingViewModel @Inject constructor(
         }
     }
 
-    suspend fun getCurrentTracking(): OrderDTO? {
+    suspend fun getCurrentOrderInProgress(): OrderDTO? {
         val response = orderRepository.getLastProgress()
         if (response.isSuccessful) {
             val orderResponse = response.body();

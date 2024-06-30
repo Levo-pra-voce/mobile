@@ -110,7 +110,7 @@ fun DeliveryTracking(
             val orderState by trackingViewModel.orderState.collectAsState()
             LaunchedEffect(Unit) {
                 trackingViewModel.connectWebSocket()
-                val orderInTracking = trackingViewModel.getCurrentTracking()
+                val orderInTracking = trackingViewModel.getCurrentOrderInProgress()
                 if (orderInTracking != null) {
                     val latLng = LatLng(
                         orderInTracking.originLatitude ?: 0.0,
