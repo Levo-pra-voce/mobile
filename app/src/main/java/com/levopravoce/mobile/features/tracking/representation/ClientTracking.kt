@@ -121,11 +121,11 @@ fun ClientTracking(
             horizontal = Alignment.CenterHorizontally,
         ) {
             Row {
-                BackButton(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .offset(x = -(32.dp))
-                )
+//                BackButton(
+//                    modifier = Modifier
+//                        .size(24.dp)
+//                        .offset(x = -(32.dp))
+//                )
                 Text(
                     text = "Entrega em andamento",
                     color = MaterialTheme.customColorsShema.title,

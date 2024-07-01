@@ -74,6 +74,8 @@ class TrackingViewModel @Inject constructor(
             val orderResponse = response.body();
             orderState.value = orderResponse
             return orderResponse
+        } else {
+            currentTrackingState.value = ApiResponse.Error("Erro ao buscar pedido")
         }
         return null;
     }

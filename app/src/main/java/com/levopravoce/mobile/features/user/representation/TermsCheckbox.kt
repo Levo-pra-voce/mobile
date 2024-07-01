@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.config.termsLink
-import com.levopravoce.mobile.features.order.represatation.RoundedCheckbox
+import com.levopravoce.mobile.features.order.representation.newOrder.RoundedCheckbox
 import com.levopravoce.mobile.features.start.representation.bottomBorder
 import com.levopravoce.mobile.ui.theme.customColorsShema
 

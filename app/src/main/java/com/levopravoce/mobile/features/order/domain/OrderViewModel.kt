@@ -79,6 +79,7 @@ class OrderViewModel @Inject constructor(
     }
 
     fun isLoading() = uiState.value.status == RequestStatus.LOADING
+
     suspend fun assignDeliveryman(userId: Long) {
         try {
             setLoadState()

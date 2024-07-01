@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.order.data
 
 import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
+import com.levopravoce.mobile.features.deliveryManList.data.dto.RequestDTO
 import com.levopravoce.mobile.features.order.data.dto.GoogleDistanceMatrixRequestDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.dto.RecommendUserDTO
@@ -23,17 +24,13 @@ interface OrderRepository {
     @GET("/api/order/deliveries-pending")
     suspend fun findAllPending(): List<OrderDTO>
 
+    @GET("/api/order/assign-orders")
+    suspend fun findAllRequest(): List<RequestDTO>
+
     @GET("/api/order/{id}")
     suspend fun findById(
         @Path("id") id: String
     ): OrderDTO
-    @GET("/api/map/distance")
-    suspend fun getDistance(
-        @Query("originLat") originLat: Double,
-        @Query("originLng") originLng: Double,
-        @Query("destinationLat") destinationLat: Double,
-        @Query("destinationLng") destinationLng: Double
-    ): Response<GoogleDistanceMatrixRequestDTO>
 
     @GET("/api/order/deliverymans")
     suspend fun getAvailableDeliveryUsers(): Response<List<RecommendUserDTO>>
@@ -50,5 +47,15 @@ interface OrderRepository {
     @POST("api/order/assign-deliveryman/{deliverymanId}")
     suspend fun assignDeliveryman(
         @Path("deliverymanId") deliverymanId: Long
+    ): Response<Unit>
+
+    @POST("api/order/accept/{id}")
+    suspend fun acceptOrder(
+        @Path("id") id: Long
+    ): Response<Unit>
+
+    @POST("api/order/start/{id}")
+    suspend fun startOrder(
+        @Path("id") id: Long
     ): Response<Unit>
 }

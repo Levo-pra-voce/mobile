@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.gson.Gson
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.data.dto.ApiResponse
@@ -29,6 +30,9 @@ import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.order.data.dto.OrderStatus
+import com.levopravoce.mobile.features.tracking.data.OrderTrackingDTO
+import com.levopravoce.mobile.features.tracking.data.OrderTrackingStatus
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
@@ -41,7 +45,7 @@ private val firstLineDescriptorData = listOf(
         contentDescription = "icone para solicitar entrega",
         title = "Suas entregas",
         imageModifier = Modifier.offset(x = -(18.dp), y = 4.dp),
-        route = Routes.Home.DELIVERY_LIST
+        route = Routes.Home.DELIVERY_MAN
     ),
     IconDescriptorData(
         id = R.drawable.report_icon,
@@ -56,30 +60,36 @@ private val firstLineDescriptorData = listOf(
 fun HomeDelivery(
     trackingViewModel: TrackingViewModel = hiltSharedViewModel()
 ) {
-    val currentTrackingState = trackingViewModel.currentTrackingState.collectAsStateWithLifecycle()
-    var haveTracking by remember { mutableStateOf(false) }
+    val messageState = trackingViewModel.webSocketState.collectAsState()
+    val currentTrackingState by trackingViewModel.currentTrackingState.collectAsState()
     val firstRenderState = trackingViewModel.firstRender.collectAsState()
     val navController = navControllerContext.current
-    LaunchedEffect(Unit) {trackingViewModel.setStateCurrentTracking()}
-    haveTracking = when (currentTrackingState.value) {
-        is ApiResponse.Success -> {
-            (currentTrackingState.value as ApiResponse.Success<OrderDTO?>).data != null
-        }
-        is ApiResponse.Error -> {
-            false
-        }
-        is ApiResponse.Loading -> {
-            false
-        }
+    LaunchedEffect(Unit) {
+        trackingViewModel.connectWebSocket()
+        trackingViewModel.setStateCurrentTracking()
+        trackingViewModel.setFirstRender()
+        println("Delivery: Unit effect")
     }
 
-    LaunchedEffect(currentTrackingState.value) {
-        if (currentTrackingState.value is ApiResponse.Success || currentTrackingState.value is ApiResponse.Error) {
+    LaunchedEffect(currentTrackingState) {
+        if (currentTrackingState !is ApiResponse.Loading) {
             trackingViewModel.setFirstRender()
         }
     }
 
-    if (currentTrackingState.value is ApiResponse.Loading) {
+    LaunchedEffect(messageState.value) {
+        println("Delivery: messageState.value: ${messageState.value}")
+        if (messageState.value?.message != null) {
+            val gson = Gson()
+            val trackingDTO =
+                gson.fromJson(messageState.value?.message, OrderTrackingDTO::class.java)
+            if (trackingDTO?.status == OrderTrackingStatus.STARTED) {
+                navController?.navigate(Routes.Home.DELIVERY_TRACKING_CLIENT)
+            }
+        }
+    }
+
+    if (currentTrackingState is ApiResponse.Loading) {
         Screen {
             Column(
                 Modifier
@@ -92,7 +102,9 @@ fun HomeDelivery(
             }
         }
     } else {
-        if (!haveTracking || !firstRenderState.value) {
+        val haveTracking =
+            currentTrackingState is ApiResponse.Success<OrderDTO?> && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
+        if (!haveTracking) {
             Column {
                 UserHeader()
                 UserOptions()

@@ -13,10 +13,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.auth.representation.Authentication
 import com.levopravoce.mobile.features.configuration.representation.Configuration
-import com.levopravoce.mobile.features.deliveryList.representation.DeliveryDetails
-import com.levopravoce.mobile.features.deliveryList.representation.DeliveryList
+import com.levopravoce.mobile.features.deliveryManList.representation.DeliveryMan
+import com.levopravoce.mobile.features.deliveryManList.representation.delivery.DeliveryDetails
+import com.levopravoce.mobile.features.deliveryManList.representation.request.RequestDetails
 import com.levopravoce.mobile.features.home.representation.HomeDecider
-import com.levopravoce.mobile.features.order.represatation.OrderInfo
+import com.levopravoce.mobile.features.order.representation.newOrder.OrderInfo
 import com.levopravoce.mobile.features.payment.representation.ClientPayment
 import com.levopravoce.mobile.features.payment.representation.DeliveryPayment
 import com.levopravoce.mobile.features.relatory.representation.Relatory
@@ -87,13 +88,22 @@ fun NavGraphBuilder.homeGraph() {
             ChangePassword()
         }
 
-        authComposable(route = Routes.Home.DELIVERY_LIST) {
-            DeliveryList()
+        authComposable(route = Routes.Home.DELIVERY_MAN) {
+            DeliveryMan()
+        }
+
+        authComposable(route = Routes.Home.REQUEST_DETAILS) {
+            val deliveryId = it.arguments?.getString("deliveryId") ?: ""
+            RequestDetails(deliveryId)
         }
 
         authComposable(route = Routes.Home.DELIVERY_DETAILS) {
             val deliveryId = it.arguments?.getString("deliveryId") ?: ""
             DeliveryDetails(deliveryId)
+        }
+
+        authComposable(route = Routes.Home.DELIVERY_MAN) {
+            DeliveryMan()
         }
 
         authComposable(route = Routes.Home.DELIVERY_DETAILS) {
