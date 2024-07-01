@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.order.represatation
+package com.levopravoce.mobile.features.order.representation.newOrder
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.features.app.representation.Button
-import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.configuration.representation.PersonIcon
 import com.levopravoce.mobile.features.order.data.dto.RecommendUserDTO
 import com.levopravoce.mobile.features.order.domain.OrderViewModel

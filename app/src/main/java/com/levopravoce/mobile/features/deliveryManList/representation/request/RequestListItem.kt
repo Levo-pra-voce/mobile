@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.deliveryList.representation
+package com.levopravoce.mobile.features.deliveryManList.representation.request
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,22 +9,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.levopravoce.mobile.features.app.data.dto.ApiResponse
 import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.configuration.representation.PersonIcon
-import com.levopravoce.mobile.features.order.data.dto.OrderDTO
+import com.levopravoce.mobile.features.deliveryManList.data.dto.RequestDTO
+import com.levopravoce.mobile.features.deliveryManList.domain.DeliveryManViewModel
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun DeliveryItem(deliveryDTO: OrderDTO) {
+fun RequestListItem(
+    requestDTO: RequestDTO,
+    deliveryManViewModel: DeliveryManViewModel
+) {
     val navController = navControllerContext.current
+    val coroutineScope = rememberCoroutineScope()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -34,31 +44,44 @@ fun DeliveryItem(deliveryDTO: OrderDTO) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             PersonIcon()
             Text(
-                text = deliveryDTO.client?.name ?: "Nome não encontrado",
+                text = requestDTO.name ?: "Nome não encontrado",
                 color = MaterialTheme.customColorsShema.title,
                 modifier = Modifier.padding(top = 4.dp)
             )
             Text(
-                text = deliveryDTO.averageRating?.toString() ?: "Avaliação não encontrado",
+                text = requestDTO.averageRating?.toString() ?: "Avaliação não encontrado",
                 color = MaterialTheme.customColorsShema.title,
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
-        Column(modifier = Modifier.padding(start = 32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier.padding(start = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(text = "Detalhes") {
-                navController?.navigate("delivery/${deliveryDTO.id}")
+                navController?.navigate("request/${requestDTO.orderId}")
             }
             val currentDate = LocalDate.now();
             val pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             val formattedDate = currentDate.format(pattern);
-            if (deliveryDTO.deliveryDate != null && deliveryDTO.deliveryDate == formattedDate && deliveryDTO.status == OrderStatus.ESPERANDO) {
+            if (requestDTO.deliveryDate != null && requestDTO.deliveryDate == formattedDate) {
                 Column(modifier = Modifier.padding(top = 12.dp)) {
                     Button(
-                        text = "Iniciar",
-                        modifier = Modifier.background(Color(3,139,0)),
+                        text = "Aceitar",
+                        modifier = Modifier.background(Color(3, 139, 0)),
                         padding = 8
                     ) {
-
+                        val orderId = requestDTO.orderId
+                        if (orderId != null) {
+                            coroutineScope.launch(Dispatchers.IO) {
+                                val apiResponse = deliveryManViewModel.acceptRequest(orderId)
+                                if (apiResponse is ApiResponse.Success) {
+                                    withContext(Dispatchers.Main) {
+                                        navController?.navigateUp()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

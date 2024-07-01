@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.data.dto.ApiResponse
@@ -29,6 +32,8 @@ import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
+import com.levopravoce.mobile.features.tracking.data.OrderTrackingDTO
+import com.levopravoce.mobile.features.tracking.data.OrderTrackingStatus
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
@@ -50,18 +55,37 @@ private val firstLineDescriptorData = listOf(
         route = Routes.Home.DELIVERY_TRACKING_CLIENT
     ),
 )
+
 @Composable
 fun HomeClient(
     trackingViewModel: TrackingViewModel = hiltSharedViewModel()
 ) {
-    val currentTrackingState by trackingViewModel.currentTrackingState.collectAsStateWithLifecycle()
+    val messageState = trackingViewModel.webSocketState.collectAsState()
+    val currentTrackingState by trackingViewModel.currentTrackingState.collectAsState()
     val firstRenderState = trackingViewModel.firstRender.collectAsState()
     val navController = navControllerContext.current
-    LaunchedEffect(Unit) { trackingViewModel.setStateCurrentTracking() }
+    LaunchedEffect(Unit) {
+        trackingViewModel.connectWebSocket()
+        trackingViewModel.setStateCurrentTracking()
+        trackingViewModel.setFirstRender()
+        println("Client: Unit effect")
+    }
 
     LaunchedEffect(currentTrackingState) {
         if (currentTrackingState is ApiResponse.Success || currentTrackingState is ApiResponse.Error) {
             trackingViewModel.setFirstRender()
+        }
+    }
+
+    LaunchedEffect(messageState.value) {
+        println("Client: messageState.value: ${messageState.value}")
+        if (messageState.value?.message != null) {
+            val gson = Gson()
+            val trackingDTO =
+                gson.fromJson(messageState.value?.message, OrderTrackingDTO::class.java)
+            if (trackingDTO?.status == OrderTrackingStatus.STARTED) {
+                navController?.navigate(Routes.Home.DELIVERY_TRACKING_CLIENT)
+            }
         }
     }
 
@@ -78,23 +102,15 @@ fun HomeClient(
             }
         }
     } else {
-        val haveTracking = currentTrackingState is ApiResponse.Success && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
-        if (!haveTracking || !firstRenderState.value) {
+        val haveTracking =
+            currentTrackingState is ApiResponse.Success<OrderDTO?> && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
+        if (!haveTracking) {
             Column {
                 UserHeader()
                 UserOptions()
             }
         } else {
-            val orderDTO = (currentTrackingState as ApiResponse.Success<OrderDTO?>).data
-            when (orderDTO?.status) {
-                OrderStatus.EM_PROGRESSO -> {
-                    navController?.navigate(Routes.Home.DELIVERY_TRACKING_CLIENT)
-                }
-                OrderStatus.ENTREGADO -> {
-                    navController?.navigate(Routes.Home.CLIENT_PAYMENT)
-                }
-                else -> {}
-            }
+            navController?.navigate(Routes.Home.DELIVERY_TRACKING_CLIENT)
         }
     }
 }

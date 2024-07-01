@@ -29,7 +29,7 @@ fun BackButton(
         modifier = modifier
             .clickable {
                 if (enabled) {
-                    if (onClick == null) navController?.popBackStack() else onClick()
+                    if (onClick == null) navController?.navigateUp() else onClick()
                 }
             }
     )

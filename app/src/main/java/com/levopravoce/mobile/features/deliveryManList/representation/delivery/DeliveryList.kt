@@ -1,4 +1,4 @@
-package com.levopravoce.mobile.features.deliveryList.representation
+package com.levopravoce.mobile.features.deliveryManList.representation.delivery
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,17 +18,18 @@ import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
-import com.levopravoce.mobile.features.deliveryList.domain.DeliveryListViewModel
+import com.levopravoce.mobile.features.deliveryManList.domain.DeliveryManViewModel
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun DeliveryList(
-    deliveryListViewModel: DeliveryListViewModel = hiltSharedViewModel()
+    deliveryManViewModel: DeliveryManViewModel = hiltSharedViewModel(),
+    onBackButton: (() -> Unit)? = null
 ) {
-    val uiState = deliveryListViewModel.uiState.collectAsState()
+    val uiState = deliveryManViewModel.uiStateDelivery.collectAsState()
 
     LaunchedEffect(Unit) {
-        deliveryListViewModel.findAll()
+        deliveryManViewModel.findAllDelivery()
     }
 
     Screen(padding = 0.dp) {
@@ -40,7 +41,11 @@ fun DeliveryList(
                     modifier = Modifier
                         .size(24.dp)
                         .padding(end = 8.dp),
-                )
+                ) {
+                    if (onBackButton != null) {
+                        onBackButton()
+                    }
+                }
                 Text(
                     text = "Suas entregas",
                     color = MaterialTheme.customColorsShema.title,
@@ -51,13 +56,11 @@ fun DeliveryList(
         }
         LazyColumn {
             items(uiState.value.list.size) { index ->
-                DeliveryItem(uiState.value.list[index])
-//                if (index !== uiState.value.list.size - 1) {
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.customColorsShema.placeholder
-                    )
-//                }
+                DeliveryItem(uiState.value.list[index], deliveryManViewModel)
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.customColorsShema.placeholder
+                )
             }
         }
     }

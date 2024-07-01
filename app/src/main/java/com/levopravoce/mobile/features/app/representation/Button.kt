@@ -23,12 +23,13 @@ fun Button(
     color: Color = MaterialTheme.customColorsShema.title,
     padding: Int = 16,
     disabled: Boolean = false,
+    backgroundColor: Color = MaterialTheme.customColorsShema.invertBackground,
     onClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .clip(RoundedCornerShape(20))
-            .background(MaterialTheme.customColorsShema.invertBackground)
+            .background(backgroundColor)
             .clickable {
                 if (!disabled) {
                     onClick()
