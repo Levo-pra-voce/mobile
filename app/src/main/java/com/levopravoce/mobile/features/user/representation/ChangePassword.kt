@@ -8,24 +8,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
+import com.levopravoce.mobile.features.app.domain.MainViewModel
 import com.levopravoce.mobile.features.app.representation.Alert
+import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.FormInputText
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.app.representation.Submit
-import com.levopravoce.mobile.features.forgotPassword.domain.ForgotPasswordViewModel
-import com.levopravoce.mobile.features.forgotPassword.representation.ForgotPasswordState
 import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
@@ -33,10 +33,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ChangePassword(
-    model: UserViewModel = hiltSharedViewModel(),
+    userViewModel: UserViewModel = hiltSharedViewModel(),
+    mainViewModel: MainViewModel = hiltSharedViewModel()
 ) {
-    val state = model.uiState.collectAsStateWithLifecycle();
-    val isLoading = state.value.status == RequestStatus.LOADING
+
+    val authState = mainViewModel.authUiStateStateFlow.collectAsStateWithLifecycle();
+    val userState = userViewModel.uiState.collectAsStateWithLifecycle();
+    val isLoading = userState.value.status == RequestStatus.LOADING
     val coroutineScope = rememberCoroutineScope()
     val navController = navControllerContext.current
 
@@ -44,8 +47,8 @@ fun ChangePassword(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(state.value.status) {
-        when (state.value.status) {
+    LaunchedEffect(userState.value.status) {
+        when (userState.value.status) {
             RequestStatus.SUCCESS -> {
                 navController?.navigate(Routes.Auth.LOGIN)
             }
@@ -56,9 +59,14 @@ fun ChangePassword(
         }
     }
 
-    Alert(show = showError, message = state.value.error)
+    Alert(show = showError, message = userState.value.error)
 
     Screen(padding = 24.dp) {
+        if (authState.value.data != null && authState.value.data?.token != null) {
+            BackButton(
+                Modifier.scale(1.5f)
+            )
+        }
         var password by remember { mutableStateOf("") }
         var repeatPassword by remember { mutableStateOf("") }
         Column(
@@ -92,7 +100,7 @@ fun ChangePassword(
             Submit(
                 onSubmit = {
                     coroutineScope.launch {
-                        model.changePassword(password, repeatPassword)
+                        userViewModel.changePassword(password, repeatPassword)
                     }
                 },
                 isLoading = isLoading,
