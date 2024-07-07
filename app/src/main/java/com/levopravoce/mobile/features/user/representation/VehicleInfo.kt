@@ -20,6 +20,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
+import com.levopravoce.mobile.common.transformation.MaskVisualTransformation
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.app.representation.FormInputText
@@ -83,10 +84,11 @@ fun VehicleInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                onChange = { vehicle = vehicle.copy(plate = it.maxLength(7)) },
-                value = vehicle.plate ?: "",
+                onChange = { vehicle = vehicle.copy(plate = it.maxLength(7).uppercase()) },
+                value = vehicle.plate?.uppercase() ?: "",
                 placeHolder = "Placa",
                 withBorder = false,
+                visualTransformation = MaskVisualTransformation("####-###"),
                 onSubmitted = nextFocus,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 modifier = Modifier
