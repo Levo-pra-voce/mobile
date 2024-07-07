@@ -28,7 +28,7 @@ fun AddressConfig(
 
     val authState = mainViewModel.authUiStateStateFlow.collectAsState()
 
-    Column(Modifier.padding(20.dp)) {
+    Column(Modifier.padding(horizontal = 20.dp, vertical = 10.dp)) {
         Text(
             text = "Endereço",
             color = MaterialTheme.customColorsShema.listTitle,
