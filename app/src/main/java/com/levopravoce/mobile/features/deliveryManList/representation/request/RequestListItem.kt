@@ -49,7 +49,7 @@ fun RequestListItem(
                 modifier = Modifier.padding(top = 4.dp)
             )
             Text(
-                text = requestDTO.averageRating?.toString() ?: "Avaliação não encontrado",
+                text = requestDTO.averageRating?.toString()?.replace(".", ",") ?: "Avaliação não encontrado",
                 color = MaterialTheme.customColorsShema.title,
                 modifier = Modifier.padding(top = 4.dp)
             )

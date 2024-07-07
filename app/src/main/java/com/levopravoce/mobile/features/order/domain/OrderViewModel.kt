@@ -28,16 +28,16 @@ class OrderViewModel @Inject constructor(
     private val _usersList = MutableStateFlow<List<RecommendUserDTO>>(listOf())
     val usersList: StateFlow<List<RecommendUserDTO>> = _usersList
 
-    private fun setLoadState()  {
+    private fun setLoadState() {
         _uiState.value = OrderUiState(status = RequestStatus.LOADING)
     }
 
-    private fun setErrorState(e: Exception){
+    private fun setErrorState(e: Exception) {
         Log.e("OrderViewModel", "Error: ${e.message}", e)
         _uiState.value = OrderUiState(status = RequestStatus.ERROR)
     }
 
-    suspend fun createOrder(order: OrderDTO): Boolean{
+    suspend fun createOrder(order: OrderDTO): Boolean {
         try {
             setLoadState()
             val data = orderRepository.requestOrder(order)
@@ -80,13 +80,14 @@ class OrderViewModel @Inject constructor(
 
     fun isLoading() = uiState.value.status == RequestStatus.LOADING
 
-    suspend fun assignDeliveryman(userId: Long) {
+    suspend fun assignDeliveryman(userId: Long): String {
         try {
             setLoadState()
             val data = orderRepository.assignDeliveryman(userId)
 
             if (data.isSuccessful) {
                 _uiState.value = OrderUiState(status = RequestStatus.SUCCESS)
+                return "Entregador atribuído com sucesso!"
             } else {
                 _uiState.value = OrderUiState(
                     status = RequestStatus.ERROR,
@@ -96,5 +97,6 @@ class OrderViewModel @Inject constructor(
         } catch (e: Exception) {
             setErrorState(e)
         }
+        return uiState.value.error ?: "Erro ao atribuir entregador"
     }
 }

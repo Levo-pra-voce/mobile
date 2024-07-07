@@ -11,12 +11,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.R
+import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.configuration.representation.PersonIcon
 import com.levopravoce.mobile.features.order.data.dto.RecommendUserDTO
@@ -32,7 +35,14 @@ fun DeliverymanItemInfo(
     orderViewModel: OrderViewModel
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val showAlert = remember {
+        mutableStateOf(false)
+    }
+    val messageAlert = remember {
+        mutableStateOf("")
+    }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Alert(show = showAlert, message = messageAlert.value)
         PersonIcon()
         Column(
             Modifier.padding(top = 16.dp, start = 8.dp)
@@ -59,7 +69,9 @@ fun DeliverymanItemInfo(
                 Button(text = "Solicitar", modifier = Modifier
                     .width(128.dp)) {
                     coroutineScope.launch(Dispatchers.IO) {
-                        orderViewModel.assignDeliveryman(recommendUserDTO.userId ?: 0)
+                        val message = orderViewModel.assignDeliveryman(recommendUserDTO.userId ?: 0)
+                        showAlert.value = true
+                        messageAlert.value = message
                     }
                 }
             }

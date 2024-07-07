@@ -46,7 +46,7 @@ fun DeliveryItem(deliveryDTO: OrderDTO, deliveryManViewModel: DeliveryManViewMod
                 modifier = Modifier.padding(top = 4.dp)
             )
             Text(
-                text = deliveryDTO.averageRating?.toString() ?: "Avaliação não encontrado",
+                text = deliveryDTO.averageRating?.toString()?.replace(".", ",") ?: "Avaliação não encontrado",
                 color = MaterialTheme.customColorsShema.title,
                 modifier = Modifier.padding(top = 4.dp)
             )

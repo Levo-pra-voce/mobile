@@ -207,7 +207,7 @@ fun ClientTracking(
                             )
                             Spacer(modifier = Modifier.padding(start = 48.dp))
                             Text(
-                                text = orderState?.averageRating?.toString() ?: "0.0",
+                                text = orderState?.averageRating?.toString()?.replace(".", ",") ?: "0.0",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.customColorsShema.title
                             )
