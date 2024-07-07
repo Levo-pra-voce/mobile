@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.data.dto.ApiResponse
 import com.levopravoce.mobile.features.app.domain.MainViewModel
+import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
@@ -42,19 +45,18 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.launch
 
 
-private val firstLineDescriptorData = listOf(
-    IconDescriptorData(
-        id = R.drawable.delivery_ok,
-        contentDescription = "icone para solicitar entrega",
-        title = "Solicitar\n" + "entrega",
-        route = Routes.Home.SELECT_ORDER
-    ),
-    IconDescriptorData(
-        id = R.drawable.delivery_call,
-        contentDescription = "icone para acompanhar entrega",
-        title = "Acompanhar\n" + "entrega",
-        route = Routes.Home.DELIVERY_TRACKING_CLIENT
-    ),
+val requestOrder = IconDescriptorData(
+    id = R.drawable.delivery_ok,
+    contentDescription = "icone para solicitar entrega",
+    title = "Solicitar\n" + "entrega",
+    route = Routes.Home.SELECT_ORDER
+)
+
+val trackOrder = IconDescriptorData(
+    id = R.drawable.delivery_call,
+    contentDescription = "icone para acompanhar entrega",
+    title = "Acompanhar\n" + "entrega",
+    route = Routes.Home.DELIVERY_TRACKING_CLIENT
 )
 
 @Composable
@@ -111,7 +113,9 @@ fun HomeClient(
             }
             Column {
                 UserHeader()
-                UserOptions()
+                UserOptions(
+                    haveTracking = haveTracking
+                )
             }
         } else {
             navController?.navigate(Routes.Home.DELIVERY_TRACKING_CLIENT)
@@ -152,7 +156,7 @@ fun RowOption(
 
 @Composable
 private fun UserOptions(
-    mainViewModel: MainViewModel = hiltSharedViewModel()
+    mainViewModel: MainViewModel = hiltSharedViewModel(), haveTracking: Boolean = false
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -181,11 +185,34 @@ private fun UserOptions(
             .background(color = MaterialTheme.customColorsShema.background)
             .padding(36.dp)
     ) {
-        RowOption(
+        val navController = navControllerContext.current
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            iconDescriptorData = firstLineDescriptorData,
-            modifier = Modifier
-        )
+        ) {
+            IconDescriptor(id = requestOrder.id,
+                contentDescription = requestOrder.contentDescription,
+                title = requestOrder.title,
+                onClick = {
+                    requestOrder.route?.let { route ->
+                        navController?.navigate(route)
+                    }
+                })
+            val showTrackingError = remember { mutableStateOf(false) }
+            Alert(show = showTrackingError, message = "Você possui uma entrega em andamento")
+            IconDescriptor(id = trackOrder.id,
+                contentDescription = trackOrder.contentDescription,
+                title = trackOrder.title,
+                onClick = {
+                    if (!haveTracking) {
+                        showTrackingError.value = true
+                        return@IconDescriptor
+                    }
+                    trackOrder.route?.let { route ->
+                        navController?.navigate(route)
+                    }
+                })
+        }
         RowOption(
             horizontalArrangement = Arrangement.SpaceBetween,
             iconDescriptorData = thirdLineDescriptorData,

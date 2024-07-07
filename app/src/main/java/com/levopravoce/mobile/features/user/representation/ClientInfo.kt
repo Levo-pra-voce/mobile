@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +49,8 @@ fun ClientInfo(
     userDTO: UserDTO = UserDTO(
         userType = UserType.CLIENTE
     ),
-    userViewModel: UserViewModel = hiltViewModel()
+    userViewModel: UserViewModel = hiltViewModel(),
+    onBack: (() -> Unit)? = null,
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
     val userViewModelState = userViewModel.uiState.collectAsState()
@@ -119,8 +121,14 @@ fun ClientInfo(
         Column {
             BackButton(
                 Modifier.scale(1.5f),
-                userViewModelState.value.status != RequestStatus.LOADING
-            )
+                userViewModelState.value.status != RequestStatus.LOADING,
+            ) {
+                if (onBack != null) {
+                    onBack()
+                } else {
+                    navController?.popBackStack()
+                }
+            }
         }
 
         Column(
@@ -237,10 +245,4 @@ fun ClientInfo(
             SubmitButton(userViewModel, userDTORemember, UserType.CLIENTE)
         }
     }
-}
-
-@Preview
-@Composable
-fun ClientRegisterPreview() {
-    ClientInfo()
 }
