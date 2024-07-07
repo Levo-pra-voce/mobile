@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.order.representation.newOrder
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -233,6 +234,9 @@ fun OrderInfo(
             }
 
             OrderInfoState.CREATE_MAP_SELECTION -> {
+                BackHandler {
+                    orderInfoState = OrderInfoState.CREATE_ORDER_FIELDS
+                }
                 Screen(
                     Modifier
                         .fillMaxWidth()

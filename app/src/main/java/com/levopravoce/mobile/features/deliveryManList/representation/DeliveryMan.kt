@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.deliveryManList.representation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,12 +18,22 @@ fun DeliveryMan() {
     var deliveryManView: DeliveryManView? by remember { mutableStateOf(null) }
 
     when (deliveryManView) {
-        DeliveryManView.DELiVERY -> DeliveryList() {
-            deliveryManView = null
+        DeliveryManView.DELiVERY -> {
+            val onBack: () -> Unit = {
+                deliveryManView = null
+            }
+            BackHandler(onBack = onBack)
+            DeliveryList(onBackButton = onBack)
         }
-        DeliveryManView.REQUEST -> RequestList() {
-            deliveryManView = null
+
+        DeliveryManView.REQUEST -> {
+            val onBack: () -> Unit = {
+                deliveryManView = null
+            }
+            BackHandler(onBack = onBack)
+            RequestList(onBackButton = onBack)
         }
+
         null -> DeliveryManScreenDecider { deliveryManView = it }
     }
 }
