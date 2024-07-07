@@ -10,9 +10,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.themeCustomization.domain.ThemeCustomizationViewModel
 
 @Immutable
@@ -50,7 +51,7 @@ val DarkColorSchema = CustomColorsShema(
     listTitle = gray80,
 )
 
-var LocalColors = staticCompositionLocalOf { LightColorSchema }
+var LocalColors = compositionLocalOf { LightColorSchema }
 
 val MaterialTheme.customColorsShema: CustomColorsShema
     @Composable
@@ -66,9 +67,15 @@ enum class ThemeMode {
 
 @Composable
 fun MobileTheme(
-    content: @Composable () -> Unit
+    themeCustomizationViewModel: ThemeCustomizationViewModel = hiltSharedViewModel(),
+    content: @Composable () -> Unit,
 ) {
-    val colors = DarkColorSchema
+    val themeMode by themeCustomizationViewModel.themeMode.collectAsState()
+    val colors = when (themeMode) {
+        ThemeMode.LIGHT -> LightColorSchema
+        ThemeMode.DARK -> DarkColorSchema
+        ThemeMode.SYSTEM -> if (isSystemInDarkTheme()) DarkColorSchema else LightColorSchema
+    }
 
     CompositionLocalProvider(
         LocalColors provides colors
