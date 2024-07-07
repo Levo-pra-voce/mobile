@@ -88,22 +88,6 @@ fun OrderInfo(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(state.value.status) {
-        when (state.value.status) {
-            RequestStatus.SUCCESS -> {
-                hideKeyboard()
-                navController?.navigate(Routes.Home.ROUTE)
-            }
-
-            RequestStatus.ERROR -> {
-                hideKeyboard()
-                showError.value = true
-            }
-
-            else -> {}
-        }
-    }
-
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             val lastOrderInPending = orderViewModel.getCurrentOrderInPending()
