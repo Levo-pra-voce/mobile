@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.home.representation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -105,6 +106,9 @@ fun HomeClient(
         val haveTracking =
             currentTrackingState is ApiResponse.Success<OrderDTO?> && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
         if (!haveTracking) {
+            BackHandler {
+
+            }
             Column {
                 UserHeader()
                 UserOptions()

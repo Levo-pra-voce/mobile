@@ -24,14 +24,15 @@ data class UserUiState(
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authStore: AuthStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UserUiState())
 
     val uiState: StateFlow<UserUiState> = _uiState
 
-    init{
+    init {
         _uiState.value = UserUiState(
             data = UserDTO(
                 userType = UserType.ENTREGADOR
@@ -44,9 +45,13 @@ class UserViewModel @Inject constructor(
         try {
             val data = userRepository.register(userType.name, user)
             if (data.isSuccessful) {
+                data.body()?.token?.let { authStore.saveToken(it) }
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+                _uiState.value = UserUiState(
+                    status = RequestStatus.ERROR,
+                    error = ErrorUtils.parseError(response = data)
+                )
             }
 
         } catch (
@@ -60,12 +65,14 @@ class UserViewModel @Inject constructor(
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
         try {
             val data = userRepository.update(userDTO)
-
             if (data.isSuccessful) {
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
                 return true;
             } else {
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+                _uiState.value = UserUiState(
+                    status = RequestStatus.ERROR,
+                    error = ErrorUtils.parseError(response = data)
+                )
             }
 
         } catch (
@@ -88,7 +95,10 @@ class UserViewModel @Inject constructor(
             if (data.isSuccessful) {
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+                _uiState.value = UserUiState(
+                    status = RequestStatus.ERROR,
+                    error = ErrorUtils.parseError(response = data)
+                )
             }
 
         } catch (
@@ -102,7 +112,8 @@ class UserViewModel @Inject constructor(
         _uiState.value = UserUiState(status = RequestStatus.LOADING)
         try {
             if (newPassword != repeatPassword) {
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = "As senhas não coincidem")
+                _uiState.value =
+                    UserUiState(status = RequestStatus.ERROR, error = "As senhas não coincidem")
                 return
             }
 
@@ -113,7 +124,10 @@ class UserViewModel @Inject constructor(
             if (data.isSuccessful) {
                 _uiState.value = UserUiState(status = RequestStatus.SUCCESS)
             } else {
-                _uiState.value = UserUiState(status = RequestStatus.ERROR, error = ErrorUtils.parseError(response = data))
+                _uiState.value = UserUiState(
+                    status = RequestStatus.ERROR,
+                    error = ErrorUtils.parseError(response = data)
+                )
             }
 
         } catch (
