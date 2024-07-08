@@ -6,7 +6,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.UserType
+
+val mockClient = UserDTO(
+    userType = UserType.CLIENTE,
+    name = "Luiz",
+    zipCode = "88061412",
+    cpf = "79228000023",
+    email = "dudubr1441@gmail.com",
+    password = "Teste1234",
+    phone = "48991407989",
+    complement = "Casa",
+    acceptTerms = true
+)
 
 @Composable
 fun Register(
@@ -20,7 +33,9 @@ fun Register(
             BackHandler {
                 onBack()
             }
-            ClientInfo {
+            ClientInfo(
+                userDTO = mockClient
+            ) {
                 onBack()
             }
         }
