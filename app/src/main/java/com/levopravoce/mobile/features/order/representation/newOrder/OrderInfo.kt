@@ -238,7 +238,7 @@ fun OrderInfo(
                         BackButton(
                             Modifier.scale(1.5f), state.value.status != RequestStatus.LOADING
                         ) {
-                            mapViewDisplay.value = false
+                            orderInfoState = OrderInfoState.CREATE_ORDER_FIELDS
                         }
                         Row(
                             modifier = Modifier

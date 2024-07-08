@@ -236,7 +236,9 @@ fun ClientInfo(
                         .fillMaxWidth()
                         .padding(top = 8.dp)
                 )
-                Terms {
+                Terms(
+                    initialValue = userDTORemember.acceptTerms ?: false,
+                ) {
                     userDTORemember = userDTORemember.copy(acceptTerms = it)
                 }
             }

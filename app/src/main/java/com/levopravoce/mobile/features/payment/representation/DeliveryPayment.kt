@@ -99,8 +99,10 @@ fun DeliveryPayment(
                     )
                 }
             }
-            Button(text = "Voltar", modifier = Modifier.fillMaxWidth()) {
-                navController?.popBackStack()
+            if (isPaid.value) {
+                Button(text = "Voltar", modifier = Modifier.fillMaxWidth()) {
+                    navController?.popBackStack()
+                }
             }
         }
     }

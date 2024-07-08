@@ -9,15 +9,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.features.app.data.dto.ApiResponse
+import com.levopravoce.mobile.features.app.representation.Alert
 import com.levopravoce.mobile.features.app.representation.Button
 import com.levopravoce.mobile.features.configuration.representation.PersonIcon
 import com.levopravoce.mobile.features.deliveryManList.domain.DeliveryManViewModel
+import com.levopravoce.mobile.features.deliveryManList.representation.DeliveryManView
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.routes.navControllerContext
@@ -66,6 +70,10 @@ fun DeliveryItem(deliveryDTO: OrderDTO, deliveryManViewModel: DeliveryManViewMod
                         localDateByOrder
                     ) || currentDate.isEqual(localDateByOrder))
                 ) {
+                    val showSuccessAlert = remember { mutableStateOf(false) }
+                    Alert(show = showSuccessAlert, message = "Iniciando entrega") {
+                        navController?.navigateUp()
+                    }
                     Column(modifier = Modifier.padding(top = 12.dp)) {
                         Button(
                             text = "Iniciar",
@@ -77,9 +85,7 @@ fun DeliveryItem(deliveryDTO: OrderDTO, deliveryManViewModel: DeliveryManViewMod
                                 coroutineScope.launch(Dispatchers.IO) {
                                     val apiResponse = deliveryManViewModel.startOrder(deliveryId)
                                     if (apiResponse is ApiResponse.Success) {
-                                        withContext(Dispatchers.Main) {
-                                            navController?.navigateUp()
-                                        }
+                                        showSuccessAlert.value = true
                                     }
                                 }
                             }
