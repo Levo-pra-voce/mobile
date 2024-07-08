@@ -12,6 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
@@ -71,11 +73,10 @@ class OrderViewModel @Inject constructor(
     }
 
     fun validateDeliveryDate(order: OrderDTO): Boolean {
-        val dataFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        val currentDate = Calendar.getInstance().time;
-        val deliveryDate = dataFormat.parse(order.deliveryDate);
-
-        return if(deliveryDate.before(currentDate)) {
+        val pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        val deliveryDate: LocalDate = LocalDate.parse(order.deliveryDate, pattern);
+        val currentDate = LocalDate.now();
+        return if(deliveryDate.isBefore(currentDate) && !deliveryDate.equals(currentDate)) {
             _uiState.value = OrderUiState(status = RequestStatus.ERROR, error = "Data de entrega inválida")
             false
         } else {
