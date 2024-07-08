@@ -54,7 +54,7 @@ fun MapSelectDestination(
                 mapType = MapType.TERRAIN,
                 minZoomPreference = 11.0F,
                 isTrafficEnabled = false,
-                isMyLocationEnabled = false
+                isMyLocationEnabled = true
             )
         )
     }

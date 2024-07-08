@@ -106,7 +106,7 @@ fun NavGraphBuilder.homeGraph() {
         authComposable(route = Routes.Home.DELIVERY_MAN) {
             val screen = it.arguments?.getString("screen", null)
             DeliveryMan(
-                screen = when (screen) {
+                screen = when (screen?.uppercase()) {
                     "delivery" -> DeliveryManView.DELiVERY
                     "request" -> DeliveryManView.REQUEST
                     else -> null
