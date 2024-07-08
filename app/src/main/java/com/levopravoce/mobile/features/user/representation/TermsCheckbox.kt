@@ -24,10 +24,11 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun Terms(
+    initialValue: Boolean = false,
     onChange: (value: Boolean) -> Unit,
 ) {
     val context = LocalContext.current
-    var value by remember { mutableStateOf(false) }
+    var value by remember { mutableStateOf(initialValue) }
     Row(
         Modifier
             .padding(top = 24.dp, bottom = 8.dp)
