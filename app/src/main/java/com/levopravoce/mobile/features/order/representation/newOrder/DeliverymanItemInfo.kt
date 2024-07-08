@@ -1,6 +1,8 @@
 package com.levopravoce.mobile.features.order.representation.newOrder
 
+import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.R
@@ -41,6 +44,7 @@ fun DeliverymanItemInfo(
     val messageAlert = remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Alert(show = showAlert, message = messageAlert.value)
         PersonIcon()
@@ -66,8 +70,10 @@ fun DeliverymanItemInfo(
                 )
             }
             Row(Modifier.padding(top = 12.dp)) {
-                Button(text = "Solicitar", modifier = Modifier
-                    .width(128.dp)) {
+                Button(
+                    text = "Solicitar", modifier = Modifier
+                        .width(128.dp)
+                ) {
                     coroutineScope.launch(Dispatchers.IO) {
                         val message = orderViewModel.assignDeliveryman(recommendUserDTO.userId ?: 0)
                         showAlert.value = true
@@ -80,7 +86,14 @@ fun DeliverymanItemInfo(
             painter = painterResource(R.drawable.whatsapp_icon),
             contentDescription = "icone do whatsapp",
             contentScale = ContentScale.FillHeight,
-            modifier = Modifier.padding(start = 16.dp, top = 48.dp)
+            modifier = Modifier
+                .padding(start = 16.dp, top = 48.dp)
+                .clickable {
+                    val url = "https://wa.me/${recommendUserDTO.phone}?text=Olá, gostaria de solicitar um serviço de entrega"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = android.net.Uri.parse(url)
+                    context.startActivity(intent)
+                }
         )
     }
 }
