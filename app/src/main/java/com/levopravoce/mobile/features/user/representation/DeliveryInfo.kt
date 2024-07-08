@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,12 +43,13 @@ import com.levopravoce.mobile.features.user.domain.UserViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DeliveryInfo(
     userDTO: UserDTO = UserDTO(
         userType = UserType.ENTREGADOR
-    ), userViewModel: UserViewModel = hiltViewModel()
+    ),
+    userViewModel: UserViewModel = hiltViewModel(),
+    onBack: (() -> Unit)? = null,
 ) {
     var userDTORemember by remember { mutableStateOf(userDTO) }
     val userViewModelState = userViewModel.uiState.collectAsState()
@@ -106,8 +108,15 @@ fun DeliveryInfo(
             )
         ) {
             BackButton(
-                Modifier.scale(1.5f), userViewModelState.value.status != RequestStatus.LOADING
-            )
+                Modifier.scale(1.5f),
+                userViewModelState.value.status != RequestStatus.LOADING,
+            ) {
+                if (onBack != null) {
+                    onBack()
+                } else {
+                    navController?.popBackStack()
+                }
+            }
 
             Title(text = if (isEditing) "Editar Conta" else "Cadastrar Conta")
 
@@ -211,7 +220,9 @@ fun DeliveryInfo(
                             .fillMaxWidth()
                             .padding(top = 8.dp)
                     )
-                    Terms {
+                    Terms(
+                        initialValue = userDTORemember.acceptTerms ?: false,
+                    ) {
                         userDTORemember = userDTORemember.copy(acceptTerms = it)
                     }
                 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,12 +25,14 @@ import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.deliveryManList.domain.DeliveryManViewModel
+import com.levopravoce.mobile.features.deliveryManList.representation.DeliveryManView
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun RequestList(
     deliveryManViewModel: DeliveryManViewModel = hiltSharedViewModel(),
-    onBackButton: (() -> Unit)? = null
+    onBackButton: (() -> Unit)? = null,
+    deliveryManViewState: MutableState<DeliveryManView?>
 ) {
     val requestUiStateState = deliveryManViewModel.uiStateRequestList.collectAsState()
     val assignedRequestState = deliveryManViewModel.assignedRequest.collectAsState()
@@ -84,7 +87,7 @@ fun RequestList(
         }
         LazyColumn {
             items(requestUiStateState.value.list.size) { index ->
-                RequestListItem(requestUiStateState.value.list[index], deliveryManViewModel)
+                RequestListItem(requestUiStateState.value.list[index], deliveryManViewModel, deliveryManViewState)
 //                if (index !== uiState.value.list.size - 1) {
                 Divider(
                     modifier = Modifier.fillMaxWidth(),

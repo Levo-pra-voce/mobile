@@ -19,9 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.features.themeCustomization.domain.ThemeCustomizationViewModel
@@ -30,11 +31,11 @@ import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
 fun ThemeCustomization(
-    viewModel: ThemeCustomizationViewModel = hiltViewModel()
+    viewModel: ThemeCustomizationViewModel = hiltSharedViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsState();
+    val uiState = viewModel.themeMode.collectAsState();
 
-    val isDarkMode = when (uiState.value.themeMode) {
+    val isDarkMode = when (uiState.value) {
         ThemeMode.DARK -> true
         ThemeMode.LIGHT -> false
         ThemeMode.SYSTEM -> isSystemInDarkTheme()

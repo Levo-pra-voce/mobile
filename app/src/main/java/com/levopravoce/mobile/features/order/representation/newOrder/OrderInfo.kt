@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.order.representation.newOrder
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -59,7 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 enum class OrderInfoState {
-    CREATE_MAP_SELECTION, CREATE_ORDER_FIELDS, CREATE_DELIVERYMAN_LIST,
+    CREATE_ORDER_FIELDS, CREATE_MAP_SELECTION, CREATE_DELIVERYMAN_LIST,
 }
 
 @Composable
@@ -85,22 +86,6 @@ fun OrderInfo(
 
     val showError = remember {
         mutableStateOf(false)
-    }
-
-    LaunchedEffect(state.value.status) {
-        when (state.value.status) {
-            RequestStatus.SUCCESS -> {
-                hideKeyboard()
-                navController?.navigate(Routes.Home.ROUTE)
-            }
-
-            RequestStatus.ERROR -> {
-                hideKeyboard()
-                showError.value = true
-            }
-
-            else -> {}
-        }
     }
 
     LaunchedEffect(Unit) {
@@ -226,13 +211,20 @@ fun OrderInfo(
                     }
                     EnterButton("Avançar") {
                         coroutineScope.launch {
-                            orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
+                            if(orderViewModel.validateOrderFields(orderDTOState)) {
+                                orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
+                            } else{
+                                showError.value = true
+                            }
                         }
                     }
                 }
             }
 
             OrderInfoState.CREATE_MAP_SELECTION -> {
+                BackHandler {
+                    orderInfoState = OrderInfoState.CREATE_ORDER_FIELDS
+                }
                 Screen(
                     Modifier
                         .fillMaxWidth()
@@ -246,7 +238,7 @@ fun OrderInfo(
                         BackButton(
                             Modifier.scale(1.5f), state.value.status != RequestStatus.LOADING
                         ) {
-                            mapViewDisplay.value = false
+                            orderInfoState = OrderInfoState.CREATE_ORDER_FIELDS
                         }
                         Row(
                             modifier = Modifier

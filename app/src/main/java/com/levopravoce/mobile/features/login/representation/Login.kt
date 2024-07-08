@@ -77,7 +77,6 @@ fun Login(
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         Column {
-
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -117,7 +116,7 @@ fun Login(
                     value = password,
                     placeHolder = "*****",
                     label = "Digite sua senha:",
-//                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = PasswordVisualTransformation(),
                     onSubmitted = hideKeyboard,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     modifier = Modifier

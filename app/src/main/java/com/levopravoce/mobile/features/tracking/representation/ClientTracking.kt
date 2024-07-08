@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.tracking.representation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +49,8 @@ import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ClientTracking(
@@ -56,6 +60,7 @@ fun ClientTracking(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(LatLng(0.0, 0.0), 16f)
     }
+    val coroutineScope = rememberCoroutineScope()
     var deliveryUserPosition: LatLng? by remember {
         mutableStateOf(null)
     }
@@ -98,6 +103,13 @@ fun ClientTracking(
                 orderInTracking.originLatitude ?: 0.0, orderInTracking.originLongitude ?: 0.0
             )
             cameraPositionState.move(CameraUpdateFactory.newLatLng(latLng))
+            if (orderInTracking.status == OrderStatus.ENTREGADO) {
+                navController?.navigate(Routes.Home.CLIENT_PAYMENT) {
+                    popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                        inclusive = true
+                    }
+                }
+            }
         } else {
             navController?.popBackStack()
         }
@@ -121,11 +133,22 @@ fun ClientTracking(
             horizontal = Alignment.CenterHorizontally,
         ) {
             Row {
-//                BackButton(
-//                    modifier = Modifier
-//                        .size(24.dp)
-//                        .offset(x = -(32.dp))
-//                )
+                BackHandler {
+                    coroutineScope.launch(Dispatchers.Main) {
+                        trackingViewModel.setRedirectToTracking(false)
+                        navController?.navigateUp()
+                    }
+                }
+                BackButton(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .offset(x = -(32.dp))
+                ) {
+                    coroutineScope.launch(Dispatchers.Main) {
+                        trackingViewModel.setRedirectToTracking(false)
+                        navController?.navigateUp()
+                    }
+                }
                 Text(
                     text = "Entrega em andamento",
                     color = MaterialTheme.customColorsShema.title,
@@ -207,7 +230,8 @@ fun ClientTracking(
                             )
                             Spacer(modifier = Modifier.padding(start = 48.dp))
                             Text(
-                                text = orderState?.averageRating?.toString() ?: "0.0",
+                                text = orderState?.averageRating?.toString()?.replace(".", ",")
+                                    ?: "0.0",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.customColorsShema.title
                             )

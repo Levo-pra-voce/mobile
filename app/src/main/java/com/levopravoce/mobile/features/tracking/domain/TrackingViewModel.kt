@@ -25,7 +25,7 @@ class TrackingViewModel @Inject constructor(
     val viewState = _viewState.asStateFlow()
     val webSocketState = webSocketClient.messageFlow.asStateFlow()
     val orderState = MutableStateFlow<OrderDTO?>(null)
-    val firstRender = MutableStateFlow(true)
+    val redirectToTracking = MutableStateFlow(true)
     val currentTrackingState = MutableStateFlow<ApiResponse<OrderDTO?>>(ApiResponse.Loading())
 
     override fun onCleared() {
@@ -87,8 +87,8 @@ class TrackingViewModel @Inject constructor(
         }
     }
 
-    fun setFirstRender() {
-        firstRender.value = false
+    fun setRedirectToTracking(value: Boolean) {
+        redirectToTracking.value = value
     }
 }
 
