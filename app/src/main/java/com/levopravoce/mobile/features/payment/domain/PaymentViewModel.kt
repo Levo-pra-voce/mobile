@@ -1,12 +1,15 @@
 package com.levopravoce.mobile.features.payment.domain
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.levopravoce.mobile.BuildConfig
 import com.levopravoce.mobile.config.WebSocketClient
 import com.levopravoce.mobile.features.auth.domain.AuthStore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,6 +18,12 @@ class PaymentViewModel @Inject constructor(
     private val authStore: AuthStore,
     ) : ViewModel() {
     val webSocketState = webSocketClient.messageFlow.asStateFlow()
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            connectWebSocket()
+        }
+    }
 
     override fun onCleared() {
         webSocketClient.disconnect()

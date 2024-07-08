@@ -138,7 +138,8 @@ private fun createDefaultBitmap(sizePx: Int): Bitmap {
 
 @Composable
 fun ClientPayment(
-    paymentViewModel: PaymentViewModel = hiltSharedViewModel()
+    paymentViewModel: PaymentViewModel = hiltSharedViewModel(),
+    trackingViewModel: TrackingViewModel = hiltSharedViewModel()
 ) {
     val messageState by paymentViewModel.webSocketState.collectAsState()
     val navController = navControllerContext.current
@@ -193,7 +194,8 @@ fun ClientPayment(
                 }
             }
             Button(text = "Voltar", modifier = Modifier.fillMaxWidth()) {
-                navController?.popBackStack()
+                trackingViewModel.setRedirectToTracking(false)
+                navController?.navigateUp()
             }
         }
     }

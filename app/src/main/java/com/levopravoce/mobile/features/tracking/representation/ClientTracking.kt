@@ -103,6 +103,13 @@ fun ClientTracking(
                 orderInTracking.originLatitude ?: 0.0, orderInTracking.originLongitude ?: 0.0
             )
             cameraPositionState.move(CameraUpdateFactory.newLatLng(latLng))
+            if (orderInTracking.status == OrderStatus.ENTREGADO) {
+                navController?.navigate(Routes.Home.CLIENT_PAYMENT) {
+                    popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                        inclusive = true
+                    }
+                }
+            }
         } else {
             navController?.popBackStack()
         }
