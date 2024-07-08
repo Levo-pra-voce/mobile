@@ -58,4 +58,7 @@ interface OrderRepository {
     suspend fun startOrder(
         @Path("id") id: Long
     ): Response<Unit>
+
+    @GET("api/order/payment")
+    suspend fun sendPaymentRequest(): Response<Unit>
 }

@@ -3,9 +3,9 @@ package com.levopravoce.mobile.features.payment.representation
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -42,6 +43,7 @@ import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -143,6 +145,7 @@ fun ClientPayment(
 ) {
     val messageState by paymentViewModel.webSocketState.collectAsState()
     val navController = navControllerContext.current
+    val coroutineScope = rememberCoroutineScope()
     val isPaid = remember {
         mutableStateOf(false)
     }
@@ -180,7 +183,8 @@ fun ClientPayment(
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.customColorsShema.title,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 32.dp)
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
                 )
                 if (qrCodeLink.value.isNotEmpty()) {
                     Image(
@@ -189,7 +193,15 @@ fun ClientPayment(
                             size = 300.dp,
                             padding = 1.dp
                         ),
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch(Dispatchers.Main) {
+                                val response = paymentViewModel.sendPaymentRequest()
+                                if (response.isSuccessful) {
+                                    isPaid.value = true
+                                }
+                            }
+                        }
                     )
                 }
             }
