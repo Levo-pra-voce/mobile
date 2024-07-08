@@ -189,7 +189,7 @@ private fun UserOptions(
                     }
                 })
             val showTrackingError = remember { mutableStateOf(false) }
-            Alert(show = showTrackingError, message = "Você possui uma entrega em andamento")
+            Alert(show = showTrackingError, message = "Você não possuí nenhuma entrega em andamento.")
             IconDescriptor(id = trackOrder.id,
                 contentDescription = trackOrder.contentDescription,
                 title = trackOrder.title,
