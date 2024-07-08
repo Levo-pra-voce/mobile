@@ -167,10 +167,20 @@ fun RenderRelatoryItem(data: RelatoryDTO, isLast: Boolean) {
                 text = "Valor: ${formatCurrency(data.value)}",
                 color = MaterialTheme.customColorsShema.placeholder
             )
-            Text(
-                text = "Data da entrega: ${data.deliveryDate?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: "Data não informada"}",
-                color = MaterialTheme.customColorsShema.placeholder
-            )
+            if (data.deliveryDate != null) {
+                val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val date = LocalDate.parse(data.deliveryDate, pattern)
+                val formattedDate = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                Text(
+                    text = "Data da entrega: $formattedDate",
+                    color = MaterialTheme.customColorsShema.placeholder
+                )
+            } else {
+                Text(
+                    text = "Data da entrega: Data não informada",
+                    color = MaterialTheme.customColorsShema.placeholder
+                )
+            }
         }
     }
 }
