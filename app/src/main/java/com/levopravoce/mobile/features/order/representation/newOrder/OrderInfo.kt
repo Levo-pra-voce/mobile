@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 enum class OrderInfoState {
-    CREATE_MAP_SELECTION, CREATE_ORDER_FIELDS, CREATE_DELIVERYMAN_LIST,
+    CREATE_ORDER_FIELDS, CREATE_MAP_SELECTION, CREATE_DELIVERYMAN_LIST,
 }
 
 @Composable
@@ -211,7 +211,11 @@ fun OrderInfo(
                     }
                     EnterButton("Avançar") {
                         coroutineScope.launch {
-                            orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
+                            if(orderViewModel.validateOrderFields(orderDTOState)) {
+                                orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
+                            } else{
+                                showError.value = true
+                            }
                         }
                     }
                 }

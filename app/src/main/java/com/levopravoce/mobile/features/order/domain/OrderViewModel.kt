@@ -59,6 +59,14 @@ class OrderViewModel @Inject constructor(
         }
     }
 
+    fun validateOrderFields(order: OrderDTO): Boolean {
+       if(order.height == null || order.width == null || order.maxWeight == null || order.deliveryDate.isNullOrEmpty() == null) {
+           _uiState.value = OrderUiState(status = RequestStatus.ERROR, error = "Campos preenchidos incorretamente")
+           return false
+       }
+        return true
+    }
+
     suspend fun getCurrentOrderInPending(): OrderDTO? {
         val response = orderRepository.getLastPending()
         if (response.isSuccessful) {
