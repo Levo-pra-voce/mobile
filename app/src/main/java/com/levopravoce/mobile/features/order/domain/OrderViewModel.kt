@@ -11,6 +11,9 @@ import com.levopravoce.mobile.features.order.data.dto.RecommendUserDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 
 data class OrderUiState(
@@ -60,11 +63,24 @@ class OrderViewModel @Inject constructor(
     }
 
     fun validateOrderFields(order: OrderDTO): Boolean {
-       if(order.height == null || order.width == null || order.maxWeight == null || order.deliveryDate.isNullOrEmpty() == null) {
+       if(order.height == null || order.width == null || order.maxWeight == null || order.deliveryDate.isNullOrEmpty()) {
            _uiState.value = OrderUiState(status = RequestStatus.ERROR, error = "Campos preenchidos incorretamente")
            return false
        }
         return true
+    }
+
+    fun validateDeliveryDate(order: OrderDTO): Boolean {
+        val dataFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        val currentDate = Calendar.getInstance().time;
+        val deliveryDate = dataFormat.parse(order.deliveryDate);
+
+        return if(deliveryDate.before(currentDate)) {
+            _uiState.value = OrderUiState(status = RequestStatus.ERROR, error = "Data de entrega inválida")
+            false
+        } else {
+            true
+        }
     }
 
     suspend fun getCurrentOrderInPending(): OrderDTO? {
