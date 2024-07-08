@@ -33,7 +33,6 @@ import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun RequestDetails(
@@ -139,6 +138,12 @@ fun RequestDetails(
         }
 
         Column(Modifier.padding(top = 24.dp)) {
+            val showSuccessAlert = remember { mutableStateOf(false) }
+            Alert(show = showSuccessAlert, message = "Pedido foi aceito") {
+                coroutineScope.launch(Dispatchers.Main) {
+                    navController?.navigateUp()
+                }
+            }
             Button(
                 text = "Aceitar", modifier = Modifier.fillMaxWidth(), backgroundColor =
                 Color(0xFF038B00)
@@ -148,9 +153,7 @@ fun RequestDetails(
                     coroutineScope.launch(Dispatchers.IO) {
                         val apiResponse = deliveryManViewModel.acceptRequest(orderId)
                         if (apiResponse is ApiResponse.Success) {
-                            withContext(Dispatchers.Main) {
-                                navController?.navigateUp()
-                            }
+                            showSuccessAlert.value = true
                         }
                     }
                 }
