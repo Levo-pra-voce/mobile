@@ -22,9 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
@@ -35,7 +32,6 @@ import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
-import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingDTO
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingStatus
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
@@ -65,19 +61,14 @@ fun HomeClient(
 ) {
     val messageState = trackingViewModel.webSocketState.collectAsState()
     val currentTrackingState by trackingViewModel.currentTrackingState.collectAsState()
-    val firstRenderState = trackingViewModel.firstRender.collectAsState()
+    val redirectToTrackingState = trackingViewModel.redirectToTracking.collectAsState()
     val navController = navControllerContext.current
     LaunchedEffect(Unit) {
         trackingViewModel.connectWebSocket()
-        trackingViewModel.setStateCurrentTracking()
-        trackingViewModel.setFirstRender()
-        println("Client: Unit effect")
-    }
-
-    LaunchedEffect(currentTrackingState) {
-        if (currentTrackingState is ApiResponse.Success || currentTrackingState is ApiResponse.Error) {
-            trackingViewModel.setFirstRender()
+        if (currentTrackingState !is ApiResponse.Success) {
+            trackingViewModel.setStateCurrentTracking()
         }
+        println("Client: Unit effect")
     }
 
     LaunchedEffect(messageState.value) {
@@ -105,9 +96,8 @@ fun HomeClient(
             }
         }
     } else {
-        val haveTracking =
-            currentTrackingState is ApiResponse.Success<OrderDTO?> && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
-        if (!haveTracking) {
+        val haveTracking = currentTrackingState is ApiResponse.Success && (currentTrackingState as ApiResponse.Success<OrderDTO?>).data != null
+        if (!redirectToTrackingState.value || !haveTracking) {
             BackHandler {
 
             }

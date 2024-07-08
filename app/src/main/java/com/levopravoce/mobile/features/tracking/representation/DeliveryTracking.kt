@@ -162,11 +162,11 @@ fun DeliveryTracking(
                     horizontal = Alignment.CenterHorizontally,
                 ) {
                     Row {
-//                        BackButton(
-//                            modifier = Modifier
-//                                .size(24.dp)
-//                                .offset(x = -(32.dp))
-//                        )
+                        BackButton(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .offset(x = -(32.dp))
+                        )
                         Text(
                             text = "Local de entrega",
                             color = MaterialTheme.customColorsShema.title,

@@ -14,14 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.gson.Gson
 import com.levopravoce.mobile.R
 import com.levopravoce.mobile.common.viewmodel.hiltSharedViewModel
@@ -31,7 +27,6 @@ import com.levopravoce.mobile.features.app.representation.Loading
 import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.home.data.IconDescriptorData
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
-import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingDTO
 import com.levopravoce.mobile.features.tracking.data.OrderTrackingStatus
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
@@ -63,19 +58,11 @@ fun HomeDelivery(
 ) {
     val messageState = trackingViewModel.webSocketState.collectAsState()
     val currentTrackingState by trackingViewModel.currentTrackingState.collectAsState()
-    val firstRenderState = trackingViewModel.firstRender.collectAsState()
     val navController = navControllerContext.current
     LaunchedEffect(Unit) {
         trackingViewModel.connectWebSocket()
         trackingViewModel.setStateCurrentTracking()
-        trackingViewModel.setFirstRender()
         println("Delivery: Unit effect")
-    }
-
-    LaunchedEffect(currentTrackingState) {
-        if (currentTrackingState !is ApiResponse.Loading) {
-            trackingViewModel.setFirstRender()
-        }
     }
 
     LaunchedEffect(messageState.value) {
