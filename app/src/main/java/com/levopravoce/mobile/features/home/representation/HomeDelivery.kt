@@ -43,10 +43,10 @@ import kotlinx.coroutines.launch
 private val firstLineDescriptorData = listOf(
     IconDescriptorData(
         id = R.drawable.truck_icon,
-        contentDescription = "icone para solicitar entrega",
+        contentDescription = "icone para ver suas entregas",
         title = "Suas entregas",
         imageModifier = Modifier.offset(x = -(18.dp), y = 4.dp),
-        route = Routes.Home.DELIVERY_MAN
+        route = Routes.Home.DELIVERY_MAN.replace("{screen}", "null")
     ),
     IconDescriptorData(
         id = R.drawable.report_icon,

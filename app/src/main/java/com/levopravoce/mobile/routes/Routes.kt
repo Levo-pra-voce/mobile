@@ -19,7 +19,7 @@ object Routes {
         val SELECT_ORDER = "select_order"
         val RELATORY = "relatory"
         val CHANGE_PASSWORD = "change_password"
-        val DELIVERY_MAN = "delivery_list"
+        val DELIVERY_MAN = "delivery_list/{screen}"
         val DELIVERY_DETAILS = "delivery/{deliveryId}"
         val REQUEST_DETAILS = "request/{deliveryId}"
         val DELIVERY_TRACKING_CLIENT = "delivery_tracking/client"

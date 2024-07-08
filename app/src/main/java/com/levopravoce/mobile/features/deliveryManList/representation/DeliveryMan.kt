@@ -14,8 +14,10 @@ enum class DeliveryManView {
 }
 
 @Composable
-fun DeliveryMan() {
-    var deliveryManView: DeliveryManView? by remember { mutableStateOf(null) }
+fun DeliveryMan(
+    screen: DeliveryManView? = null,
+) {
+    var deliveryManView: DeliveryManView? by remember { mutableStateOf(screen) }
 
     when (deliveryManView) {
         DeliveryManView.DELiVERY -> {

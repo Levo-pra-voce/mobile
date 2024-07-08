@@ -14,6 +14,7 @@ import androidx.navigation.compose.navigation
 import com.levopravoce.mobile.features.auth.representation.Authentication
 import com.levopravoce.mobile.features.configuration.representation.Configuration
 import com.levopravoce.mobile.features.deliveryManList.representation.DeliveryMan
+import com.levopravoce.mobile.features.deliveryManList.representation.DeliveryManView
 import com.levopravoce.mobile.features.deliveryManList.representation.delivery.DeliveryDetails
 import com.levopravoce.mobile.features.deliveryManList.representation.request.RequestDetails
 import com.levopravoce.mobile.features.home.representation.HomeDecider
@@ -103,7 +104,14 @@ fun NavGraphBuilder.homeGraph() {
         }
 
         authComposable(route = Routes.Home.DELIVERY_MAN) {
-            DeliveryMan()
+            val screen = it.arguments?.getString("screen", null)
+            DeliveryMan(
+                screen = when (screen) {
+                    "delivery" -> DeliveryManView.DELiVERY
+                    "request" -> DeliveryManView.REQUEST
+                    else -> null
+                }
+            )
         }
 
         authComposable(route = Routes.Home.DELIVERY_DETAILS) {

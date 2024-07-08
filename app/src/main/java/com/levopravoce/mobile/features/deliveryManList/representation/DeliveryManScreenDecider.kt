@@ -31,22 +31,9 @@ fun DeliveryManScreenDecider(
         Column(
             Modifier.padding(16.dp)
         ) {
-            Column {
+            Column(Modifier.padding(top = 16.dp)) {
                 BackButton(
                     modifier = Modifier.scale(1.5f)
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 48.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Você é ?",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.customColorsShema.title
                 )
             }
 

@@ -26,6 +26,7 @@ import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.configuration.representation.PersonIcon
 import com.levopravoce.mobile.features.deliveryManList.domain.DeliveryManViewModel
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
+import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +51,13 @@ fun DeliveryDetails(
         BackButton(
             Modifier.size(28.dp)
         ) {
-            navController?.popBackStack()
+            navController?.navigate(
+                Routes.Home.DELIVERY_MAN.replace("{screen}", "DELIVERY")
+            ) {
+                popUpTo(Routes.Home.DELIVERY_MAN.replace("{screen}", "DELIVERY")) {
+                    inclusive = true
+                }
+            }
         }
         Column(
             modifier = Modifier.fillMaxWidth(),
