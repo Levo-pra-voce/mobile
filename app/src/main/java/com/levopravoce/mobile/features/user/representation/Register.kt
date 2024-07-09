@@ -24,7 +24,7 @@ val mockClient = UserDTO(
 
 val mockDelivery = UserDTO(
     userType = UserType.ENTREGADOR,
-    name = "Luiz",
+    name = "Gabriel",
     zipCode = "88061412",
     complement = "Casa",
     cpf = "51604819073",
