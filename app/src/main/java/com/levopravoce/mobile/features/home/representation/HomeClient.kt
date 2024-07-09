@@ -65,9 +65,7 @@ fun HomeClient(
     val navController = navControllerContext.current
     LaunchedEffect(Unit) {
         trackingViewModel.connectWebSocket()
-        if (currentTrackingState !is ApiResponse.Success) {
-            trackingViewModel.setStateCurrentTracking()
-        }
+        trackingViewModel.setStateCurrentTracking()
         println("Client: Unit effect")
     }
 

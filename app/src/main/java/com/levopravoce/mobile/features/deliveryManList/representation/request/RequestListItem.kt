@@ -71,7 +71,7 @@ fun RequestListItem(
                 val currentDate = LocalDate.now();
                 val pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 val parsedDeliveryDate = LocalDate.parse(deliveryDate, pattern)
-                if (currentDate.isBefore(parsedDeliveryDate) || currentDate.isEqual(
+                if (currentDate.isAfter(parsedDeliveryDate) || currentDate.isEqual(
                         parsedDeliveryDate
                     )
                 ) {
