@@ -211,7 +211,7 @@ fun OrderInfo(
                     }
                     EnterButton("Avançar") {
                         coroutineScope.launch {
-                            if(orderViewModel.validateOrderFields(orderDTOState)) {
+                            if(orderViewModel.validateOrderFields(orderDTOState) && orderViewModel.validateDeliveryDate(orderDTOState)){
                                 orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
                             } else{
                                 showError.value = true
