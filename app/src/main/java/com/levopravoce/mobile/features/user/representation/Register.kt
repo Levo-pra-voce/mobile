@@ -43,7 +43,7 @@ val mockDelivery = UserDTO(
         height = 1.5,
         width = 1.5,
         maxWeight = 500.0,
-        renavam = "123456789",
+        renavam = "99188451705",
     )
 )
 
