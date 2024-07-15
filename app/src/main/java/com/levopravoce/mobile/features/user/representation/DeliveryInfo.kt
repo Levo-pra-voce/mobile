@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -122,6 +123,8 @@ fun DeliveryInfo(
 
             Column {
                 FormInputText(
+                    labelModifier = Modifier.offset(y = (-12).dp),
+                    label = "Nome",
                     onChange = {
                         userDTORemember = userDTORemember.copy(name = it)
                     },
@@ -132,6 +135,7 @@ fun DeliveryInfo(
                     modifier = Modifier.fillMaxWidth()
                 )
                 FormInputText(
+                    label = "Email",
                     onChange = { userDTORemember = userDTORemember.copy(email = it) },
                     value = userDTORemember.email ?: "",
                     placeHolder = "Email",
@@ -143,6 +147,7 @@ fun DeliveryInfo(
                         .padding(top = 8.dp)
                 )
                 FormInputText(
+                    label = "CPF",
                     onChange = {
                         userDTORemember = userDTORemember.copy(cpf = it.maxLength(11))
                     },
@@ -157,6 +162,7 @@ fun DeliveryInfo(
                         .padding(top = 8.dp)
                 )
                 FormInputText(
+                    label = "CNH",
                     onChange = { userDTORemember = userDTORemember.copy(cnh = it.maxLength(11)) },
                     value = userDTORemember.cnh ?: "",
                     placeHolder = "CNH",
@@ -169,6 +175,7 @@ fun DeliveryInfo(
                         .padding(top = 8.dp)
                 )
                 FormInputText(
+                    label = "Telefone",
                     onChange = {
                         userDTORemember = userDTORemember.copy(phone = it.maxLength(11))
                     },
@@ -183,6 +190,7 @@ fun DeliveryInfo(
                         .padding(top = 8.dp)
                 )
                 FormInputText(
+                    label = "CEP",
                     onChange = {
                         userDTORemember = userDTORemember.copy(zipCode = it.maxLength(9))
                     },
@@ -197,6 +205,7 @@ fun DeliveryInfo(
                         .padding(top = 8.dp)
                 )
                 FormInputText(
+                    label = "Endereço",
                     onChange = { userDTORemember = userDTORemember.copy(complement = it) },
                     value = userDTORemember.complement ?: "",
                     placeHolder = "Complemento",
@@ -208,6 +217,7 @@ fun DeliveryInfo(
                 )
                 if (!isEditing) {
                     FormInputText(
+                        label = "Senha",
                         onChange = { userDTORemember = userDTORemember.copy(password = it) },
                         value = userDTORemember.password ?: "",
                         placeHolder = "Senha",

@@ -100,22 +100,32 @@ fun Login(
                     .padding(top = 128.dp, bottom = 72.dp)
                     .fillMaxWidth()
             ) {
+                Text(
+                    text = "Digite seu e-mail:",
+                    color = MaterialTheme.customColorsShema.title,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                    modifier = Modifier.padding(bottom = 16.dp, start = 4.dp)
+                )
                 FormInputText(
                     onChange = { email = it },
                     value = email,
                     placeHolder = "email@*****.com",
-                    label = "Digite seu e-mail:",
                     onSubmitted = nextFocus,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
             }
             Column(modifier = Modifier.padding(bottom = 24.dp)) {
+                Text(
+                    text = "Digite sua senha:",
+                    color = MaterialTheme.customColorsShema.title,
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                    modifier = Modifier.padding(bottom = 16.dp, start = 4.dp)
+                )
                 FormInputText(
                     onChange = { password = it },
                     value = password,
                     placeHolder = "*****",
-                    label = "Digite sua senha:",
                     visualTransformation = PasswordVisualTransformation(),
                     onSubmitted = hideKeyboard,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
