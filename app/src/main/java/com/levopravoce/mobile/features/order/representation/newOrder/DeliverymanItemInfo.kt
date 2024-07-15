@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -86,6 +87,7 @@ fun DeliverymanItemInfo(
             painter = painterResource(R.drawable.whatsapp_icon),
             contentDescription = "icone do whatsapp",
             contentScale = ContentScale.FillHeight,
+            colorFilter = ColorFilter.tint(MaterialTheme.customColorsShema.border),
             modifier = Modifier
                 .padding(start = 16.dp, top = 48.dp)
                 .clickable {
