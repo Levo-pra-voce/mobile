@@ -120,7 +120,7 @@ fun VehicleInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                label = "Altura máxima suportada",
+                label = "Altura máxima suportada em metros",
                 onChange = {
                     val height = it.replace(",", ".").toDoubleOrNull()
                     vehicle = vehicle.copy(height = height)
@@ -135,7 +135,7 @@ fun VehicleInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                label = "Comprimento máximo suportado",
+                label = "Largura máxima suportado em metros",
                 onChange = {
                     val width = it.replace(",", ".").toDoubleOrNull()
                     vehicle = vehicle.copy(width = width)
@@ -150,7 +150,7 @@ fun VehicleInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                label = "Peso máximo suportado",
+                label = "Peso máximo suportado em kg",
                 onChange = {
                     val weight = it.replace(",", ".").toDoubleOrNull()
                     vehicle = vehicle.copy(maxWeight = weight)
@@ -180,7 +180,7 @@ fun VehicleInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
-                label = "Preço cobrado por quilômetro rodado",
+                label = "Preço cobrado por km rodado",
                 onChange = {
                     val price = it.replace(",", ".").toDoubleOrNull()
                     vehicle = vehicle.copy(pricePerKm = price)
