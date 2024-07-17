@@ -7,4 +7,5 @@ class RecommendUserDTO {
     var price: Double? = null
     var averageRating: Double? = null
     var phone: String? = null
+    var ratings: List<RatingDTO>? = null
 }

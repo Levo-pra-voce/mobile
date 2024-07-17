@@ -30,11 +30,22 @@ import com.levopravoce.mobile.features.auth.data.dto.UserDTO
 import com.levopravoce.mobile.features.auth.data.dto.Vehicle
 import com.levopravoce.mobile.features.user.domain.UserUiState
 
+fun removePriceFormat(price: String): Double? {
+    if (price.endsWith(",0")) {
+        return price.replace(",0", "").replace(",", ".").toDoubleOrNull()
+    }
+    return price.replace(",", ".").toDoubleOrNull()
+}
 
 fun formatPrice(price: Double?): String {
     if (price == null || price == 0.0) return "";
 
-    return price.toString().replace(".", ",").padEnd(2, '0')
+    return price.toString().replace(".", ",")
+}
+fun formatPrice(price: Int?): String {
+    if (price == null || price == 0) return "";
+
+    return price.toString().replace(".", ",")
 }
 
 @Composable
@@ -59,9 +70,7 @@ fun VehicleInfo(
         BackButton(
             Modifier.scale(1.5f), userViewModelState.value.status != RequestStatus.LOADING, onSubmit
         )
-
         Title(text = if (isEditing) "Editar Veículo" else "Cadastrar Veículo")
-
         Column {
             FormInputText(
                 labelModifier = Modifier.offset(y = (-12).dp),
@@ -122,7 +131,7 @@ fun VehicleInfo(
             FormInputText(
                 label = "Altura máxima suportada em metros",
                 onChange = {
-                    val height = it.replace(",", ".").toDoubleOrNull()
+                    val height = removePriceFormat(it)
                     vehicle = vehicle.copy(height = height)
                 },
                 value = formatPrice(vehicle.height),
@@ -137,7 +146,7 @@ fun VehicleInfo(
             FormInputText(
                 label = "Largura máxima suportado em metros",
                 onChange = {
-                    val width = it.replace(",", ".").toDoubleOrNull()
+                    val width = removePriceFormat(it)
                     vehicle = vehicle.copy(width = width)
                 },
                 value = formatPrice(vehicle.width),
@@ -152,7 +161,7 @@ fun VehicleInfo(
             FormInputText(
                 label = "Peso máximo suportado em kg",
                 onChange = {
-                    val weight = it.replace(",", ".").toDoubleOrNull()
+                    val weight = removePriceFormat(it)
                     vehicle = vehicle.copy(maxWeight = weight)
                 },
                 value = formatPrice(vehicle.maxWeight),
@@ -167,7 +176,7 @@ fun VehicleInfo(
             FormInputText(
                 label = "Preço base por viagem",
                 onChange = {
-                    val price = it.replace(",", ".").toDoubleOrNull()
+                    val price = removePriceFormat(it)
                     vehicle = vehicle.copy(priceBase = price)
                 },
                 value = formatPrice(vehicle.priceBase),
@@ -182,7 +191,7 @@ fun VehicleInfo(
             FormInputText(
                 label = "Preço cobrado por km rodado",
                 onChange = {
-                    val price = it.replace(",", ".").toDoubleOrNull()
+                    val price = removePriceFormat(it)
                     vehicle = vehicle.copy(pricePerKm = price)
                 },
                 value = formatPrice(vehicle.pricePerKm),

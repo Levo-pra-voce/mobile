@@ -162,6 +162,17 @@ fun ClientPayment(
             val gson = Gson()
             val orderPaymentDTO = gson.fromJson(messageState?.message, OrderPaymentDTO::class.java)
             showPaymentAlert.value = orderPaymentDTO.isPaid
+            navController?.navigate(
+                "client_rating/${orderPaymentDTO.orderId}"
+            )
+            {
+                popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                    inclusive = true
+                }
+                popUpTo(Routes.Home.DELIVERY_PAYMENT) {
+                    inclusive = true
+                }
+            }
         }
     }
     Alert(show = showPaymentAlert, message = "Pagamento realizado com sucesso!")

@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.order.representation.newOrder
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +55,7 @@ import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.order.domain.OrderViewModel
 import com.levopravoce.mobile.features.user.representation.formatPrice
+import com.levopravoce.mobile.features.user.representation.removePriceFormat
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
@@ -139,10 +141,8 @@ fun OrderInfo(
                             label = "Largura em metros",
                             labelModifier = Modifier.offset(y = (-12).dp),
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.toDouble()
-                                    orderDTOState = orderDTOState.copy(width = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(width = number)
                             },
                             value = formatPrice(orderDTOState.width),
                             placeHolder = "Digite aqui",
@@ -155,10 +155,8 @@ fun OrderInfo(
                             label = "Altura em metros",
                             enabled = orderDTOState.id == null,
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.replace(",", ".").toDoubleOrNull()
-                                    orderDTOState = orderDTOState.copy(height = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(height = number)
                             },
                             value = formatPrice(orderDTOState.height),
                             placeHolder = "Digite aqui",
@@ -173,10 +171,8 @@ fun OrderInfo(
                             label = "Peso máximo em kg",
                             enabled = orderDTOState.id == null,
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.toDouble()
-                                    orderDTOState = orderDTOState.copy(maxWeight = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(maxWeight = number)
                             },
                             value = formatPrice(orderDTOState.maxWeight),
                             placeHolder = "Digite aqui",
@@ -217,9 +213,12 @@ fun OrderInfo(
                     }
                     EnterButton("Avançar") {
                         coroutineScope.launch {
-                            if(orderViewModel.validateOrderFields(orderDTOState) && orderViewModel.validateDeliveryDate(orderDTOState)){
+                            if (orderViewModel.validateOrderFields(orderDTOState) && orderViewModel.validateDeliveryDate(
+                                    orderDTOState
+                                )
+                            ) {
                                 orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
-                            } else{
+                            } else {
                                 showError.value = true
                             }
                         }
@@ -295,6 +294,7 @@ fun OrderInfo(
                     }
                 }
             }
+
             OrderInfoState.CREATE_DELIVERYMAN_LIST -> {
                 DeliverymanListInfo(
                     order = orderDTOState
@@ -335,7 +335,6 @@ fun EnterButton(
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .background(MaterialTheme.customColorsShema.invertBackground)
             .clip(RoundedCornerShape(20))
             .clickable {
                 onSubmit()
@@ -343,6 +342,13 @@ fun EnterButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.customColorsShema.buttonBackground)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.customColorsShema.buttonBackground,
+                        shape = RoundedCornerShape(20)
+                    )
+                    .clip(RoundedCornerShape(20))
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {

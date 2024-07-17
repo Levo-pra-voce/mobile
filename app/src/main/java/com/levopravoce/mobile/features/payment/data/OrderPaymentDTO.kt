@@ -1,5 +1,6 @@
 package com.levopravoce.mobile.features.payment.data
 
 data class OrderPaymentDTO(
-    var isPaid: Boolean
+    var isPaid: Boolean,
+    var orderId: Long
 )

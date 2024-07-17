@@ -21,6 +21,7 @@ import com.levopravoce.mobile.features.home.representation.HomeDecider
 import com.levopravoce.mobile.features.order.representation.newOrder.OrderInfo
 import com.levopravoce.mobile.features.payment.representation.ClientPayment
 import com.levopravoce.mobile.features.payment.representation.DeliveryPayment
+import com.levopravoce.mobile.features.rating.representation.Rating
 import com.levopravoce.mobile.features.relatory.representation.Relatory
 import com.levopravoce.mobile.features.themeCustomization.representation.ThemeCustomization
 import com.levopravoce.mobile.features.tracking.representation.ClientTracking
@@ -133,6 +134,13 @@ fun NavGraphBuilder.homeGraph() {
 
         authComposable(route = Routes.Home.DELIVERY_PAYMENT) {
             DeliveryPayment()
+        }
+
+        authComposable(route = Routes.Home.CLIENT_RATING) {
+            val orderId = it.arguments?.getString("orderId")
+            if (orderId != null) {
+                Rating(orderId.toLong())
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.levopravoce.mobile.features.app.representation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,7 @@ fun Button(
     color: Color = MaterialTheme.customColorsShema.title,
     padding: Int = 16,
     disabled: Boolean = false,
-    backgroundColor: Color = MaterialTheme.customColorsShema.invertBackground,
+    backgroundColor: Color = MaterialTheme.customColorsShema.buttonBackground,
     onClick: () -> Unit,
 ) {
     Row(
