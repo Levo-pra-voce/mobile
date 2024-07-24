@@ -27,6 +27,7 @@ data class CustomColorsShema(
     val invertBackground: Color = Color.Unspecified,
     val listTitle: Color = Color.Unspecified,
     val buttonBackground: Color = Color.Unspecified,
+    val success: Color = Color.Unspecified,
 )
 
 val LightColorSchema = CustomColorsShema(
@@ -39,6 +40,7 @@ val LightColorSchema = CustomColorsShema(
     invertBackground = White100,
     listTitle = gray80,
     buttonBackground = gray60,
+    success = green100
 )
 
 
@@ -52,6 +54,7 @@ val DarkColorSchema = CustomColorsShema(
     invertBackground = Black100,
     listTitle = gray80,
     buttonBackground = Black100,
+    success = green100
 )
 
 var LocalColors = compositionLocalOf { LightColorSchema }

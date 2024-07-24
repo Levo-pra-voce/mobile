@@ -166,7 +166,7 @@ fun Rating(
                 Button(text = "Voltar", modifier = Modifier.width(100.dp)) {
                     redirectToHome()
                 }
-                Button(text = "Enviar", modifier = Modifier.width(100.dp)) {
+                Button(text = "Enviar", modifier = Modifier.width(100.dp), backgroundColor = MaterialTheme.customColorsShema.success) {
                     coroutineScope.launch {
                         val comment = comment
                         if (comment.isNullOrBlank()) {
