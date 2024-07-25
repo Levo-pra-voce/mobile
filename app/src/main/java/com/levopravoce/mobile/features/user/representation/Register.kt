@@ -24,7 +24,7 @@ val mockClient = UserDTO(
 
 val mockDelivery = UserDTO(
     userType = UserType.ENTREGADOR,
-    name = "Luiz",
+    name = "Gabriel",
     zipCode = "88061412",
     complement = "Casa",
     cpf = "51604819073",
@@ -34,7 +34,7 @@ val mockDelivery = UserDTO(
     password = "Teste1234",
     acceptTerms = true,
     vehicle = Vehicle(
-        plate = "ABC1234",
+        plate = "ABE1234",
         model = "Fusca",
         color = "Azul",
         manufacturer = "Volkswagen",
@@ -43,7 +43,7 @@ val mockDelivery = UserDTO(
         height = 1.5,
         width = 1.5,
         maxWeight = 500.0,
-        renavam = "123456789",
+        renavam = "99188451705",
     )
 )
 

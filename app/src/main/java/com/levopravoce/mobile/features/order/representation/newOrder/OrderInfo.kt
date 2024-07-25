@@ -2,6 +2,7 @@ package com.levopravoce.mobile.features.order.representation.newOrder
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -52,6 +54,8 @@ import com.levopravoce.mobile.features.app.representation.Screen
 import com.levopravoce.mobile.features.order.data.dto.OrderDTO
 import com.levopravoce.mobile.features.order.data.dto.OrderStatus
 import com.levopravoce.mobile.features.order.domain.OrderViewModel
+import com.levopravoce.mobile.features.user.representation.formatPrice
+import com.levopravoce.mobile.features.user.representation.removePriceFormat
 import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
@@ -132,32 +136,30 @@ fun OrderInfo(
                             color = MaterialTheme.customColorsShema.title
                         )
                     }
-
                     Column {
                         FormInputText(
+                            label = "Largura em metros",
+                            labelModifier = Modifier.offset(y = (-12).dp),
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.toDouble()
-                                    orderDTOState = orderDTOState.copy(height = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(width = number)
                             },
-                            value = orderDTOState.height?.toString() ?: "",
-                            placeHolder = "Largura:",
+                            value = formatPrice(orderDTOState.width),
+                            placeHolder = "Digite aqui",
                             withBorder = false,
                             onSubmitted = nextFocus,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             modifier = Modifier.fillMaxWidth()
                         )
                         FormInputText(
+                            label = "Altura em metros",
                             enabled = orderDTOState.id == null,
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.toDouble()
-                                    orderDTOState = orderDTOState.copy(width = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(height = number)
                             },
-                            value = orderDTOState.width?.toString() ?: "",
-                            placeHolder = "Altura:",
+                            value = formatPrice(orderDTOState.height),
+                            placeHolder = "Digite aqui",
                             withBorder = false,
                             onSubmitted = nextFocus,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -166,15 +168,14 @@ fun OrderInfo(
                                 .padding(top = 8.dp)
                         )
                         FormInputText(
+                            label = "Peso máximo em kg",
                             enabled = orderDTOState.id == null,
                             onChange = {
-                                if (it.toDoubleOrNull() != null) {
-                                    val number = it.toDouble()
-                                    orderDTOState = orderDTOState.copy(maxWeight = number)
-                                }
+                                val number = removePriceFormat(it)
+                                orderDTOState = orderDTOState.copy(maxWeight = number)
                             },
-                            value = orderDTOState.maxWeight?.toString() ?: "",
-                            placeHolder = "Peso máximo:",
+                            value = formatPrice(orderDTOState.maxWeight),
+                            placeHolder = "Digite aqui",
                             withBorder = false,
                             onSubmitted = nextFocus,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -183,8 +184,9 @@ fun OrderInfo(
                                 .padding(top = 8.dp)
                         )
                         FormInputDate(
+                            label = "Data de entrega",
                             value = orderDTOState.deliveryDate ?: "",
-                            placeHolder = "Data de entrega:",
+                            placeHolder = "selecione aqui",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp)
@@ -211,9 +213,12 @@ fun OrderInfo(
                     }
                     EnterButton("Avançar") {
                         coroutineScope.launch {
-                            if(orderViewModel.validateOrderFields(orderDTOState) && orderViewModel.validateDeliveryDate(orderDTOState)){
+                            if (orderViewModel.validateOrderFields(orderDTOState) && orderViewModel.validateDeliveryDate(
+                                    orderDTOState
+                                )
+                            ) {
                                 orderInfoState = OrderInfoState.CREATE_MAP_SELECTION
-                            } else{
+                            } else {
                                 showError.value = true
                             }
                         }
@@ -289,6 +294,7 @@ fun OrderInfo(
                     }
                 }
             }
+
             OrderInfoState.CREATE_DELIVERYMAN_LIST -> {
                 DeliverymanListInfo(
                     order = orderDTOState
@@ -329,7 +335,6 @@ fun EnterButton(
         Row(modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .background(MaterialTheme.customColorsShema.invertBackground)
             .clip(RoundedCornerShape(20))
             .clickable {
                 onSubmit()
@@ -337,6 +342,13 @@ fun EnterButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.customColorsShema.buttonBackground)
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.customColorsShema.buttonBackground,
+                        shape = RoundedCornerShape(20)
+                    )
+                    .clip(RoundedCornerShape(20))
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {

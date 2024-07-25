@@ -72,7 +72,7 @@ fun DeliverymanListInfo(
                         .padding(top = 16.dp)
                 ) {
                     Text(
-                        text = "Motoras",
+                        text = "Motoristas",
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.customColorsShema.title,
                         fontWeight = MaterialTheme.typography.bodySmall.fontWeight,

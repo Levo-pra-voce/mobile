@@ -40,6 +40,7 @@ import com.levopravoce.mobile.features.app.representation.Title
 import com.levopravoce.mobile.features.payment.data.OrderPaymentDTO
 import com.levopravoce.mobile.features.payment.domain.PaymentViewModel
 import com.levopravoce.mobile.features.tracking.domain.TrackingViewModel
+import com.levopravoce.mobile.routes.Routes
 import com.levopravoce.mobile.routes.navControllerContext
 import com.levopravoce.mobile.ui.theme.customColorsShema
 import kotlinx.coroutines.Dispatchers
@@ -146,7 +147,7 @@ fun ClientPayment(
     val messageState by paymentViewModel.webSocketState.collectAsState()
     val navController = navControllerContext.current
     val coroutineScope = rememberCoroutineScope()
-    val isPaid = remember {
+    val showPaymentAlert = remember {
         mutableStateOf(false)
     }
     val qrCodeLink = remember {
@@ -160,10 +161,21 @@ fun ClientPayment(
         if (messageState?.destination == Destination.ORDER_PAYMENT) {
             val gson = Gson()
             val orderPaymentDTO = gson.fromJson(messageState?.message, OrderPaymentDTO::class.java)
-            isPaid.value = orderPaymentDTO.isPaid
+            showPaymentAlert.value = orderPaymentDTO.isPaid
+            navController?.navigate(
+                "client_rating/${orderPaymentDTO.orderId}"
+            )
+            {
+                popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                    inclusive = true
+                }
+                popUpTo(Routes.Home.DELIVERY_PAYMENT) {
+                    inclusive = true
+                }
+            }
         }
     }
-    Alert(show = isPaid, message = "Pagamento realizado com sucesso!")
+    Alert(show = showPaymentAlert, message = "Pagamento realizado com sucesso!")
     Screen(padding = 32.dp) {
         Column(
             Modifier
@@ -198,7 +210,7 @@ fun ClientPayment(
                             coroutineScope.launch(Dispatchers.Main) {
                                 val response = paymentViewModel.sendPaymentRequest()
                                 if (response.isSuccessful) {
-                                    isPaid.value = true
+                                    showPaymentAlert.value = true
                                 }
                             }
                         }
@@ -207,7 +219,13 @@ fun ClientPayment(
             }
             Button(text = "Voltar", modifier = Modifier.fillMaxWidth()) {
                 trackingViewModel.setRedirectToTracking(false)
-                navController?.navigateUp()
+                navController?.navigate(
+                    Routes.Home.INICIAL
+                ) {
+                    popUpTo(Routes.Home.DELIVERY_TRACKING_CLIENT) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }

@@ -3,7 +3,9 @@ package com.levopravoce.mobile.features.app.representation
 import android.app.UiModeManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.levopravoce.mobile.ui.theme.MobileTheme
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
@@ -27,6 +30,7 @@ fun FormInputText(
     modifier: Modifier = Modifier,
     placeHolder: String = "",
     label: String? = null,
+    labelModifier: Modifier = Modifier,
     onChange: (String) -> Unit,
     onSubmitted: () -> Any? = {},
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -35,13 +39,14 @@ fun FormInputText(
     enabled: Boolean = true
 ) {
 
-    Column {
+    Box {
         if (label != null) {
             Text(
                 text = label,
                 color = MaterialTheme.customColorsShema.title,
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                modifier = Modifier.padding(bottom = 16.dp, start = 4.dp)
+                fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                fontStyle = MaterialTheme.typography.headlineSmall.fontStyle,
+                modifier = Modifier.offset(y = 12.dp).zIndex(1f).then(labelModifier)
             )
         }
         TextField(
@@ -76,6 +81,7 @@ fun FormInputText(
                 false -> modifier
             }
                 .background(color = MaterialTheme.customColorsShema.background)
+                .padding(top = if (label != null) 12.dp else 0.dp)
                 .then(modifier)
         )
     }

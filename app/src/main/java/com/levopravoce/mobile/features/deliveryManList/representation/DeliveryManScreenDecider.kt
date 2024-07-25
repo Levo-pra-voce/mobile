@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.unit.dp
 import com.levopravoce.mobile.features.app.representation.BackButton
 import com.levopravoce.mobile.features.app.representation.Button
+import com.levopravoce.mobile.features.app.representation.Header
 import com.levopravoce.mobile.ui.theme.customColorsShema
 
 @Composable
@@ -28,34 +29,43 @@ fun DeliveryManScreenDecider(
             .fillMaxHeight()
             .background(MaterialTheme.customColorsShema.background)
     ) {
-        Column(
-            Modifier.padding(16.dp)
+        Header(
+            horizontal = Alignment.CenterHorizontally,
         ) {
-            Column(Modifier.padding(top = 16.dp)) {
-                BackButton(
-                    modifier = Modifier.scale(1.5f)
-                )
-            }
+            Text(
+                text = "Entregas",
+                color = MaterialTheme.customColorsShema.title,
+                fontSize = MaterialTheme.typography.displayMedium.fontSize,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        }
+    }
+    Column(
+        Modifier.padding(16.dp)
+    ) {
+        Column {
+            BackButton(
+                modifier = Modifier.scale(1.5f)
+            )
+        }
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Option(
+                value = DeliveryManView.REQUEST, title = "Solicitações", onClick = onClick
+            )
+            Column(Modifier.padding(top = 48.dp)) {
                 Option(
-                    value = DeliveryManView.REQUEST, title = "Solicitações", onClick = onClick
+                    value = DeliveryManView.DELiVERY, title = "Suas entregas", onClick = onClick
                 )
-                Column(Modifier.padding(top = 48.dp)) {
-                    Option(
-                        value = DeliveryManView.DELiVERY, title = "Suas entregas", onClick = onClick
-                    )
-                }
             }
         }
     }
-
 }
 
 @Composable

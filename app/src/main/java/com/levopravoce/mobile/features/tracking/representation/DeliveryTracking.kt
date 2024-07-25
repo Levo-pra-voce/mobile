@@ -1,6 +1,7 @@
 package com.levopravoce.mobile.features.tracking.representation
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,9 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -68,6 +72,7 @@ fun DeliveryTracking(
     val coroutineScope = rememberCoroutineScope()
     val locationPermissions = rememberPermissionState(Manifest.permission.ACCESS_FINE_LOCATION)
     val context = LocalContext.current
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
     val navController = navControllerContext.current
     LaunchedEffect(locationPermissions.status) {
         trackingViewModel.handlePermissionEvent(locationPermissions.status)
@@ -91,7 +96,7 @@ fun DeliveryTracking(
         is ViewState.Success -> {
             val userLocation = (viewState as ViewState.Success).location ?: LatLng(0.0, 0.0)
             val cameraPositionState = rememberCameraPositionState {
-                position = CameraPosition.fromLatLngZoom(userLocation, 15f)
+                position = CameraPosition.fromLatLngZoom(userLocation, 16f)
             }
             val messageState = trackingViewModel.webSocketState.collectAsState()
             var showFinishButton by remember {
@@ -117,6 +122,27 @@ fun DeliveryTracking(
                         orderInTracking.originLongitude ?: 0.0
                     )
                     cameraPositionState.move(CameraUpdateFactory.newLatLng(latLng))
+                }
+                if (locationPermissions.status == PermissionStatus.Granted) {
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                            location?.let {
+                                val trackingDTO = OrderTrackingDTO(
+                                    latitude = location.latitude,
+                                    longitude = location.longitude,
+                                    orderId = orderState?.id
+                                )
+                                trackingViewModel.sendMessage(trackingDTO)
+                            }
+                        }
+                    }
                 }
             }
             LaunchedEffect(orderState?.status) {
@@ -162,11 +188,11 @@ fun DeliveryTracking(
                     horizontal = Alignment.CenterHorizontally,
                 ) {
                     Row {
-                        BackButton(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .offset(x = -(32.dp))
-                        )
+//                        BackButton(
+//                            modifier = Modifier
+//                                .size(24.dp)
+//                                .offset(x = -(32.dp))
+//                        )
                         Text(
                             text = "Local de entrega",
                             color = MaterialTheme.customColorsShema.title,

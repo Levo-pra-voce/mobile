@@ -26,5 +26,6 @@ object Routes {
         val DELIVERY_TRACKING_DRIVER = "delivery_tracking/driver"
         val DELIVERY_PAYMENT = "delivery_payment"
         val CLIENT_PAYMENT = "client_payment"
+        val CLIENT_RATING = "client_rating/{orderId}"
     }
 }

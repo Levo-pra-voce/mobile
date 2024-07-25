@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.levopravoce.mobile.common.RequestStatus
 import com.levopravoce.mobile.common.input.maxLength
@@ -146,6 +148,8 @@ fun ClientInfo(
 
         Column {
             FormInputText(
+                label = "Nome",
+                labelModifier = Modifier.offset(y = (-12).dp),
                 onChange = {
                     userDTORemember = userDTORemember.copy(name = it)
                 },
@@ -157,6 +161,7 @@ fun ClientInfo(
                     .fillMaxWidth()
             )
             FormInputText(
+                label = "Email",
                 enabled = !isEditing,
                 onChange = { userDTORemember = userDTORemember.copy(email = it) },
                 value = userDTORemember.email ?: "",
@@ -169,6 +174,7 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
+                label = "CPF",
                 enabled = !isEditing,
                 onChange = { userDTORemember = userDTORemember.copy(cpf = it.maxLength(11)) },
                 value = if (!isEditing) userDTORemember.cpf
@@ -183,6 +189,7 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
+                label = "Telefone",
                 onChange = { userDTORemember = userDTORemember.copy(phone = it.maxLength(11)) },
                 value = userDTORemember.phone ?: "",
                 placeHolder = "Telefone",
@@ -195,6 +202,7 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
+                label = "CEP",
                 onChange = {
                     userDTORemember = userDTORemember.copy(zipCode = it.maxLength(9))
                 },
@@ -209,6 +217,7 @@ fun ClientInfo(
                     .padding(top = 8.dp)
             )
             FormInputText(
+                label = "Complemento",
                 onChange = { userDTORemember = userDTORemember.copy(complement = it) },
                 value = userDTORemember.complement ?: "",
                 placeHolder = "Complemento",
@@ -226,6 +235,7 @@ fun ClientInfo(
             )
             if (!isEditing) {
                 FormInputText(
+                    label = "Senha",
                     onChange = { userDTORemember = userDTORemember.copy(password = it) },
                     value = userDTORemember.password ?: "",
                     placeHolder = "Senha",
